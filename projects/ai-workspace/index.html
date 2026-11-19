@@ -180,7 +180,7 @@ async function sendChat(){
     };
     while(true){
       const part=await reader.read();if(part.done)break;
-      buffer+=decoder.decode(part.value,{stream:true}).replace(/\r\n/g,'\n');
+      buffer+=decoder.decode(part.value,{stream:true});buffer=buffer.replace(/\r\n/g,'\n');
       let boundary;while((boundary=buffer.indexOf('\n\n'))!==-1){const frame=buffer.slice(0,boundary);buffer=buffer.slice(boundary+2);processFrame(frame)}
     }
     buffer+=decoder.decode().replace(/\r\n/g,'\n');if(buffer.trim())processFrame(buffer);
