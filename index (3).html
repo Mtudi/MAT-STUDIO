@@ -1,0 +1,1459 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="dark light">
+<title>Xi — Personal AI</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600&display=swap">
+<style>
+:root{--accrgb:61,220,132;--onacc:#04130a;--bg:#090a09;--panel:#101211;--panel2:#161917;--line:#242826;--text:#e8ece9;--mute:#8a938d;--acc:#3ddc84;--acc2:#2bb36a;--accbg:rgba(var(--accrgb),.1);--user:#18201b;--code:#0b0d0c;--danger:#ff7b7b;--r:14px;--font:Inter,"IBM Plex Sans Arabic",system-ui,-apple-system,"Segoe UI",Roboto,"Noto Sans Arabic",sans-serif;--mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+[data-theme=light]{--bg:#f6f8f6;--panel:#fff;--panel2:#eef2ef;--line:#dbe2dd;--text:#151a17;--mute:#66706a;--acc:#12a85a;--acc2:#0d8a49;--accbg:rgba(18,168,90,.1);--user:#e6f3ea;--code:#f1f4f2;--danger:#c92a2a}
+*{box-sizing:border-box;margin:0}
+html,body{height:100%}
+body{font:15px/1.6 var(--font);background:var(--bg);color:var(--text);overflow:hidden;-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer;background:none;border:0}
+:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+::-webkit-scrollbar{width:8px;height:8px}::-webkit-scrollbar-thumb{background:var(--line);border-radius:8px}::-webkit-scrollbar-thumb:hover{background:var(--mute)}
+*{scrollbar-width:thin;scrollbar-color:var(--line) transparent}
+.app{display:grid;grid-template-columns:288px minmax(0,1fr);height:100dvh}
+.side{background:var(--panel);border-inline-end:1px solid var(--line);display:flex;flex-direction:column;gap:10px;padding:14px;min-height:0}
+.brand{display:flex;align-items:center;gap:10px;padding:4px 4px 8px}
+.brand small{display:block;color:var(--mute);font-size:12px;line-height:1.1}
+.brand b{font-size:18px;letter-spacing:.3px}
+.logo{width:36px;height:36px;border-radius:11px;display:grid;place-items:center;font-weight:700;font-size:20px;color:var(--acc);background:var(--accbg);border:1px solid rgba(var(--accrgb),.35);box-shadow:0 0 18px rgba(var(--accrgb),.18)}
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;padding:10px 14px;border-radius:12px;border:1px solid var(--line);transition:.18s}
+.btn:hover{background:var(--panel2);border-color:var(--mute)}
+.btn.primary{background:var(--acc);color:var(--onacc);border-color:var(--acc);font-weight:600}
+.btn.primary:hover{background:var(--acc2);border-color:var(--acc2);box-shadow:0 0 16px rgba(var(--accrgb),.25)}
+.btn.danger{color:var(--danger);border-color:rgba(255,123,123,.4)}
+.search{width:100%;padding:9px 12px;border-radius:10px;border:1px solid var(--line);background:var(--bg)}
+.list{flex:1;overflow:auto;display:flex;flex-direction:column;gap:2px;min-height:0}
+.item{display:flex;align-items:center;gap:4px;border-radius:10px;border:1px solid transparent;transition:.15s}
+.item:hover{background:var(--panel2)}
+.item.on{background:var(--accbg);border-color:rgba(var(--accrgb),.3)}
+.item .pick{flex:1;min-width:0;text-align:start;padding:8px 10px}
+.item .t{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:14px}
+.item .d{display:block;color:var(--mute);font-size:11.5px}
+.item .mini{opacity:0;width:28px;height:28px;border-radius:8px;color:var(--mute)}
+.item:hover .mini,.item:focus-within .mini,.item.on .mini{opacity:1}
+.item .mini:hover{background:var(--line);color:var(--text)}
+.empty{color:var(--mute);text-align:center;padding:24px 8px;font-size:13px}
+.main{display:flex;flex-direction:column;min-width:0;min-height:0;position:relative}
+.top{display:flex;align-items:center;gap:6px;padding:10px 14px;border-bottom:1px solid var(--line);padding-top:max(10px,env(safe-area-inset-top))}
+.ttl{flex:1;min-width:0;text-align:start;font-weight:600;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:6px 8px;border-radius:8px}
+.ttl:hover{background:var(--panel2)}
+.badge{font:12px var(--mono);color:var(--acc);background:var(--accbg);border:1px solid rgba(var(--accrgb),.25);padding:3px 9px;border-radius:99px;white-space:nowrap;max-width:36vw;overflow:hidden;text-overflow:ellipsis}
+.icon{width:36px;height:36px;border-radius:10px;color:var(--mute);font-size:17px;flex:none;transition:.15s}
+.icon:hover{background:var(--panel2);color:var(--text)}
+#menu{display:none}
+.chat{flex:1;overflow-y:auto;overflow-x:hidden;scroll-behavior:smooth;min-height:0}
+.inner{max-width:820px;margin:0 auto;padding:22px 16px 10px;display:flex;flex-direction:column;gap:20px;min-height:100%}
+.welcome{margin:auto;text-align:center;padding:24px 0;animation:rise .5s ease}
+.welcome .logo{width:64px;height:64px;font-size:34px;margin:0 auto 18px;border-radius:18px;box-shadow:0 0 40px rgba(var(--accrgb),.2)}
+.welcome h2{font-size:clamp(24px,5vw,34px);letter-spacing:-.5px}
+.welcome p{color:var(--mute);margin:8px auto 22px;max-width:480px}
+.chips{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;max-width:560px;margin:0 auto}
+.chip{padding:12px 14px;border-radius:12px;border:1px solid var(--line);background:var(--panel);text-align:start;font-size:14px;transition:.18s}
+.chip:hover{border-color:var(--acc);transform:translateY(-1px);background:var(--accbg)}
+.chip span{display:block;color:var(--mute);font-size:12px}
+.notice{margin:0 auto 18px;max-width:520px;padding:10px 14px;border-radius:12px;border:1px solid rgba(255,123,123,.4);color:var(--danger);font-size:14px}
+.notice button{text-decoration:underline;color:inherit;font-weight:600}
+.msg{display:flex;gap:12px;animation:rise .25s ease;min-width:0}
+.msg.user{justify-content:flex-end}
+.msg.user .body{max-width:85%;background:var(--user);border:1px solid var(--line);border-radius:var(--r) var(--r) 4px var(--r);padding:10px 14px}
+.msg.user .content{white-space:pre-wrap;overflow-wrap:anywhere}
+.avatar{flex:none;width:30px;height:30px;border-radius:9px;display:grid;place-items:center;font-weight:700;color:var(--acc);background:var(--accbg);border:1px solid rgba(var(--accrgb),.3);margin-top:2px}
+.msg.ai .body{flex:1;min-width:0}
+.content{overflow-wrap:anywhere}
+.content>*+*{margin-top:.75em}
+.content h2,.content h3,.content h4,.content h5{line-height:1.3;margin-top:1.1em}
+.content h2{font-size:1.3em}.content h3{font-size:1.15em}.content h4,.content h5{font-size:1em}
+.content ul,.content ol{padding-inline-start:1.4em}.content li+li{margin-top:.25em}
+.content a{color:var(--acc);text-underline-offset:3px}
+.content blockquote{border-inline-start:3px solid var(--acc);padding:2px 12px;color:var(--mute)}
+.content hr{border:0;border-top:1px solid var(--line)}
+code.ic{font:.88em var(--mono);background:var(--panel2);border:1px solid var(--line);padding:1px 6px;border-radius:6px;direction:ltr;unicode-bidi:isolate}
+.cb{border:1px solid var(--line);border-radius:12px;background:var(--code);overflow:hidden;direction:ltr;text-align:left}
+.cb header{display:flex;justify-content:space-between;align-items:center;padding:6px 8px 6px 14px;border-bottom:1px solid var(--line);color:var(--mute);font:12px var(--mono)}
+.cb header button{color:var(--mute);padding:3px 10px;border-radius:7px;font-size:12px}
+.cb header button:hover{background:var(--panel2);color:var(--text)}
+.cb pre{overflow-x:auto;padding:12px 14px;font:13px/1.55 var(--mono);tab-size:2}
+.tk-k{color:#c792ea}.tk-s{color:#a5d66f}.tk-c{color:#6b7a70;font-style:italic}.tk-n{color:#f5a97f}.tk-f{color:#6cb6ff}
+[data-theme=light] .tk-k{color:#8a3fb8}[data-theme=light] .tk-s{color:#3f7d12}[data-theme=light] .tk-n{color:#b4570f}[data-theme=light] .tk-f{color:#1c6bc4}
+.err{color:var(--danger);border:1px solid rgba(255,123,123,.4);border-radius:10px;padding:8px 12px;font-size:14px;margin-top:8px}
+.note{color:var(--mute);font-size:12.5px;margin-top:6px}
+.acts{display:flex;gap:4px;margin-top:6px}
+.acts button{color:var(--mute);font-size:12.5px;padding:3px 10px;border-radius:8px;border:1px solid transparent}
+.acts button:hover{border-color:var(--line);background:var(--panel2);color:var(--text)}
+.dots{display:inline-flex;gap:5px;padding:8px 0}
+.dots i{width:7px;height:7px;border-radius:50%;background:var(--acc);animation:blink 1.2s infinite both}
+.dots i:nth-child(2){animation-delay:.15s}.dots i:nth-child(3){animation-delay:.3s}
+.cursor::after{content:"";display:inline-block;width:7px;height:1.05em;background:var(--acc);margin-inline-start:2px;vertical-align:-2px;animation:blink 1s infinite}
+@keyframes blink{0%,80%,100%{opacity:.25}40%{opacity:1}}
+@keyframes rise{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.composer{padding:8px 14px max(14px,env(safe-area-inset-bottom))}
+.box{max-width:820px;margin:0 auto;display:flex;align-items:flex-end;gap:8px;background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:8px 8px 8px 16px;transition:.18s}
+.box:focus-within{border-color:var(--acc);box-shadow:0 0 0 3px var(--accbg)}
+.box textarea{flex:1;border:0;background:none;resize:none;outline:0;max-height:200px;min-height:28px;padding:5px 0;line-height:1.5}
+.send{flex:none;width:38px;height:38px;border-radius:12px;background:var(--acc);color:var(--onacc);font-size:18px;font-weight:700;transition:.15s}
+.send:hover:not(:disabled){background:var(--acc2)}
+.send:disabled{opacity:.35;cursor:not-allowed}
+.send.stop{background:var(--panel2);color:var(--text);border:1px solid var(--line)}
+.hint{max-width:820px;margin:6px auto 0;text-align:center;color:var(--mute);font-size:11.5px}
+dialog{margin:auto;width:min(560px,calc(100vw - 24px));max-height:calc(100dvh - 24px);overflow:auto;background:var(--panel);color:var(--text);border:1px solid var(--line);border-radius:18px;padding:0}
+dialog::backdrop{background:rgba(0,0,0,.6);backdrop-filter:blur(3px)}
+.dh{display:flex;justify-content:space-between;align-items:center;padding:16px 20px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--panel);z-index:1}
+.dh h2{font-size:17px}
+.sec{padding:16px 20px;border-bottom:1px solid var(--line);display:grid;gap:8px}
+.sec:last-child{border:0}
+.sec h3{font-size:12px;text-transform:uppercase;letter-spacing:.8px;color:var(--mute)}
+.sec label{font-size:13px;color:var(--mute)}
+.sec p{color:var(--mute);font-size:13px}
+.fld{width:100%;padding:9px 12px;border-radius:10px;border:1px solid var(--line);background:var(--bg)}
+.row{display:flex;gap:8px}.row>.fld{flex:1;min-width:0}
+.row .btn{padding:8px 12px;white-space:nowrap}
+textarea.fld{resize:vertical;min-height:70px}
+.warn{border:1px solid rgba(255,196,0,.35);background:rgba(255,196,0,.07);border-radius:10px;padding:10px 12px;font-size:13px;color:var(--text)}
+.toast{position:fixed;left:50%;bottom:90px;transform:translate(-50%,20px);background:var(--panel2);border:1px solid var(--line);padding:9px 16px;border-radius:99px;font-size:13.5px;opacity:0;pointer-events:none;transition:.25s;z-index:99;max-width:90vw}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+.scrim{display:none}
+@media (max-width:820px){
+ .app{grid-template-columns:minmax(0,1fr)}
+ .side{position:fixed;inset:0 auto 0 0;width:min(86vw,320px);z-index:30;transform:translateX(-102%);transition:transform .25s;padding-top:max(14px,env(safe-area-inset-top))}
+ [dir=rtl] .side{inset:0 0 0 auto;transform:translateX(102%)}
+ .nav-open .side{transform:none}
+ .scrim{display:block;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:20;opacity:0;pointer-events:none;transition:.25s}
+ .nav-open .scrim{opacity:1;pointer-events:auto}
+ #menu{display:inline-block}
+ .item .mini{opacity:1}
+ .chips{grid-template-columns:1fr}
+ .hint{display:none}
+ .badge{display:none}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+label[for=provider],#provider{display:none}
+[data-mode=sample] label[for=apiKey],[data-mode=sample] label[for=model],[data-mode=sample] .row:has(#apiKey),[data-mode=sample] .row:has(#saveKey),[data-mode=sample] .row:has(#model),[data-mode=sample] #keyStatus,[data-mode=sample] #modelStatus,[data-mode=sample] #geminiWarn{display:none}
+[data-mode=gemini] #sampleNote,[data-mode=preview] #sampleNote,[data-mode=preview] label[for=model],[data-mode=preview] .row:has(#model),[data-mode=preview] #modelStatus{display:none}
+.modes{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;max-width:560px;margin:0 auto 14px;text-align:start}
+.mode{border:1px solid var(--line);background:var(--panel);border-radius:14px;padding:12px 14px;display:grid;gap:4px;font-size:13px;align-content:start}
+.mode b{font-size:14px}.mode .sub{color:var(--acc);font-size:12px}.mode p{color:var(--mute);font-size:12.5px;margin:0}
+.mode em{font-style:normal;font-size:12px;color:var(--mute)}.mode a{color:var(--acc);font-size:12.5px}
+.mode.on{border-color:rgba(var(--accrgb),.5);background:var(--accbg)}.mode.on em{color:var(--acc)}.mode.off{opacity:.65}
+@media (max-width:820px){.modes{grid-template-columns:1fr}}
+[data-theme=light]{--accrgb:18,168,90;--accbg:rgba(var(--accrgb),.1);--onacc:#fff}
+[data-accent=blue]{--acc:#5aa9ff;--acc2:#3b8fe8;--accrgb:90,169,255}
+[data-accent=violet]{--acc:#a78bfa;--acc2:#8b6cf0;--accrgb:167,139,250}
+[data-accent=amber]{--acc:#fbbf24;--acc2:#e0a40f;--accrgb:251,191,36}
+[data-theme=light][data-accent=blue]{--acc:#1d6fd1;--acc2:#1658a8;--accrgb:29,111,209}
+[data-theme=light][data-accent=violet]{--acc:#7c4dff;--acc2:#6538e0;--accrgb:124,77,255}
+[data-theme=light][data-accent=amber]{--acc:#c27c0e;--acc2:#a2660a;--accrgb:194,124,14}
+::selection{background:rgba(var(--accrgb),.3)}
+.main::before{content:"";position:absolute;inset:0 0 auto 0;height:280px;background:radial-gradient(60% 100% at 50% 0,rgba(var(--accrgb),.09),transparent);pointer-events:none;z-index:0}
+.top,.chat,.composer{position:relative;z-index:1}
+.btn:active,.chip:active{transform:scale(.98)}
+.send:active:not(:disabled){transform:scale(.92)}
+.cb{box-shadow:0 6px 20px rgba(0,0,0,.18)}
+.box{box-shadow:0 8px 30px rgba(0,0,0,.25)}
+[data-theme=light] .box,[data-theme=light] .cb{box-shadow:0 6px 20px rgba(0,0,0,.06)}
+[dir=rtl] .box{padding:8px 16px 8px 8px}
+@keyframes sheet{from{transform:translateY(40px);opacity:0}to{transform:none;opacity:1}}
+@media (max-width:820px){.icon{width:40px;height:40px}.send{width:42px;height:42px}.item .pick{padding:11px 10px}dialog{margin:auto 0 0;width:100%;max-height:92dvh;border-radius:18px 18px 0 0;animation:sheet .25s ease}}
+#bg{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
+.app{position:relative;z-index:1}
+.side{background:color-mix(in srgb,var(--panel) 80%,transparent);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
+.box{background:color-mix(in srgb,var(--panel) 78%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+@media (max-width:820px){.side{background:var(--panel)}}
+body.modo-on .inner{padding-bottom:120px}
+.modo{position:fixed;inset-inline-end:14px;bottom:calc(env(safe-area-inset-bottom,0px) + 104px);z-index:6;display:flex;flex-direction:column;align-items:flex-end;gap:4px;pointer-events:none}
+.modo[hidden]{display:none}
+.mchar{pointer-events:auto;background:none;border:0;padding:0;cursor:pointer;line-height:0}
+.mchar svg{width:96px;height:auto;overflow:visible;filter:drop-shadow(0 8px 14px rgba(0,0,0,.35));transition:transform .2s}
+.mchar:hover svg{transform:scale(1.05) rotate(-2deg)}
+.mbub{pointer-events:auto;max-width:min(270px,72vw);background:var(--panel2);border:1px solid rgba(var(--accrgb),.45);border-radius:14px 14px 4px 14px;padding:8px 13px 9px;font-size:13.5px;line-height:1.5;box-shadow:0 8px 28px rgba(0,0,0,.3);transition:opacity .3s,transform .3s}
+.mbub.out{opacity:0;transform:translateY(6px);pointer-events:none}
+.mbub b{display:block;color:var(--acc);font-size:11px;letter-spacing:.5px;margin-bottom:1px}
+.mbub.typing #mtxt::after{content:"";display:inline-block;width:2px;height:1em;background:var(--acc);margin-inline-start:2px;vertical-align:-2px;animation:blink 1s infinite}
+.modo svg .eyes-h,.modo svg .eyes-s,.modo svg .brows-s,.modo svg .brows-u,.modo svg .mo{display:none}
+.modo svg[data-mood=happy] .eyes-o,.modo svg[data-mood=thinking] .eyes-o{display:none}
+.modo svg[data-mood=happy] .eyes-h,.modo svg[data-mood=thinking] .eyes-s,.modo svg[data-mood=serious] .brows-s,.modo svg[data-mood=surprised] .brows-u{display:inline}
+.modo svg[data-mood=normal] .mo-n,.modo svg[data-mood=thinking] .mo-n,.modo svg[data-mood=happy] .mo-h,.modo svg[data-mood=serious] .mo-s,.modo svg[data-mood=surprised] .mo-u{display:inline}
+.modo svg.talk .mo{display:none}.modo svg.talk .mo-t{display:inline}
+.modo svg[data-mood=surprised] .eyes-o{transform:scale(1.1);transform-origin:80px 78px}
+.modo svg[data-mood=serious] .eyes-o{transform:scaleY(.82);transform-origin:80px 78px}
+.modo .pupil{transition:transform .12s}
+.modo .eyes-o .eye{transform-box:fill-box;transform-origin:center;animation:mblink 4.6s infinite}
+.modo .spin{transform-box:fill-box;transform-origin:center;animation:mspin 1.4s linear infinite}
+.modo .body{animation:mbreathe 3.4s ease-in-out infinite}
+.modo .head{transform-origin:80px 112px;animation:mtilt 6s ease-in-out infinite}
+.modo svg.talk .head{animation:mbob .4s ease-in-out infinite}
+.modo .mo-t{transform-box:fill-box;transform-origin:center;animation:mflap .26s ease-in-out infinite}
+@keyframes mblink{0%,93%,100%{transform:scaleY(1)}96%{transform:scaleY(.08)}}
+@keyframes mspin{to{transform:rotate(360deg)}}
+@keyframes mbreathe{0%,100%{transform:translateY(0)}50%{transform:translateY(-2.5px)}}
+@keyframes mtilt{0%,100%{transform:rotate(-1.6deg)}50%{transform:rotate(1.6deg)}}
+@keyframes mbob{0%,100%{transform:translateY(0)}50%{transform:translateY(-2px)}}
+@keyframes mflap{0%,100%{transform:scaleY(.3)}50%{transform:scaleY(1)}}
+@media (max-width:820px){.modo{bottom:calc(env(safe-area-inset-bottom,0px) + 88px)}.mchar svg{width:70px}}
+body.modo-on .top{z-index:3}
+.more{position:relative}
+.pop{position:absolute;inset-inline-end:0;top:44px;min-width:220px;background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:6px;box-shadow:0 14px 34px rgba(0,0,0,.35);z-index:15}
+.pop[hidden]{display:none}
+.top{z-index:3}
+.mi{display:block;width:100%;text-align:start;padding:9px 12px;border-radius:8px;font-size:14px}
+.mi:hover,.mi:focus-visible{background:var(--accbg)}
+.main::before{background:radial-gradient(60% 100% at 50% 0,rgba(var(--accrgb),.06),transparent)}
+.logo,.btn.primary:hover{box-shadow:none}
+.welcome .logo{box-shadow:0 0 26px rgba(var(--accrgb),.12)}
+.item .mini.pinned{opacity:1;color:var(--acc)}
+.sync{font-size:11.5px;color:var(--mute);text-align:center;padding:2px 6px}
+.vbtn{width:34px;height:34px;flex:none;border-radius:10px;color:var(--mute);font-size:17px;transition:.15s}
+.vbtn:hover{background:var(--panel2);color:var(--text)}
+html:not([data-mode=gemini]) label[for=visionModel],html:not([data-mode=gemini]) #visionModel{display:none}
+.vmsg{font-size:12.5px;color:var(--mute);margin:0}.vmsg.err{color:var(--danger)}
+.vadv summary{cursor:pointer;color:var(--acc);font-size:13px}.vadv .fld{margin-top:8px}
+.vprev{width:100%;max-height:260px;border-radius:12px;background:#000}
+.vbar{height:6px;border-radius:6px;background:var(--line);overflow:hidden}
+.vbar i{display:block;height:100%;width:0;background:var(--acc);transition:width .3s}
+.vhist{display:grid;gap:6px}.vhist button{text-align:start;padding:8px 12px;border:1px solid var(--line);border-radius:10px;font-size:13px}
+.vhist button:hover{border-color:var(--acc);background:var(--accbg)}.vhist small{display:block;color:var(--mute)}
+.vcard{border:1px solid var(--line);background:var(--panel);border-radius:14px;overflow:hidden;margin-bottom:10px}
+.vcard video{display:block;width:100%;max-height:300px;background:#000}
+.vcard .vmeta{padding:8px 12px;font-size:12.5px;color:var(--mute)}
+.vcard .btn{margin:0 12px 12px}
+.vbtn[hidden]{display:none}
+</style>
+</head>
+<body>
+<canvas id="bg" aria-hidden="true"></canvas>
+<noscript><p style="padding:24px">Xi needs JavaScript enabled.</p></noscript>
+<div class="app" id="app">
+ <aside class="side" id="side" aria-label="Sidebar">
+  <div class="brand"><div class="logo" aria-hidden="true">Ξ</div><div><b>Xi</b><small>Personal AI</small></div></div>
+  <button class="btn primary" id="newChat">＋ New chat</button>
+  <input class="search" id="search" type="search" placeholder="Search chats" aria-label="Search chats" autocomplete="off">
+  <nav class="list" id="list" aria-label="Conversations"></nav>
+  <div class="sync" id="syncChip"></div>
+  <button class="btn" id="openSettings">⚙ Settings</button>
+ </aside>
+ <div class="scrim" id="scrim"></div>
+ <main class="main">
+  <header class="top">
+   <button class="icon" id="menu" aria-label="Open menu">☰</button>
+   <button class="ttl" id="title" title="Click to rename">Xi</button>
+   <span class="badge" id="badge"></span>
+   <div class="more"><button class="icon" id="moreBtn" aria-label="More" aria-haspopup="menu" aria-expanded="false">⋯</button>
+   <div class="pop" id="pop" role="menu" hidden><button class="mi" id="exportBtn" role="menuitem">⤓ Export conversation</button><button class="mi" id="clearBtn" role="menuitem">⌫ Clear conversation</button><button class="mi" id="settingsTop" role="menuitem">⚙ Settings</button></div></div>
+  </header>
+  <section class="chat" id="chat"><div class="inner" id="msgs" role="log" aria-live="polite"></div></section>
+  <footer class="composer">
+   <div class="box">
+    <button class="vbtn" id="visionBtn" type="button" aria-label="Instagram Vision" title="Instagram Vision">🎞</button>
+    <textarea id="input" rows="1" placeholder="Message Xi…" aria-label="Message" maxlength="30000" dir="auto"></textarea>
+    <button class="send" id="send" aria-label="Send" disabled>↑</button>
+   </div>
+   <div class="hint">Enter to send · Shift+Enter for a new line · Xi can make mistakes, verify important info.</div>
+  </footer>
+ </main>
+</div>
+
+<dialog id="settings" aria-labelledby="sTitle">
+ <div class="dh"><h2 id="sTitle">Settings</h2><button class="icon" id="closeSettings" aria-label="Close">✕</button></div>
+ <div class="sec">
+  <h3>AI provider</h3>
+  <label for="provider">Provider</label>
+  <select class="fld" id="provider"></select>
+  <label for="apiKey">Gemini API key (Google AI Studio) — only needed for the Gemini provider</label>
+  <div class="row"><input class="fld" id="apiKey" type="password" autocomplete="off" spellcheck="false" placeholder="Paste your Gemini API key">
+   <button class="btn" id="toggleKey" type="button">Show</button></div>
+  <div class="row"><button class="btn primary" id="saveKey" type="button">Save key</button><button class="btn" id="removeKey" type="button">Remove key</button></div>
+  <p id="keyStatus"></p>
+  <p id="sampleNote">In this shared version Xi asks Claude through the page that hosts it, so no API key is needed. The first message asks you for permission once. Your conversations stay in this browser.</p>
+  <div class="warn" id="geminiWarn"><b>Security notice:</b> in a browser-only app your key is stored in this browser's localStorage and sent directly from the page to Google. Anyone with access to this browser or page can read it. Use it only for personal testing, with a restricted key, never on a shared computer or public site. The provider layer in the code (<code>Providers</code>) is isolated, so a secure backend proxy can replace it later without touching the interface.</div>
+ </div>
+ <div class="sec">
+  <h3>Model</h3>
+  <label for="model">Model</label>
+  <div class="row"><select class="fld" id="model"></select><button class="btn" id="refreshModels" type="button">Refresh list</button></div>
+  <p id="modelStatus">Default list shown. “Refresh list” asks the API which models your key can use.</p>
+  <label for="system">Custom instructions (sent as system instruction)</label>
+  <textarea class="fld" id="system" maxlength="4000" placeholder="Leave empty to use Xi's default behaviour"></textarea>
+  <label for="visionModel">Vision model (video analysis)</label>
+  <input class="fld" id="visionModel" maxlength="60" autocomplete="off" spellcheck="false" placeholder="gemini-3.8-flash">
+ </div>
+ <div class="sec">
+  <h3>Appearance</h3>
+  <label for="theme">Theme</label>
+  <select class="fld" id="theme"><option value="dark">Dark</option><option value="light">Light</option><option value="system">Match system</option></select>
+  <label for="accent">Accent color</label>
+  <select class="fld" id="accent"><option value="green">Green</option><option value="blue">Blue</option><option value="violet">Violet</option><option value="amber">Amber</option></select>
+  <label for="lang">Interface language</label>
+  <select class="fld" id="lang"><option value="en">English</option><option value="ar">العربية</option></select>
+  <label for="bgmode">Animated background</label>
+  <select class="fld" id="bgmode"><option value="aurora">Aurora</option><option value="network">Network</option><option value="off">Off</option></select>
+  <label for="modoOn">Modo assistant</label>
+  <select class="fld" id="modoOn"><option value="on">On</option><option value="off">Off</option></select>
+ </div>
+ <div class="sec">
+  <h3>Data</h3>
+  <p>Conversations are stored only in this browser (localStorage). They are sent to the AI provider only to generate replies.</p>
+  <p id="syncStatus"></p>
+  <button class="btn danger" id="clearAll" type="button">Delete all conversations</button>
+ </div>
+ <div class="sec">
+  <h3>About Xi</h3>
+  <p>Xi is a personal AI chat interface built with plain HTML, CSS and JavaScript in a single file. Replies come from the provider you configure; Xi never fabricates answers — if the API fails you will see the error.</p>
+ </div>
+</dialog>
+<dialog id="vision" aria-labelledby="vTitle">
+ <div class="dh"><h2 id="vTitle">Instagram Vision</h2><button class="icon" id="vClose" type="button" aria-label="Close">✕</button></div>
+ <div class="sec">
+  <p class="vmsg" id="vIntro">Analyze a Reel you saved. Save the video to your device first, then upload it here.</p>
+  <details class="vadv"><summary>Why can't I paste a Reel link?</summary>
+   <p class="vmsg">Instagram does not give apps a video file from a public link. Its official API only returns media owned by an Instagram professional account that has authorized an app, and it needs a Meta app and a server to keep access tokens safe. Scraping breaks the platform rules, so Xi does not do it. Only analyze videos you own or have permission to use.</p>
+  </details>
+ </div>
+ <div class="sec">
+  <input id="vFile" type="file" accept="video/*,.mp4,.mov,.webm" hidden>
+  <button class="btn" id="vPick" type="button">⬆ Choose video (MP4, MOV, WEBM)</button>
+  <p class="vmsg" id="vFileMsg" role="status"></p>
+  <video id="vPrev" class="vprev" controls playsinline preload="metadata" hidden></video>
+  <label for="vFocus" id="vFocusL">Focus (optional)</label>
+  <input class="fld" id="vFocus" maxlength="300" placeholder="e.g. translate the speech into Arabic">
+  <button class="btn primary" id="vGo" type="button" disabled>Analyze video</button>
+ </div>
+ <div class="sec" id="vProg" hidden><div id="vStep" class="vmsg" role="status"></div><div class="vbar"><i id="vBarI"></i></div><button class="btn" id="vCancel" type="button" hidden>Cancel</button></div>
+ <div class="sec"><label>Recent analyses</label><div id="vHist" class="vhist"></div>
+  <p class="vmsg">Your video is uploaded to Google to be analyzed and Google deletes it after 48 hours. Your Gemini key is kept in this browser, so use this only on your own device.</p></div>
+</dialog>
+<div class="modo" id="modo" hidden>
+ <div class="mbub out" id="mbub" hidden><b>Xi Modo</b><span id="mtxt" dir="auto"></span></div>
+ <button class="mchar" id="mchar" type="button" aria-label="Xi Modo">
+ <svg viewBox="0 -8 160 178" data-mood="normal" aria-hidden="true">
+  <g class="body">
+   <rect x="68" y="100" width="24" height="26" fill="#fdd0a8" stroke="#111" stroke-width="3"/>
+   <path d="M16 170 Q18 130 54 122 L106 122 Q142 130 144 170Z" fill="#c8202f" stroke="#111" stroke-width="3" stroke-linejoin="round"/>
+   <path d="M63 122 Q80 146 97 122Z" fill="#fdd0a8" stroke="#111" stroke-width="3" stroke-linejoin="round"/>
+   <g class="head">
+    <circle cx="37" cy="78" r="9" fill="#fdd0a8" stroke="#111" stroke-width="3"/>
+    <circle cx="123" cy="78" r="9" fill="#fdd0a8" stroke="#111" stroke-width="3"/>
+    <ellipse cx="80" cy="74" rx="43" ry="41" fill="#fdd0a8" stroke="#111" stroke-width="3"/>
+    <path d="M34 70 C27 40 42 18 66 14 L72 0 L88 12 L106 -4 L110 14 L138 10 L127 30 C141 44 132 62 125 72 C119 52 100 43 80 43 C60 43 44 52 34 70Z" fill="#111"/>
+    <g class="eyes-o">
+     <g class="eye"><circle cx="62" cy="78" r="15" fill="#fff" stroke="#111" stroke-width="3"/><g class="pupil"><circle cx="62" cy="78" r="6" fill="#111"/><circle cx="64.5" cy="75.5" r="2" fill="#fff"/></g></g>
+     <g class="eye"><circle cx="98" cy="78" r="15" fill="#fff" stroke="#111" stroke-width="3"/><g class="pupil"><circle cx="98" cy="78" r="6" fill="#111"/><circle cx="100.5" cy="75.5" r="2" fill="#fff"/></g></g>
+    </g>
+    <g class="eyes-h" fill="none" stroke="#111" stroke-width="4.5" stroke-linecap="round"><path d="M47 82 Q62 62 77 82"/><path d="M83 82 Q98 62 113 82"/></g>
+    <g class="eyes-s">
+     <circle cx="62" cy="78" r="15" fill="#fff" stroke="#111" stroke-width="3"/><circle cx="98" cy="78" r="15" fill="#fff" stroke="#111" stroke-width="3"/>
+     <g class="spin" fill="none" stroke="#111" stroke-width="2.2" stroke-linecap="round"><path d="M62 78a2 2 0 1 1 4 0a5 5 0 1 1-10 0a8 8 0 1 1 16 0a11 11 0 1 1-22 0"/></g>
+     <g class="spin" fill="none" stroke="#111" stroke-width="2.2" stroke-linecap="round"><path d="M98 78a2 2 0 1 1 4 0a5 5 0 1 1-10 0a8 8 0 1 1 16 0a11 11 0 1 1-22 0"/></g>
+    </g>
+    <g class="brows-s" stroke="#111" stroke-width="5" stroke-linecap="round"><path d="M46 60L75 68"/><path d="M114 60L85 68"/></g>
+    <g class="brows-u" fill="none" stroke="#111" stroke-width="4" stroke-linecap="round"><path d="M47 54Q61 44 75 53"/><path d="M113 54Q99 44 85 53"/></g>
+    <path d="M80 86Q84 91 79 93" fill="none" stroke="#c9885f" stroke-width="2.2" stroke-linecap="round"/>
+    <path class="mo mo-n" d="M69 100Q80 108 91 100" fill="none" stroke="#111" stroke-width="3.5" stroke-linecap="round"/>
+    <g class="mo mo-h"><path d="M63 94Q80 120 97 94Z" fill="#8b1424" stroke="#111" stroke-width="3" stroke-linejoin="round"/><path d="M72 106Q80 112 88 106Q80 101 72 106Z" fill="#ef6b73"/></g>
+    <path class="mo mo-s" d="M71 102H89" stroke="#111" stroke-width="3.5" stroke-linecap="round"/>
+    <ellipse class="mo mo-u" cx="80" cy="103" rx="5" ry="7" fill="#8b1424" stroke="#111" stroke-width="3"/>
+    <ellipse class="mo mo-t" cx="80" cy="102" rx="8" ry="6" fill="#8b1424" stroke="#111" stroke-width="3"/>
+   </g>
+  </g>
+ </svg>
+ </button>
+</div>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+(() => {
+'use strict';
+/* ============================== 1. HELPERS ============================== */
+const $ = s => document.querySelector(s);
+const el = (tag, cls, txt) => { const e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; };
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+const LS = {
+  get(k, d) { try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch { return d; } },
+  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); return true; } catch { toast('Could not save: browser storage is full or blocked'); return false; } }
+};
+let toastTimer;
+function toast(msg) { const t = $('#toast'); t.textContent = msg; t.classList.add('on'); clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove('on'), 2400); }
+async function copyText(text) {
+  try { await navigator.clipboard.writeText(text); return true; }
+  catch { const ta = el('textarea'); ta.value = text; ta.style.cssText = 'position:fixed;opacity:0'; document.body.append(ta); ta.select(); let ok = false; try { ok = document.execCommand('copy'); } catch {} ta.remove(); return ok; }
+}
+
+/* ============================== 2. PROVIDERS ==============================
+   A provider exposes: name, models, listModels(key), stream({key,model,system,messages,ctrl,onToken}).
+   To use a secure backend later, add a provider here that calls your own server
+   (no key in the browser) — the UI only talks to this interface. */
+const DEFAULT_SYSTEM = "You are Xi, a helpful, accurate and concise personal AI assistant. Always reply in the same language as the user's latest message. Use Markdown; put code in fenced code blocks with a language tag.";
+const Providers = {
+  gemini: {
+    name: 'Google Gemini (Guest mode)',
+    base: 'https://generativelanguage.googleapis.com/v1beta',
+    models: ['gemini-2.5-flash', 'gemini-2.5-pro', 'gemini-2.5-flash-lite'],
+    async listModels(key) {
+      const res = await fetch(this.base + '/models?pageSize=100', { headers: { 'x-goog-api-key': key } });
+      if (!res.ok) throw new Error(await errText(res));
+      const j = await res.json();
+      return (j.models || [])
+        .filter(m => (m.supportedGenerationMethods || []).includes('generateContent') && /^models\/gemini/.test(m.name) && !/(embedding|tts|image|live|aqa|vision)/.test(m.name))
+        .map(m => m.name.replace('models/', '')).sort();
+    },
+    async stream({ key, model, system, messages, ctrl, onToken, video }) {
+      if (video) return Vision.ask({ system, messages, video, ctrl, onToken });
+      const res = await fetch(`${this.base}/models/${encodeURIComponent(model)}:streamGenerateContent?alt=sse`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key },
+        body: JSON.stringify({
+          systemInstruction: { parts: [{ text: system }] },
+          contents: messages.map(m => ({ role: m.role === 'user' ? 'user' : 'model', parts: [{ text: m.text }] }))
+        })
+      });
+      if (!res.ok) throw new Error(await errText(res));
+      if (ctrl && ctrl.aborted) { try { res.body.cancel(); } catch {} throw abortErr(); }
+      const reader = res.body.getReader(), dec = new TextDecoder();
+      if (ctrl) ctrl.reader = reader;
+      let buf = '', full = '', finish = '';
+      const handle = line => {
+        if (!line.startsWith('data:')) return;
+        const d = line.slice(5).trim(); if (!d) return;
+        let j; try { j = JSON.parse(d); } catch { return; }
+        if (j.promptFeedback && j.promptFeedback.blockReason) throw new Error('The request was blocked by the provider (' + j.promptFeedback.blockReason + ').');
+        const c = j.candidates && j.candidates[0]; if (!c) return;
+        const t = ((c.content && c.content.parts) || []).map(p => p.text || '').join('');
+        if (t) { full += t; onToken(full); }
+        if (c.finishReason) finish = c.finishReason;
+      };
+      for (;;) {
+        const { done, value } = await reader.read();
+        if (ctrl && ctrl.aborted) throw abortErr();
+        if (done) break;
+        buf += dec.decode(value, { stream: true });
+        const lines = buf.split(/\r?\n/); buf = lines.pop();
+        lines.forEach(handle);
+      }
+      if (buf) handle(buf);
+      if (!full) throw new Error('The model returned an empty response' + (finish ? ' (' + finish + ')' : '') + '.');
+      return { text: full, finish };
+    }
+  },
+  preview: {
+    name: 'Claude (built-in preview)',
+    needsKey: false,
+    models: ['claude-sonnet-4-6'],
+    async stream({ system, messages, ctrl, onToken }) {
+      const NOACCESS = 'No built-in Claude access here. Add a free Gemini key in Settings to chat from this page.';
+      const turns = [];
+      messages.forEach(m => {
+        const role = m.role === 'user' ? 'user' : 'assistant', last = turns[turns.length - 1];
+        if (last && last.role === role) last.content += '\n\n' + m.text; else turns.push({ role, content: m.text });
+      });
+      while (turns.length && turns[0].role !== 'user') turns.shift();
+      let res;
+      try {
+        res = await fetch('https://api.anthropic.com/v1/messages', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ model: 'claude-sonnet-4-6', max_tokens: 1000, system, messages: turns }) });
+      } catch { throw new Error(NOACCESS); }
+      if (!res.ok) throw new Error(NOACCESS + ' (' + res.status + ')');
+      const j = await res.json();
+      if (ctrl && ctrl.aborted) throw abortErr();
+      const full = (j.content || []).map(b => b.type === 'text' ? b.text : '').join('');
+      if (!full) throw new Error('The model returned an empty response.');
+      onToken(full);
+      return { text: full, finish: j.stop_reason === 'max_tokens' ? 'MAX_TOKENS' : '' };
+    }
+  },
+  sample: {
+    name: 'Claude account (Professional mode)',
+    needsKey: false,
+    models: ['Claude'],
+    async stream({ system, messages, ctrl, onToken }) {
+      if (!window.claude || !window.claude.use) throw new Error('Xi must be opened from its shared link to reach Claude.');
+      const sample = await window.claude.use('sample');
+      if (!sample) throw new Error('Claude is not available in this view. Make sure you are signed in, then reload the page.');
+      const turns = [];
+      messages.forEach(m => {
+        const role = m.role === 'user' ? 'user' : 'assistant', last = turns[turns.length - 1];
+        if (last && last.role === role) last.content += '\n\n' + m.text; else turns.push({ role, content: m.text });
+      });
+      while (turns.length && turns[0].role !== 'user') turns.shift();
+      if (!turns.length) throw new Error('Nothing to send.');
+      turns[0].content = 'Follow these instructions in every reply:\n' + system + '\n\n---\n\n' + turns[0].content;
+      const ac = new AbortController(); ctrl.hook = () => ac.abort();
+      let full = '', r = null;
+      try {
+        r = await sample(turns, { signal: ac.signal, cache: false, onText: ({ text }) => { if (text && text !== 'Thinking...') { full = text; onToken(text); } } });
+      } catch (e) {
+        if (ctrl.aborted || (e && (e.code === 'cancelled' || e.name === 'AbortError'))) { if (e && e.text && !full) onToken(e.text); throw abortErr(); }
+        const code = e && e.code;
+        throw new Error(code === 'not_granted' ? 'Permission was declined. Reload the page and allow Xi to ask Claude.' : code === 'rate_limited' ? 'Too many requests right now. Please wait a moment and try again.' : ((e && e.message) || 'The request failed.'));
+      }
+      full = (r && r.text) || full;
+      if (!full) throw new Error('The model returned an empty response.');
+      return { text: full, finish: r && r.truncated ? 'MAX_TOKENS' : '' };
+    }
+  }
+};
+const abortErr = () => Object.assign(new Error('Aborted'), { name: 'AbortError' });
+async function errText(res) {
+  let msg = res.status + ' ' + res.statusText;
+  try { const j = await res.json(); if (j.error && j.error.message) msg = j.error.message; } catch {}
+  return msg;
+}
+function friendlyError(e) {
+  if (e instanceof TypeError || /failed to fetch|networkerror|load failed/i.test(e.message || ''))
+    return (provider().needsKey === false ? '' : '') + 'Could not reach the AI service. If you are viewing this inside a preview or sandboxed frame, outside requests are blocked: save the file as index.html and open it directly in your browser. Otherwise check your internet connection, VPN, or any blocker extension.';
+  return e.message || 'Unknown error';
+}
+
+/* ============================== 3. STATE ============================== */
+let convs = LS.get('xi.convs', []);
+if (!Array.isArray(convs)) convs = [];
+let activeId = LS.get('xi.active', null);
+let settings = Object.assign({ provider: 'sample', model: 'gemini-2.5-flash', theme: 'dark', accent: 'green', bg: 'aurora', modo: 'on', visionModel: 'gemini-3.8-flash', lang: (navigator.language || '').toLowerCase().startsWith('ar') ? 'ar' : 'en', system: '' }, LS.get('xi.settings', {}));
+if (!/^gemini/.test(settings.model)) settings.model = 'gemini-2.5-flash';
+let apiKey = LS.get('xi.key', '');
+let cachedModels = LS.get('xi.models', null);
+let busy = null;         // { conv, msg, ctrl } while generating
+let streamEl = null;     // content element of the streaming message
+let paintQueued = false;
+const active = () => convs.find(c => c.id === activeId) || null;
+const saveConvs = () => { Cloud.queue(); return LS.set('xi.convs', convs); };
+const saveSettings = () => LS.set('xi.settings', settings);
+const SHARE_URL = 'https://claude.ai/artifact/3TH9r9QCg2ygyR4QyXv7Dw';
+// Professional mode = viewer's own Claude account (only exists on the claude.ai shared page).
+// Guest mode = no sign-in, own Gemini key (the claude.ai sandbox blocks outside requests, so it needs the standalone file).
+const hosted = () => !!(window.claude && typeof window.claude.use === 'function');
+const providerKey = () => hosted() ? 'sample' : (apiKey ? 'gemini' : 'preview');
+const provider = () => Providers[providerKey()];
+function applyMode() { document.documentElement.dataset.mode = providerKey(); refreshBadge(); fillModels(); $('#visionBtn').hidden = providerKey() !== 'gemini'; }
+
+/* ============================== 4. MARKDOWN + CODE (safe DOM, no innerHTML) ============================== */
+function inline(parent, s) {
+  const re = /(`[^`\n]+`)|(\*\*[^*\n]+\*\*)|(\*[^*\n]+\*)|(\[[^\]\n]+\]\(https?:\/\/[^\s)]+\))/g;
+  let i = 0, m;
+  while ((m = re.exec(s))) {
+    if (m.index > i) parent.append(s.slice(i, m.index));
+    const t = m[0];
+    if (m[1]) parent.append(el('code', 'ic', t.slice(1, -1)));
+    else if (m[2]) parent.append(el('strong', null, t.slice(2, -2)));
+    else if (m[3]) parent.append(el('em', null, t.slice(1, -1)));
+    else { const mm = /\[([^\]]+)\]\((https?:[^)]+)\)/.exec(t); const a = el('a', null, mm[1]); a.href = mm[2]; a.target = '_blank'; a.rel = 'noopener noreferrer'; parent.append(a); }
+    i = re.lastIndex;
+  }
+  if (i < s.length) parent.append(s.slice(i));
+}
+const LIST_RE = /^\s*([-*+]|\d+\.)\s+/;
+function textBlocks(t, root) {
+  const L = t.split('\n'); let i = 0;
+  while (i < L.length) {
+    const l = L[i]; let m;
+    if (!l.trim()) { i++; continue; }
+    if ((m = /^(#{1,4})\s+(.*)$/.exec(l))) { const h = el('h' + (m[1].length + 1)); h.dir = 'auto'; inline(h, m[2]); root.append(h); i++; continue; }
+    if (LIST_RE.test(l)) {
+      const list = el(/^\s*\d+\./.test(l) ? 'ol' : 'ul'); list.dir = 'auto';
+      while (i < L.length && LIST_RE.test(L[i])) { const li = el('li'); inline(li, L[i].replace(LIST_RE, '')); list.append(li); i++; }
+      root.append(list); continue;
+    }
+    if (/^>\s?/.test(l)) { const q = el('blockquote'); q.dir = 'auto'; const b = []; while (i < L.length && /^>\s?/.test(L[i])) { b.push(L[i].replace(/^>\s?/, '')); i++; } inline(q, b.join(' ')); root.append(q); continue; }
+    if (/^-{3,}$/.test(l.trim())) { root.append(el('hr')); i++; continue; }
+    const p = el('p'); p.dir = 'auto'; const b = [];
+    while (i < L.length && L[i].trim() && (b.length === 0 || !/^(#{1,4}\s|\s*([-*+]|\d+\.)\s|>|-{3,}$)/.test(L[i]))) { b.push(L[i]); i++; }
+    b.forEach((x, k) => { if (k) p.append(el('br')); inline(p, x); });
+    root.append(p);
+  }
+}
+const KEYWORDS = new Set(('abstract as async await break case catch class const continue def default del do elif else enum except export extends false final finally fn for from func function go if impl import in interface is lambda let match mod new nil none null package pass private protected public pub raise return self static struct super switch this throw throws true try type typeof undefined use var void while with yield True False None int float string bool char double long str list dict echo fi then done esac select from where insert update delete create table').split(' '));
+const HASH_LANGS = /^(py|python|sh|bash|shell|zsh|ruby|rb|yaml|yml|toml|r|perl|makefile|dockerfile|ini|conf)$/i;
+function highlight(code, lang, pre) {
+  const com = HASH_LANGS.test(lang) ? '\\/\\/[^\\n]*|#[^\\n]*|\\/\\*[\\s\\S]*?\\*\\/' : '\\/\\/[^\\n]*|\\/\\*[\\s\\S]*?\\*\\/|<!--[\\s\\S]*?-->';
+  const re = new RegExp('(' + com + ')|("(?:\\\\.|[^"\\\\\\n])*"|\'(?:\\\\.|[^\'\\\\\\n])*\'|`(?:\\\\.|[^`\\\\])*`)|(\\b\\d[\\d_.]*\\b)|([A-Za-z_$][\\w$]*)', 'g');
+  let i = 0, m;
+  const span = (cls, txt) => pre.append(el('span', cls, txt));
+  while ((m = re.exec(code))) {
+    if (m.index > i) pre.append(code.slice(i, m.index));
+    if (m[1]) span('tk-c', m[0]);
+    else if (m[2]) span('tk-s', m[0]);
+    else if (m[3]) span('tk-n', m[0]);
+    else if (KEYWORDS.has(m[4])) span('tk-k', m[0]);
+    else if (code[re.lastIndex] === '(') span('tk-f', m[0]);
+    else pre.append(m[0]);
+    i = re.lastIndex;
+  }
+  if (i < code.length) pre.append(code.slice(i));
+}
+function codeBlock(lang, code) {
+  const box = el('div', 'cb'), head = el('header'), btn = el('button', null, 'Copy');
+  btn.type = 'button';
+  head.append(el('span', null, lang || 'code'), btn);
+  btn.addEventListener('click', async () => { const ok = await copyText(code); btn.textContent = ok ? 'Copied ✓' : 'Failed'; setTimeout(() => btn.textContent = 'Copy', 1500); });
+  const pre = el('pre'), c = el('code');
+  if (code.length < 60000) highlight(code, lang, c); else c.textContent = code;
+  pre.append(c); box.append(head, pre); return box;
+}
+function renderMd(text, root) {
+  root.textContent = '';
+  text.split('```').forEach((p, idx) => {
+    if (idx % 2 === 1) {
+      const nl = p.indexOf('\n'); let lang = '', code = p;
+      if (nl >= 0) { lang = p.slice(0, nl).trim().split(/\s/)[0]; code = p.slice(nl + 1); }
+      root.append(codeBlock(lang, code.replace(/\n$/, '')));
+    } else textBlocks(p, root);
+  });
+}
+
+/* ============================== 5. RENDERING ============================== */
+const chatBox = $('#chat'), msgs = $('#msgs');
+const nearBottom = () => chatBox.scrollHeight - chatBox.scrollTop - chatBox.clientHeight < 140;
+const toBottom = (smooth) => chatBox.scrollTo({ top: chatBox.scrollHeight, behavior: smooth ? 'smooth' : 'auto' });
+const SUGGESTIONS_AR = [
+  ['اشرح موضوعاً', 'اشرح لي كيف تتعلم الشبكات العصبية بأسلوب بسيط'],
+  ['مساعدة برمجية', 'اكتب دالة JavaScript تؤخر تنفيذ دالة أخرى (debounce) مع مثال'],
+  ['حسّن كتابتي', 'أعد صياغة هذه الجملة بشكل رسمي ومهني: "مرحبا، ابعثلي التقرير بسرعة"'],
+  ['ترجمة', 'ترجم "المعرفة قوة" إلى الإنجليزية والفرنسية والإسبانية']
+];
+const SUGGESTIONS = [
+  ['Explain a topic', 'Explain how neural networks learn, in simple terms'],
+  ['Help with code', 'Write a JavaScript function that debounces another function, with an example'],
+  ['Improve my writing', 'Rewrite this to sound more professional: "hey, can u send me the report asap"'],
+  ['Translate', 'Translate "Knowledge is power" into Arabic, French and Spanish']
+];
+function renderWelcome() {
+  const w = el('div', 'welcome');
+  w.append(el('div', 'logo', 'Ξ'), el('h2', null, 'How can I help you today?'), el('p', null, 'Ask anything — explanations, code, writing, summaries or translations. Xi remembers the context of this conversation.'));
+  if (!apiKey && provider().needsKey !== false) {
+    const n = el('div', 'notice'); n.append('Xi is not connected yet. '); const b = el('button', null, 'Add your Gemini API key'); b.type = 'button'; b.addEventListener('click', openSettings); n.append(b, '.'); w.append(n);
+  }
+  const host = providerKey() !== 'gemini', modes = el('div', 'modes');
+  [['Professional mode', 'Sign in with Claude', 'Uses your own Claude account. No API key needed. Works on the shared link.', host],
+   ['Guest mode', 'No sign-in', 'Use your own free Gemini key. Works when you open the downloaded file on your device or host it on your own site.', !host]
+  ].forEach(([title, sub, desc, on], i) => {
+    const c = el('div', 'mode ' + (on ? 'on' : 'off'));
+    c.append(el('b', null, title), el('span', 'sub', sub), el('p', null, desc));
+    if (on) c.append(el('em', null, 'Active here ✓'));
+    else if (i === 0) { const a = el('a', null, 'Open the Claude version'); a.href = SHARE_URL; a.target = '_blank'; a.rel = 'noopener noreferrer'; c.append(a); }
+    else c.append(el('em', null, hosted() ? 'Needs the standalone file (not available on this shared link)' : 'Add your Gemini key in Settings to use this mode'));
+    modes.append(c);
+  });
+  w.append(modes);
+  const chips = el('div', 'chips');
+  (settings.lang === 'ar' ? SUGGESTIONS_AR : SUGGESTIONS).slice(0, 2).forEach(([t, prompt]) => { const b = el('button', 'chip', t); b.type = 'button'; b.append(el('span', null, prompt.length > 52 ? prompt.slice(0, 50) + '…' : prompt)); b.addEventListener('click', () => sendMessage(prompt)); chips.append(b); });
+  w.append(chips); msgs.append(w);
+}
+function buildMsg(conv, m, isLast) {
+  const w = el('article', 'msg ' + (m.role === 'user' ? 'user' : 'ai'));
+  const body = el('div', 'body'), content = el('div', 'content');
+  body.append(content);
+  if (m.vision && m.role !== 'user') body.prepend(Vision.card(m, conv));
+  if (m.role === 'user') { content.textContent = m.text; content.dir = 'auto'; }
+  else {
+    w.append(el('div', 'avatar', 'Ξ'));
+    const streaming = busy && busy.msg === m;
+    if (streaming) streamEl = content;
+    fillAi(m, content, streaming);
+    if (m.error) body.append(el('div', 'err', '⚠ ' + m.error));
+    if (m.stopped) body.append(el('div', 'note', 'Generation stopped.'));
+    if (m.note) body.append(el('div', 'note', m.note));
+    if (!streaming && m.text) {
+      const acts = el('div', 'acts');
+      const cp = el('button', null, 'Copy'); cp.type = 'button';
+      cp.addEventListener('click', async () => { const ok = await copyText(m.text); cp.textContent = ok ? 'Copied ✓' : 'Failed'; setTimeout(() => cp.textContent = 'Copy', 1500); });
+      acts.append(cp);
+      if (isLast && !busy) { const rg = el('button', null, '↻ Regenerate'); rg.type = 'button'; rg.addEventListener('click', regenerate); acts.append(rg); }
+      body.append(acts);
+    } else if (!streaming && m.error && isLast && !busy) {
+      const acts = el('div', 'acts'), rg = el('button', null, '↻ Try again'); rg.type = 'button'; rg.addEventListener('click', regenerate); acts.append(rg); body.append(acts);
+    }
+  }
+  w.title = new Date(m.ts).toLocaleString();
+  w.append(body); return w;
+}
+function fillAi(m, content, streaming) {
+  content.textContent = '';
+  if (!m.text) { if (streaming) { const d = el('span', 'dots'); d.append(el('i'), el('i'), el('i')); content.append(d); } return; }
+  renderMd(m.text, content);
+  content.classList.toggle('cursor', !!streaming);
+}
+function renderChat(keepScroll) {
+  const stick = keepScroll ? nearBottom() : true;
+  msgs.textContent = ''; streamEl = null;
+  const c = active();
+  if (!c || !c.messages.length) renderWelcome();
+  else c.messages.forEach((m, i) => msgs.append(buildMsg(c, m, i === c.messages.length - 1)));
+  $('#title').textContent = c ? c.title : 'Xi';
+  if (stick) toBottom(false);
+}
+function schedulePaint() {
+  if (paintQueued) return; paintQueued = true;
+  requestAnimationFrame(() => {
+    paintQueued = false;
+    if (!busy || !streamEl || active() !== busy.conv) return;
+    const stick = nearBottom();
+    fillAi(busy.msg, streamEl, true);
+    if (stick) toBottom(false);
+  });
+}
+function renderList() {
+  const list = $('#list'), q = $('#search').value.trim().toLowerCase();
+  list.textContent = '';
+  const items = convs.filter(c => !q || c.title.toLowerCase().includes(q) || c.messages.some(m => (m.text || '').toLowerCase().includes(q))).sort((a, b) => (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0) || b.updated - a.updated);
+  if (!items.length) { list.append(el('div', 'empty', q ? 'No matching chats' : 'No conversations yet')); return; }
+  items.forEach(c => {
+    const row = el('div', 'item' + (c.id === activeId ? ' on' : ''));
+    const pick = el('button', 'pick'); pick.type = 'button';
+    const t = el('span', 't', c.title); t.dir = 'auto';
+    pick.append(t, el('span', 'd', new Date(c.updated).toLocaleDateString([], { month: 'short', day: 'numeric' }) + ' · ' + c.messages.length + (settings.lang === 'ar' ? ' رسالة' : ' msgs')));
+    pick.addEventListener('click', () => { selectConv(c.id); closeNav(); });
+    const ren = el('button', 'mini', '✎'); ren.type = 'button'; ren.title = 'Rename'; ren.setAttribute('aria-label', 'Rename conversation');
+    ren.addEventListener('click', () => renameConv(c.id));
+    const del = el('button', 'mini', '✕'); del.type = 'button'; del.title = 'Delete'; del.setAttribute('aria-label', 'Delete conversation');
+    del.addEventListener('click', () => deleteConv(c.id));
+    const pin = el('button', 'mini' + (c.pinned ? ' pinned' : ''), c.pinned ? '★' : '☆'); pin.type = 'button'; pin.title = c.pinned ? 'Unpin' : 'Pin'; pin.setAttribute('aria-label', c.pinned ? 'Unpin' : 'Pin');
+    pin.addEventListener('click', () => { c.pinned = !c.pinned; c.updated = Date.now(); saveConvs(); renderList(); });
+    row.append(pick, pin, ren, del); list.append(row);
+  });
+}
+function setBusyUI() {
+  const b = $('#send'), inp = $('#input');
+  b.classList.toggle('stop', !!busy);
+  b.textContent = busy ? '■' : '↑';
+  b.setAttribute('aria-label', busy ? 'Stop generation' : 'Send');
+  b.disabled = !busy && !inp.value.trim();
+}
+function refreshBadge() { $('#badge').textContent = providerKey() === 'gemini' ? settings.model : 'Claude'; }
+
+function uiDialog(title, withInput, value, okLabel) {
+  return new Promise(res => {
+    const d = el('dialog'), h = el('div', 'dh'), body = el('div', 'sec'); let inp = null;
+    h.append(el('h2', null, title));
+    if (withInput) { inp = el('input', 'fld'); inp.value = value || ''; inp.maxLength = 80; body.append(inp); }
+    const row = el('div', 'row'), cancel = el('button', 'btn', 'Cancel'), ok = el('button', 'btn primary', okLabel || 'OK');
+    cancel.type = ok.type = 'button'; row.append(cancel, ok); body.append(row); d.append(h, body);
+    const done = v => { d.close(); d.remove(); res(v); };
+    cancel.addEventListener('click', () => done(null));
+    ok.addEventListener('click', () => done(withInput ? inp.value : true));
+    d.addEventListener('cancel', e => { e.preventDefault(); done(null); });
+    if (inp) inp.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); ok.click(); } });
+    document.body.append(d); d.showModal(); if (inp) { inp.focus(); inp.select(); } else ok.focus();
+  });
+}
+const uiConfirm = (title, okLabel) => uiDialog(title, false, '', okLabel).then(v => v === true);
+const uiPrompt = (title, value) => uiDialog(title, true, value, 'Save');
+/* ============================== 6. CONVERSATIONS ============================== */
+function newChat() {
+  if (busy) return toast('Wait for Xi to finish or press stop');
+  const cur = active();
+  if (cur && !cur.messages.length) { $('#input').focus(); return; }
+  const c = { id: uid(), title: 'New chat', created: Date.now(), updated: Date.now(), messages: [] };
+  convs.unshift(c); activeId = c.id; LS.set('xi.active', activeId); saveConvs();
+  renderList(); renderChat(); $('#input').focus();
+  Modo.say(settings.lang === 'ar' ? 'صفحة جديدة! عن شنو نحچي؟' : 'Fresh page! What shall we talk about?', { mood: 'happy' });
+}
+function selectConv(id) { activeId = id; LS.set('xi.active', id); renderList(); renderChat(); }
+async function renameConv(id) {
+  const c = convs.find(x => x.id === id); if (!c) return;
+  const v = await uiPrompt('Rename conversation', c.title);
+  if (v == null) return;
+  const t = v.trim().slice(0, 80); if (!t) return toast('Title cannot be empty');
+  c.title = t; c.updated = Date.now(); saveConvs(); renderList(); renderChat(true);
+}
+async function deleteConv(id) {
+  if (busy && busy.conv.id === id) return toast('Stop generation first');
+  const c = convs.find(x => x.id === id); if (!c || !(await uiConfirm(settings.lang === 'ar' ? 'حذف «' + c.title + '»؟ لا يمكن التراجع عن ذلك.' : 'Delete “' + c.title + '”? This cannot be undone.', 'Delete'))) return;
+  convs = convs.filter(x => x.id !== id); Vision.forget(c); Cloud.remove(id);
+  if (activeId === id) activeId = convs.length ? convs.slice().sort((a, b) => b.updated - a.updated)[0].id : null;
+  LS.set('xi.active', activeId); saveConvs(); renderList(); renderChat();
+}
+async function clearConversation() {
+  const c = active(); if (!c || !c.messages.length) return toast('Nothing to clear');
+  if (busy) return toast('Stop generation first');
+  if (!(await uiConfirm('Clear all messages in this conversation?', 'Clear'))) return;
+  c.messages = []; c.title = 'New chat'; c.updated = Date.now(); saveConvs(); renderList(); renderChat();
+}
+async function exportConversation() {
+  const c = active(); if (!c || !c.messages.length) return toast('Nothing to export');
+  const md = '# ' + c.title + '\n\n' + c.messages.filter(m => m.text).map(m => '**' + (m.role === 'user' ? 'You' : 'Xi') + '** (' + new Date(m.ts).toLocaleString() + ')\n\n' + m.text).join('\n\n---\n\n') + '\n';
+  const fname = (c.title.replace(/[^\p{L}\p{N}]+/gu, '-').slice(0, 40) || 'xi-chat') + '.md';
+  try { const dl = window.claude && window.claude.use ? await window.claude.use('downloads') : null; if (dl) { await dl.save({ filename: fname, data: md }); return; } } catch (e) { if (!e || e.code !== 'declined') toast('Could not save the file'); return; }
+  const url = URL.createObjectURL(new Blob([md], { type: 'text/markdown;charset=utf-8' }));
+  const a = el('a'); a.href = url; a.download = (c.title.replace(/[^\p{L}\p{N}]+/gu, '-').slice(0, 40) || 'xi-chat') + '.md';
+  document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+/* ============================== 7. CHAT FLOW ============================== */
+async function sendMessage(raw) {
+  if (busy) return;
+  const text = String(raw || '').trim();
+  if (!text) return;
+  if (provider().needsKey !== false && !apiKey) { toast('Add your API key first'); openSettings(); return; }
+  let c = active();
+  if (!c) { c = { id: uid(), title: 'New chat', created: Date.now(), updated: Date.now(), messages: [] }; convs.unshift(c); activeId = c.id; LS.set('xi.active', activeId); }
+  if (!c.messages.length) c.title = text.replace(/\s+/g, ' ').slice(0, 40) + (text.length > 40 ? '…' : '');
+  c.messages.push({ id: uid(), role: 'user', text, ts: Date.now() });
+  c.updated = Date.now(); saveConvs();
+  const inp = $('#input'); inp.value = ''; autoGrow();
+  renderList(); await generate(c);
+}
+async function generate(conv) {
+  const msg = { id: uid(), role: 'assistant', text: '', ts: Date.now() };
+  conv.messages.push(msg);
+  const ctrl = { aborted: false, reader: null, abort() { this.aborted = true; if (this.hook) this.hook(); if (this.reader) this.reader.cancel().catch(() => {}); } };
+  busy = { conv, msg, ctrl };
+  renderChat(); toBottom(true); setBusyUI(); Modo.think();
+  const context = conv.messages.filter(m => m !== msg && !m.error && m.text).slice(-40);
+  try {
+    const r = await provider().stream({
+      key: apiKey, model: settings.model, system: ((settings.system || '').trim() || DEFAULT_SYSTEM) + Vision.note(conv),
+      messages: context, ctrl, video: Vision.alive(conv),
+      onToken: t => { if (!msg.text) Modo.writing(); msg.text = t; schedulePaint(); }
+    });
+    msg.text = r.text;
+    if (r.finish === 'MAX_TOKENS') msg.note = 'The response reached the model’s length limit.';
+  } catch (e) {
+    if (e.name === 'AbortError') { msg.stopped = true; if (!msg.text) conv.messages = conv.messages.filter(m => m !== msg); }
+    else msg.error = friendlyError(e);
+  } finally {
+    if (msg.error) Modo.fail(msg.error); else if (msg.stopped) Modo.stopped(); else Modo.done(msg.text);
+    busy = null; conv.updated = Date.now(); saveConvs();
+    renderList(); if (active() === conv) renderChat(true); setBusyUI();
+  }
+}
+function regenerate() {
+  const c = active(); if (!c || busy) return;
+  while (c.messages.length && c.messages[c.messages.length - 1].role === 'assistant') c.messages.pop();
+  if (!c.messages.length) return;
+  generate(c);
+}
+
+/* ============================== 8. SETTINGS ============================== */
+const dlg = $('#settings');
+function openSettings() {
+  $('#apiKey').value = apiKey; $('#apiKey').type = 'password'; $('#toggleKey').textContent = 'Show';
+  $('#system').value = settings.system || ''; $('#theme').value = settings.theme; $('#accent').value = settings.accent || 'green'; $('#lang').value = settings.lang; $('#bgmode').value = settings.bg; $('#modoOn').value = settings.modo; $('#visionModel').value = settings.visionModel;
+  updateKeyStatus(); fillModels();
+  if (!dlg.open) dlg.showModal();
+}
+function updateKeyStatus() { $('#keyStatus').textContent = apiKey ? 'A key is saved in this browser.' : 'No key saved. Get one free at aistudio.google.com/apikey.'; }
+function fillModels() {
+  const sel = $('#model'); sel.textContent = '';
+  const list = providerKey() === 'gemini' ? Array.from(new Set([...(cachedModels || Providers.gemini.models), settings.model])) : ['Claude'];
+  list.forEach(m => { const o = el('option', null, m); o.value = m; sel.append(o); });
+  sel.value = settings.model;
+}
+function applyTheme() {
+  const t = settings.theme === 'system' ? (matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark') : settings.theme;
+  document.documentElement.dataset.theme = t;
+  document.documentElement.dataset.accent = settings.accent || 'green';
+  if (typeof Bg !== 'undefined') Bg.refresh();
+  document.querySelector('meta[name=color-scheme]').content = t;
+}
+function bindSettings() {
+  const prov = $('#provider');
+  Object.entries(Providers).forEach(([k, p]) => { const o = el('option', null, p.name); o.value = k; prov.append(o); });
+  prov.value = settings.provider;
+  prov.addEventListener('change', () => { settings.provider = prov.value; settings.model = provider().models[0]; saveSettings(); refreshBadge(); fillModels(); });
+  $('#toggleKey').addEventListener('click', () => { const i = $('#apiKey'), show = i.type === 'password'; i.type = show ? 'text' : 'password'; $('#toggleKey').textContent = show ? 'Hide' : 'Show'; });
+  $('#saveKey').addEventListener('click', () => {
+    const v = $('#apiKey').value.trim();
+    if (v.length < 20 || /\s/.test(v)) return toast('That does not look like a valid API key');
+    apiKey = v; LS.set('xi.key', v); updateKeyStatus(); toast('API key saved'); applyMode(); if (!active() || !active().messages.length) renderChat();
+  });
+  $('#removeKey').addEventListener('click', () => { apiKey = ''; localStorage.removeItem('xi.key'); $('#apiKey').value = ''; updateKeyStatus(); toast('API key removed'); applyMode(); if (!active() || !active().messages.length) renderChat(); });
+  $('#model').addEventListener('change', e => { settings.model = e.target.value; saveSettings(); refreshBadge(); });
+  $('#system').addEventListener('change', e => { settings.system = e.target.value.slice(0, 4000); saveSettings(); toast('Instructions saved'); });
+  $('#theme').addEventListener('change', e => { settings.theme = e.target.value; saveSettings(); applyTheme(); });
+  $('#accent').addEventListener('change', e => { settings.accent = e.target.value; saveSettings(); applyTheme(); });
+  $('#lang').addEventListener('change', e => { settings.lang = e.target.value; saveSettings(); applyLang(); renderList(); renderChat(true); });
+  $('#bgmode').addEventListener('change', e => { settings.bg = e.target.value; saveSettings(); Bg.start(); });
+  $('#visionModel').addEventListener('change', e => { const v = e.target.value.trim(); if (v && !/^[\w.\-]{3,60}$/.test(v)) { toast('Invalid model name'); e.target.value = settings.visionModel; return; } settings.visionModel = v || 'gemini-3.8-flash'; e.target.value = settings.visionModel; saveSettings(); });
+  $('#modoOn').addEventListener('change', e => { settings.modo = e.target.value; saveSettings(); Modo.apply(); if (settings.modo !== 'off') Modo.hello(); });
+  matchMedia('(prefers-color-scheme: light)').addEventListener('change', () => { if (settings.theme === 'system') applyTheme(); });
+  $('#refreshModels').addEventListener('click', async () => {
+    const st = $('#modelStatus'); if (!provider().listModels) { st.textContent = 'This provider has a fixed model list.'; return; } if (!apiKey) { st.textContent = 'Save an API key first.'; return; }
+    st.textContent = 'Loading models…';
+    try {
+      const list = await provider().listModels(apiKey);
+      if (!list.length) throw new Error('No compatible models were returned for this key.');
+      cachedModels = list; LS.set('xi.models', list);
+      if (!list.includes(settings.model)) { settings.model = list.includes('gemini-2.5-flash') ? 'gemini-2.5-flash' : list[0]; saveSettings(); refreshBadge(); }
+      fillModels(); st.textContent = list.length + ' models available for your key.';
+    } catch (e) { st.textContent = 'Could not load models: ' + friendlyError(e); }
+  });
+  $('#clearAll').addEventListener('click', async () => {
+    if (busy) return toast('Stop generation first');
+    if (!(await uiConfirm('Delete ALL conversations from this browser? This cannot be undone.', 'Delete all'))) return;
+    convs.forEach(c => { Vision.forget(c); Cloud.remove(c.id); }); convs = []; activeId = null; localStorage.removeItem('xi.convs'); localStorage.removeItem('xi.active');
+    renderList(); renderChat(); toast('All conversations deleted');
+  });
+  $('#closeSettings').addEventListener('click', () => dlg.close());
+  dlg.addEventListener('click', e => { if (e.target === dlg) dlg.close(); });
+}
+
+/* ============================== 9. UI WIRING ============================== */
+function openNav() { $('#app').classList.add('nav-open'); }
+function closeNav() { $('#app').classList.remove('nav-open'); }
+function autoGrow() { const t = $('#input'); t.style.height = 'auto'; t.style.height = Math.min(t.scrollHeight, 200) + 'px'; setBusyUI(); }
+/* ---------- Account history: each person's chats are stored privately under their own Claude account ---------- */
+const Cloud = (() => {
+  let col = null, timer = 0;
+  const sent = {};
+  const L = (en, ar) => settings.lang === 'ar' ? ar : en;
+  const sig = c => c.updated + ':' + c.title + ':' + c.messages.length + ':' + (c.pinned ? 1 : 0);
+  function status(k) {
+    $('#syncStatus').textContent = k === 'on' ? L('History is saved to your Claude account and syncs across your devices ✓', 'السجل محفوظ بحساب Claude الخاص بك ويتزامن بين أجهزتك ✓')
+      : k === 'wait' ? L('Syncing…', 'جارٍ المزامنة…')
+      : L('History is saved only in this browser. Saving to your account needs a signed-in Claude account with write access to this page.', 'السجل محفوظ في هذا المتصفح فقط. حفظه بحسابك يحتاج حساب Claude مسجل الدخول وصلاحية كتابة على هذه الصفحة.');
+    $('#syncChip').textContent = k === 'on' ? L('☁ Synced with your Claude account', '☁ متزامن مع حسابك في Claude') : k === 'wait' ? '…' : L('Local only (this browser)', 'محلي فقط (هذا المتصفح)');
+  }
+  function clip(c) {
+    const o = JSON.parse(JSON.stringify(c));
+    while (o.messages.length > 1 && JSON.stringify(o).length > 230000) o.messages.shift();   // documents are capped at 256 KiB
+    return o;
+  }
+  async function flush() {
+    if (!col) return;
+    for (const c of convs.slice()) {
+      const g = sig(c); if (sent[c.id] === g) continue;
+      try { await col.doc(c.id).set(clip(c)); sent[c.id] = g; }
+      catch { col = null; status('off'); return; }   // no write access: stay local
+    }
+  }
+  function queue() { if (!col) return; clearTimeout(timer); timer = setTimeout(flush, 900); }
+  function remove(id) { if (!col) return; delete sent[id]; col.doc(id).set({ id, deleted: true, updated: Date.now() }).catch(() => {}); }
+  async function init() {
+    status('off');
+    try {
+      const [db, user] = await Promise.all([window.claude.use('db'), window.claude.use('user')]);
+      const uid = user ? await user.id() : null;
+      if (!db || !uid) return;
+      status('wait');
+      col = db.collection('data/users/' + uid + '/convs');
+      const snap = await col.get(); let changed = false;
+      snap.docs.forEach(d => {
+        const raw = d.data(); if (!raw || !raw.id) return;
+        const c = JSON.parse(JSON.stringify(raw)), i = convs.findIndex(x => x.id === c.id), mine = convs[i];
+        if (c.deleted) { if (mine && mine.updated <= c.updated) { convs.splice(i, 1); changed = true; } return; }
+        if (!Array.isArray(c.messages)) return;
+        if (!mine) { convs.push(c); sent[c.id] = sig(c); changed = true; }
+        else if ((c.updated || 0) > mine.updated) { Object.assign(mine, c); sent[c.id] = sig(mine); changed = true; }
+        else if ((c.updated || 0) === mine.updated) sent[c.id] = sig(mine);
+      });
+      if (changed) {
+        if (activeId && !active()) activeId = null;
+        if (!activeId && convs.length) activeId = convs.slice().sort((a, b) => b.updated - a.updated)[0].id;
+        LS.set('xi.convs', convs); LS.set('xi.active', activeId); renderList(); if (!busy) renderChat(true);
+      }
+      status('on'); flush();
+    } catch { col = null; status('off'); }
+  }
+  return { init, queue, remove };
+})();
+
+/* ---- pure helpers (unit-tested in Node) ---- */
+const VIDEO_MIME = { mp4: 'video/mp4', mov: 'video/mov', webm: 'video/webm', mpeg: 'video/mpeg', mpg: 'video/mpg', avi: 'video/avi', wmv: 'video/wmv', flv: 'video/x-flv', '3gp': 'video/3gpp', '3gpp': 'video/3gpp' };
+function videoMime(name, type) {   // Gemini lists video/mov (browsers report video/quicktime for .mov)
+  const ext = (String(name || '').split('.').pop() || '').toLowerCase();
+  if (VIDEO_MIME[ext]) return VIDEO_MIME[ext];
+  const t = String(type || '').toLowerCase();
+  if (t === 'video/quicktime') return 'video/mov';
+  return Object.values(VIDEO_MIME).includes(t) ? t : '';
+}
+function fmtBytes(n) { return n >= 1e9 ? (n / 1e9).toFixed(1) + ' GB' : n >= 1e6 ? (n / 1e6).toFixed(1) + ' MB' : Math.max(1, Math.round(n / 1e3)) + ' KB'; }
+function extractText(j) {   // Interactions API: steps[].model_output.content[].text (older shape: outputs[], output_text)
+  const out = [];
+  ((j && j.steps) || []).forEach(st => { if (st && st.type === 'model_output' && Array.isArray(st.content)) st.content.forEach(c => { if (c && c.type === 'text' && c.text) out.push(c.text); }); });
+  if (!out.length && j && Array.isArray(j.outputs)) j.outputs.forEach(o => { if (o && o.type === 'text' && o.text) out.push(o.text); });
+  if (!out.length && j && typeof j.output_text === 'string' && j.output_text) out.push(j.output_text);
+  return out.join('\n\n').trim();
+}
+async function interactWith(fetchFn, key, input, models, ctrl, ms) {
+  let last;
+  for (const m of models) {
+    try {
+      const res = await new Promise((resolve, reject) => {
+        const t = setTimeout(() => reject(new Error('The request timed out. Try a shorter video or try again.')), ms);
+        ctrl.hook = () => { clearTimeout(t); reject(abortErr()); };
+        fetchFn('https://generativelanguage.googleapis.com/v1beta/interactions', { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key }, body: JSON.stringify({ model: m, input }) })
+          .then(r => { clearTimeout(t); resolve(r); }, e => { clearTimeout(t); reject(e); });
+      });
+      if (ctrl.aborted) throw abortErr();
+      if (!res.ok) { const e = new Error(await errText(res)); e.status = res.status; throw e; }
+      const j = await res.json();
+      if (j && j.error) throw new Error(j.error.message || 'API error');
+      const text = extractText(j);
+      if (!text) throw new Error('The model returned no text for this video.');
+      return { text, model: m };
+    } catch (e) {
+      last = e;
+      if (ctrl.aborted || (e && e.name === 'AbortError')) throw abortErr();
+      if (!(e && (e.status === 404 || /not found|is not supported|unknown model/i.test(e.message || '')))) throw e;
+    }
+  }
+  throw last;
+}
+
+/* ---------- Instagram Vision: analyze a saved video (Gemini Files API upload + Interactions API) ----------
+   Why not analyze a Reel link? Instagram's official API only returns media owned by a professional account that
+   authorized an app (and omits the video URL for copyrighted audio), needs a Meta app + server-side tokens, and
+   scraping breaks platform rules. A saved video file is the reliable path. */
+const Vision = (() => {
+  const GEM = 'https://generativelanguage.googleapis.com', MAX = 2 * 1024 * 1024 * 1024;   // Files API: 2 GB per file
+  const blobs = new Map();   // message id -> object URL (this session only; videos are not stored in the browser)
+  const L = (en, ar) => settings.lang === 'ar' ? ar : en;
+  const dlg = $('#vision');
+  let picked = null, target = null;
+  const setMsg = (id, text, err) => { const e = $(id); e.textContent = text || ''; e.classList.toggle('err', !!err); };
+  const prog = (p, label) => { $('#vProg').hidden = false; $('#vStep').textContent = label; $('#vBarI').style.width = Math.round(p * 100) + '%'; };
+  const lock = on => { ['vPick', 'vGo', 'vFocus'].forEach(id => { $('#' + id).disabled = on; }); $('#vCancel').hidden = !on; if (!on) $('#vGo').disabled = !picked; };
+  const ready = () => providerKey() === 'gemini' && !!apiKey;
+  const alive = conv => (conv && conv.vision && Date.now() - conv.vision.uploadedAt < 47 * 3600e3) ? conv.vision : null;   // Google keeps files 48 h
+  const note = conv => (conv && conv.vision && (!alive(conv) || providerKey() !== 'gemini')) ? '\n\n(Note: a video was analyzed earlier in this conversation, but it is not attached now (Gemini deletes uploaded files after 48 hours, or the video tools are unavailable). Rely on the earlier analysis in the conversation, and say so if a question needs the video itself.)' : '';
+
+  // --- cancellation, timeouts and errors ---
+  const cancellable = (p, ctrl) => new Promise((res, rej) => { if (ctrl.aborted) return rej(abortErr()); ctrl.hook = () => rej(abortErr()); p.then(res, rej); });
+  const sleep = (ms, ctrl) => new Promise((res, rej) => { const t = setTimeout(res, ms); ctrl.hook = () => { clearTimeout(t); rej(abortErr()); }; });
+  const withTimeout = (p, ms, msg) => new Promise((res, rej) => { const t = setTimeout(() => rej(new Error(msg)), ms); p.then(v => { clearTimeout(t); res(v); }, e => { clearTimeout(t); rej(e); }); });
+  const apiError = (status, msg) => Object.assign(new Error(msg || ('HTTP ' + status)), { status });
+  const httpError = async res => apiError(res.status, await errText(res));
+  function niceErr(e) {
+    const m = (e && e.message) || '', st = e && e.status;
+    if (st === 429 || /quota|rate.?limit|resource.?exhausted/i.test(m)) return L('Gemini rate limit or quota reached. Wait a minute and try again, or use a key with billing enabled.', 'وصلت إلى حد الطلبات أو الحصة في Gemini. انتظر دقيقة وحاول مرة أخرى، أو استخدم مفتاحاً مفعّل الفوترة.');
+    if (st === 401 || st === 403 || /api key not valid|invalid api key|permission denied/i.test(m)) return L('Google rejected the request. Check that your Gemini API key is valid and allowed to use the Gemini API. (' + m.slice(0, 120) + ')', 'رفضت Google الطلب. تأكد أن مفتاح Gemini صالح ومسموح له باستخدام Gemini API. (' + m.slice(0, 120) + ')');
+    if (st === 413 || /too large/i.test(m)) return L('The video is too large for Google to accept.', 'الفيديو أكبر من أن تقبله Google.');
+    if (st >= 500) return L('Google had a temporary problem. Try again in a moment.', 'حدثت مشكلة مؤقتة عند Google. حاول بعد قليل.');
+    return friendlyError(e);
+  }
+  const cleanup = name => { if (name) fetch(GEM + '/v1beta/' + name, { method: 'DELETE', headers: { 'x-goog-api-key': apiKey } }).catch(() => {}); };   // best effort: do not leave orphaned uploads
+
+  // --- Files API: resumable upload (start -> upload+finalize), then poll until ACTIVE ---
+  async function upload(file, mime, ctrl, onProg) {
+    const start = await cancellable(withTimeout(fetch(GEM + '/upload/v1beta/files', { method: 'POST', headers: {
+      'x-goog-api-key': apiKey, 'X-Goog-Upload-Protocol': 'resumable', 'X-Goog-Upload-Command': 'start',
+      'X-Goog-Upload-Header-Content-Length': String(file.size), 'X-Goog-Upload-Header-Content-Type': mime, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ file: { display_name: file.name.slice(0, 120) } }) }), 60000, L('Could not reach Google to start the upload (timed out).', 'تعذّر الوصول إلى Google لبدء الرفع (انتهت المهلة).')), ctrl);
+    if (!start.ok) throw await httpError(start);
+    const url = start.headers.get('x-goog-upload-url');
+    if (!url) throw new Error(L('Could not start the upload: the browser could not read the upload address from Google.', 'تعذّر بدء الرفع: لم يستطع المتصفح قراءة عنوان الرفع من Google.'));
+    if (ctrl.aborted) throw abortErr();
+    const j = await new Promise((resolve, reject) => {
+      const x = new XMLHttpRequest(); let last = Date.now(), stalled = false;
+      const wd = setInterval(() => { if (Date.now() - last > 90000) { stalled = true; x.abort(); } }, 5000);   // no progress for 90 s = stalled
+      x.open('POST', url);
+      x.setRequestHeader('X-Goog-Upload-Offset', '0'); x.setRequestHeader('X-Goog-Upload-Command', 'upload, finalize');
+      x.upload.onprogress = e => { last = Date.now(); if (e.lengthComputable) onProg(e.loaded / e.total); };
+      x.onload = () => {
+        clearInterval(wd);
+        if (x.status >= 200 && x.status < 300) { try { resolve(JSON.parse(x.responseText)); } catch { reject(new Error('Unexpected response from the upload service.')); } }
+        else { let m = 'Upload failed (' + x.status + ').'; try { m = JSON.parse(x.responseText).error.message || m; } catch {} reject(apiError(x.status, m)); }
+      };
+      x.onerror = () => { clearInterval(wd); reject(new Error(L('Network error while uploading the video.', 'خطأ شبكة أثناء رفع الفيديو.'))); };
+      x.onabort = () => { clearInterval(wd); reject(stalled ? new Error(L('The upload stalled (no progress for 90 seconds). Check your connection and try again.', 'توقف الرفع (لا تقدم منذ 90 ثانية). تحقق من اتصالك وحاول مرة أخرى.')) : abortErr()); };
+      ctrl.hook = () => x.abort();
+      x.send(file);
+    });
+    if (!j.file || !j.file.uri) throw new Error('Upload finished but Google returned no file reference.');
+    return j.file;
+  }
+  async function waitActive(name, ctrl, tick) {
+    const t0 = Date.now(); let fails = 0;
+    for (;;) {
+      if (ctrl.aborted) throw abortErr();
+      let f;
+      try {
+        const res = await cancellable(fetch(GEM + '/v1beta/' + name, { headers: { 'x-goog-api-key': apiKey } }), ctrl);
+        if (!res.ok) throw await httpError(res);
+        f = await res.json(); fails = 0;
+      } catch (e) {
+        if (e && e.name === 'AbortError') throw e;
+        if ((e.status && e.status < 500 && e.status !== 429) || ++fails >= 4) throw e;   // retry short network/server hiccups
+        await sleep(2000, ctrl); continue;
+      }
+      if (!f.state || f.state === 'ACTIVE') return f;
+      if (f.state === 'FAILED') throw new Error(L('Google could not process this video. The file may be corrupted or in an unsupported format.', 'تعذّر على Google معالجة هذا الفيديو. قد يكون الملف تالفاً أو بصيغة غير مدعومة.'));
+      if (Date.now() - t0 > 300000) throw new Error(L('Video processing timed out after 5 minutes. Try a shorter video.', 'انتهت مهلة معالجة الفيديو بعد 5 دقائق. جرّب فيديو أقصر.'));
+      tick((Date.now() - t0) / 1000); await sleep(2500, ctrl);
+    }
+  }
+  const models = () => Array.from(new Set([(settings.visionModel || 'gemini-3.8-flash').trim(), settings.model].filter(Boolean)));
+  const interact = (input, ctrl) => interactWith(fetch.bind(window), apiKey, input, models(), ctrl, 240000);
+
+  // --- follow-up questions: the video is attached again (the file stays on Google for 48 h) with the conversation so far ---
+  async function ask({ system, messages, video, ctrl, onToken }) {
+    const last = messages[messages.length - 1];
+    const hist = messages.slice(0, -1).slice(-8).map(m => (m.role === 'user' ? 'User: ' : 'Xi: ') + m.text.slice(0, 3000)).join('\n\n');
+    const text = system + '\n\nYou are answering follow-up questions about the attached video. Use only what is actually visible or audible in the video and the earlier analysis. Timestamps use MM:SS. If something is not in the video, say so instead of guessing.\n\n' + (hist ? 'Conversation so far:\n' + hist + '\n\n' : '') + 'User: ' + last.text;
+    try {
+      const r = await interact([{ type: 'video', uri: video.uri, mime_type: video.mime }, { type: 'text', text }], ctrl);
+      onToken(r.text); return { text: r.text, finish: '' };
+    } catch (e) {
+      if (e && (e.status === 403 || e.status === 404 || e.status === 400) && /\bfiles?\b/i.test(e.message || '') && /not exist|permission|expired|deleted|not found/i.test(e.message || '')) {
+        video.uploadedAt = 0; saveConvs();   // the file is gone: mark it expired so the UI offers a re-upload
+        throw new Error(L('The video file is no longer available on Google (files expire after 48 hours). Use “Upload video again” on the analysis card to keep asking about the video.', 'ملف الفيديو لم يعد متاحاً عند Google (الملفات تنتهي بعد 48 ساعة). استخدم "ارفع الفيديو من جديد" في بطاقة التحليل لمتابعة الأسئلة عن الفيديو.'));
+      }
+      throw new Error(niceErr(e));
+    }
+  }
+  function buildPrompt(focus) {
+    return 'You are Xi Vision, an expert video analyst. Analyze the attached video using both its visuals and its audio. Report only what is actually visible or audible; if something is unclear or absent (no speech, no music, no on-screen text), say so instead of guessing. Use MM:SS timestamps. Reply in ' + (settings.lang === 'ar' ? 'Arabic' : "the user's language (English by default)") + '. Use these Markdown sections:\n## Overview\n## Timeline (key moments with timestamps)\n## People, objects and activities\n## Speech (transcript in the original language; add a translation when the language differs)\n## On-screen text\n## Music and audio\n## Filming and editing style (shots, transitions, pacing, effects, captions)\n## Main idea and message (audience and context)\n## How to create a similar video\nEnd by inviting follow-up questions about specific timestamps.' + (focus ? '\nPay special attention to: ' + focus : '');
+  }
+  function check(file) {
+    if (!videoMime(file.name, file.type)) return L('Unsupported file. Use an MP4, MOV or WEBM video.', 'ملف غير مدعوم. استخدم فيديو MP4 أو MOV أو WEBM.');
+    if (!file.size) return L('The file is empty.', 'الملف فارغ.');
+    if (file.size > MAX) return L('The video is larger than 2 GB, the Gemini Files API limit.', 'الفيديو أكبر من 2 جيجابايت، وهو حد Gemini Files API.');
+    return '';
+  }
+
+  // --- the full pipeline: upload -> wait for processing -> analyze (or just re-attach when the old file expired) ---
+  async function run() {
+    const pk = picked, tgt = target;
+    if (!pk) return;
+    if (busy) { toast(L('Please wait for the current reply to finish.', 'انتظر انتهاء الرد الحالي.')); return; }
+    if (!ready()) return setMsg('#vFileMsg', L('Instagram Vision needs Gemini guest mode with your API key saved in Settings.', 'رؤية انستغرام تحتاج وضع الضيف مع حفظ مفتاح Gemini في الإعدادات.'), true);
+    const bad = check(pk.file); if (bad) return setMsg('#vFileMsg', bad, true);
+    const file = pk.file, mime = videoMime(file.name, file.type), focus = tgt ? '' : $('#vFocus').value.trim().slice(0, 300);
+    const ctrl = { aborted: false, hook: null, abort() { this.aborted = true; if (this.hook) this.hook(); } };
+    busy = { conv: { id: '_vision' }, msg: { id: 'vision' }, ctrl }; setBusyUI(); lock(true); setMsg('#vFileMsg', '');
+    Modo.say(L('Watching your video…', 'أشاهد الفيديو…'), { mood: 'thinking', sticky: true, instant: true });
+    let remote = null, ok = false, timer = 0;
+    try {
+      prog(.02, L('Starting upload…', 'بدء الرفع…'));
+      const f = await upload(file, mime, ctrl, p => prog(.05 + p * .55, L('Uploading… ', 'جارٍ الرفع… ') + Math.round(p * 100) + '%'));
+      remote = f.name;
+      prog(.62, L('Google is processing the video…', 'Google تعالج الفيديو…'));
+      await waitActive(f.name, ctrl, t => prog(.62 + Math.min(.14, t / 90 * .14), L('Google is processing the video… ', 'Google تعالج الفيديو… ') + Math.round(t) + 's'));
+      if (tgt) {
+        tgt.vision = { uri: f.uri, name: f.name, mime, uploadedAt: Date.now() }; remote = null; saveConvs();
+        prog(1, L('Done ✓', 'تم ✓')); ok = true; toast(L('Video attached again. You can ask about it now.', 'أُرفق الفيديو من جديد. تقدر تسأل عنه الآن.'));
+        Modo.say(L('Video is back. Ask away!', 'الفيديو رجع. اسأل!'), { mood: 'happy' });
+      } else {
+        const t0 = Date.now();
+        timer = setInterval(() => { const s = (Date.now() - t0) / 1000; prog(.8 + Math.min(.18, s / 240 * .18), L('Analyzing visuals and audio… ', 'تحليل الصورة والصوت… ') + Math.round(s) + 's' + (s > 25 ? L(' (longer videos take more time)', ' (الفيديوهات الطويلة تحتاج وقتاً أطول)') : '')); }, 1000);
+        prog(.8, L('Analyzing visuals and audio…', 'تحليل الصورة والصوت…'));
+        const r = await interact([{ type: 'video', uri: f.uri, mime_type: mime }, { type: 'text', text: buildPrompt(focus) }], ctrl);
+        prog(1, L('Done ✓', 'تم ✓'));
+        const id = uid(), now = Date.now();
+        blobs.set(id, pk.url); pk.kept = true;
+        const conv = { id: uid(), title: ('🎞 ' + file.name).slice(0, 60), created: now, updated: now, messages: [], vision: { uri: f.uri, name: f.name, mime, uploadedAt: now } };
+        conv.messages.push({ id: uid(), role: 'user', text: L('Analyze this video', 'حلّل هذا الفيديو') + ': ' + file.name + (focus ? ' — ' + focus : ''), ts: now });
+        conv.messages.push({ id: uid(), role: 'assistant', text: r.text, ts: Date.now(), vision: { id, name: file.name, size: file.size, model: r.model } });
+        convs.unshift(conv); activeId = conv.id; LS.set('xi.active', activeId); saveConvs();
+        remote = null; ok = true; Modo.done(r.text);
+      }
+    } catch (e) {
+      if (ctrl.aborted || (e && e.name === 'AbortError')) { setMsg('#vFileMsg', L('Cancelled.', 'تم الإلغاء.')); Modo.stopped(); }
+      else { const m = niceErr(e); setMsg('#vFileMsg', m, true); Modo.fail(m); }
+    } finally {
+      clearInterval(timer); busy = null; setBusyUI(); lock(false);
+      if (remote) cleanup(remote);   // failed or cancelled after upload: remove the file from Google
+      if (ok) {
+        if (tgt && !pk.kept) URL.revokeObjectURL(pk.url);
+        picked = null; $('#vPrev').hidden = true; $('#vPrev').removeAttribute('src'); $('#vGo').disabled = true; $('#vFocus').value = '';
+        $('#vProg').hidden = true; dlg.close(); renderList(); renderChat(true); if (!tgt) { toBottom(false); closeNav(); }
+      } else setTimeout(() => { if (!busy) $('#vProg').hidden = true; }, 1500);
+    }
+  }
+
+  // --- file picking, history list, dialog ---
+  function pick(file) {
+    if (picked && !picked.kept) URL.revokeObjectURL(picked.url);
+    picked = null; $('#vPrev').hidden = true; $('#vGo').disabled = true; setMsg('#vFileMsg', '');
+    if (!file) return;
+    const bad = check(file); if (bad) return setMsg('#vFileMsg', bad, true);
+    picked = { file, url: URL.createObjectURL(file), kept: false };
+    const v = $('#vPrev'); v.src = picked.url; v.hidden = false;
+    setMsg('#vFileMsg', file.name + ' · ' + fmtBytes(file.size)); $('#vGo').disabled = false;
+  }
+  function renderHist() {
+    const h = $('#vHist'); h.textContent = '';
+    const list = convs.filter(c => c.vision).sort((a, b) => b.updated - a.updated).slice(0, 8);
+    if (!list.length) { h.append(el('span', 'vmsg', L('No analyses yet.', 'لا توجد تحليلات بعد.'))); return; }
+    list.forEach(c => { const b = el('button', null, c.title); b.type = 'button'; b.append(el('small', null, new Date(c.updated).toLocaleString())); b.addEventListener('click', () => { dlg.close(); selectConv(c.id); closeNav(); }); h.append(b); });
+  }
+  function open(t) {
+    if (!ready()) return;
+    target = t || null; const re = !!target;
+    $('#vTitle').textContent = re ? L('Upload video again', 'ارفع الفيديو من جديد') : 'Instagram Vision';
+    $('#vIntro').textContent = re ? L('The earlier file expired on Google. Upload the same video again to keep asking about it. No new analysis is created.', 'انتهت صلاحية الملف السابق عند Google. ارفع الفيديو نفسه من جديد لتتابع الأسئلة عنه. لن يُنشأ تحليل جديد.') : L('Analyze a Reel you saved. Save the video to your device first, then upload it here.', 'حلّل ريل محفوظاً عندك. احفظ الفيديو على جهازك أولاً ثم ارفعه هنا.');
+    $('#vGo').textContent = re ? L('Attach video', 'أرفق الفيديو') : L('Analyze video', 'حلّل الفيديو');
+    $('#vFocus').hidden = re; $('#vFocusL').hidden = re; $('#vGo').disabled = !picked;
+    renderHist(); if (!dlg.open) dlg.showModal();
+  }
+  function init() {
+    $('#visionBtn').addEventListener('click', () => open());
+    $('#vClose').addEventListener('click', () => { if (!busy) dlg.close(); });
+    dlg.addEventListener('click', e => { if (e.target === dlg && !busy) dlg.close(); });
+    dlg.addEventListener('cancel', e => { if (busy) e.preventDefault(); });
+    $('#vPick').addEventListener('click', () => $('#vFile').click());
+    $('#vFile').addEventListener('change', e => { pick(e.target.files[0]); e.target.value = ''; });
+    $('#vGo').addEventListener('click', run);
+    $('#vCancel').addEventListener('click', () => { if (busy) busy.ctrl.abort(); });
+  }
+  function card(m, conv) {
+    const v = m.vision, c = el('div', 'vcard'), url = blobs.get(v.id);
+    if (url) { const vid = el('video'); vid.src = url; vid.controls = true; vid.playsInline = true; vid.preload = 'metadata'; c.append(vid); }
+    c.append(el('div', 'vmeta', '🎞 ' + v.name + ' · ' + fmtBytes(v.size) + (v.model ? ' · ' + v.model : '') + (url ? '' : ' · ' + L('preview not kept after reload', 'المعاينة لا تُحفظ بعد التحديث'))));
+    if (conv && conv.vision && !alive(conv)) {
+      c.append(el('div', 'vmeta', L('The video file expired on Google (kept for 48 hours). Questions now use the written analysis only.', 'انتهت صلاحية ملف الفيديو عند Google (يُحفظ 48 ساعة). الأسئلة الآن تعتمد على التحليل المكتوب فقط.')));
+      if (ready()) { const b = el('button', 'btn', L('Upload video again', 'ارفع الفيديو من جديد')); b.type = 'button'; b.addEventListener('click', () => open(conv)); c.append(b); }
+    }
+    return c;
+  }
+  function forget(conv) { (conv.messages || []).forEach(m => { if (m.vision && blobs.has(m.vision.id)) { URL.revokeObjectURL(blobs.get(m.vision.id)); blobs.delete(m.vision.id); } }); }
+  return { init, ask, alive, note, card, forget };
+})();
+
+/* ---------- Xi Modo: animated personal assistant (SVG character, typed speech bubble) ---------- */
+const Modo = (() => {
+  const root = $('#modo'), svg = root.querySelector('svg'), bub = $('#mbub'), txt = $('#mtxt');
+  const L = (en, ar) => settings.lang === 'ar' ? ar : en;
+  const on = () => settings.modo !== 'off';
+  const still = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let timer = 0, hideT = 0, tipI = 0;
+  const mood = m => { svg.dataset.mood = m; };
+  const talking = v => svg.classList.toggle('talk', v);
+  const tips = () => [
+    L('Tip: press Shift+Enter for a new line.', 'نصيحة: اضغط Shift+Enter لسطر جديد.'),
+    L('I can explain, translate, summarize and help with code.', 'أقدر أشرح وأترجم وألخّص وأساعدك بالبرمجة.'),
+    L('Try another accent color or background in Settings!', 'جرّب لون تمييز أو خلفية ثانية من الإعدادات!'),
+    L('Use the ⤓ button to export a conversation.', 'استخدم زر ⤓ لتصدير المحادثة.')];
+  function say(text, o = {}) {
+    if (!on()) return;
+    clearInterval(timer); clearTimeout(hideT);
+    text = String(text).replace(/\s+/g, ' ').slice(0, 200);
+    mood(o.mood || 'normal'); bub.hidden = false; bub.classList.remove('out');
+    const done = () => {
+      clearInterval(timer); txt.textContent = text; bub.classList.remove('typing'); talking(!!o.talk);
+      if (!o.sticky) hideT = setTimeout(() => { bub.classList.add('out'); mood('normal'); }, o.hold || 3500 + text.length * 45);
+    };
+    if (still()) return done();
+    let i = 0; txt.textContent = ''; bub.classList.add('typing'); talking(true);
+    timer = setInterval(() => { i += 1; txt.textContent = text.slice(0, i); if (i >= text.length) done(); }, o.speed || 24);
+  }
+  function summary(t) {
+    const p = String(t).replace(/```[\s\S]*?```/g, ' ').replace(/\[([^\]]*)\]\([^)]*\)/g, '$1').replace(/[#>*_`|]+/g, ' ').replace(/\s+/g, ' ').trim();
+    if (!p) return L('Done! The code is above.', 'تمام! الكود فوق.');
+    const m = p.match(/^.{20,140}?[.!?؟](\s|$)/);
+    return m ? m[0].trim() : (p.length > 140 ? p.slice(0, 137) + '…' : p);
+  }
+  function apply() {
+    root.hidden = !on(); document.body.classList.toggle('modo-on', on());
+    if (!on()) { clearInterval(timer); clearTimeout(hideT); bub.hidden = true; }
+  }
+  btn_init();
+  function btn_init() {
+    $('#mchar').addEventListener('click', () => { const t = tips(); say(t[tipI++ % t.length], { mood: 'happy' }); });
+    window.addEventListener('pointermove', e => {   // pupils follow the pointer
+      if (!on()) return;
+      const r = svg.getBoundingClientRect(), cx = r.left + r.width / 2, cy = r.top + r.height * .45;
+      const dx = Math.max(-1, Math.min(1, (e.clientX - cx) / 300)) * 4, dy = Math.max(-1, Math.min(1, (e.clientY - cy) / 300)) * 3;
+      svg.querySelectorAll('.pupil').forEach(p => { p.style.transform = 'translate(' + dx + 'px,' + dy + 'px)'; });
+    }, { passive: true });
+  }
+  return {
+    say, apply,
+    hello: () => say(L("Hi, I'm Xi Modo, your personal assistant. Ask me anything!", 'أهلاً، أنا Xi مودو مساعدك الشخصي. اسألني أي شي!'), { mood: 'happy', hold: 6000 }),
+    think: () => say(L('Let me think…', 'خلّيني أفكر…'), { mood: 'thinking', sticky: true }),
+    writing: () => say(L('Writing it for you…', 'أكتب لك الجواب…'), { mood: 'normal', sticky: true, talk: true, speed: 16 }),
+    done: t => say(summary(t), { mood: 'happy', hold: 7000 }),
+    fail: err => say(L('Oops, something went wrong: ', 'عذراً، صار خطأ: ') + String(err).slice(0, 90), { mood: 'surprised', hold: 7000 }),
+    stopped: () => say(L('Stopped. Say the word and I will continue.', 'أوقفت التوليد. قل لي وأكمل.'), { mood: 'serious' })
+  };
+})();
+
+/* ---------- Animated background (canvas: aurora glow or particle network) ---------- */
+const Bg = (() => {
+  const cv = $('#bg'), ctx = cv.getContext('2d');
+  const ALT = { green: '56,189,248', blue: '167,139,250', violet: '90,169,255', amber: '251,113,133' };
+  const BL = [[.18, .25, .5, .9, .7, 0], [.82, .2, .42, .7, 1.1, 1], [.5, .9, .55, 1.2, .8, 0], [.1, .85, .38, .5, .9, 1]];
+  const ptr = { x: -999, y: -999, on: false };
+  let w = 0, h = 0, raf = 0, last = 0, pts = [], rgb = '61,220,132', alt = ALT.green, light = false;
+  const still = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function seed() {
+    const net = settings.bg === 'network';
+    const n = net ? Math.max(28, Math.min(90, Math.round(w * h / 20000))) : 36;
+    pts = Array.from({ length: n }, () => ({ x: Math.random() * w, y: Math.random() * h, vx: (Math.random() - .5) * .25, vy: (Math.random() - .5) * .25 - (net ? 0 : .12), r: Math.random() * 1.4 + .5, p: Math.random() * 6.28 }));
+  }
+  function blobs(t) {
+    const px = (ptr.on ? ptr.x / w - .5 : 0) * 40, py = (ptr.on ? ptr.y / h - .5 : 0) * 40, m = Math.max(w, h);
+    BL.forEach(([x, y, r, a, b, c], i) => {
+      const cx = w * (x + .1 * Math.sin(t * .13 * a + i * 1.7)) + px * (i + 1) * .4;
+      const cy = h * (y + .09 * Math.cos(t * .11 * b + i * 2.3)) + py * (i + 1) * .4;
+      const R = m * r * (1 + .06 * Math.sin(t * .2 + i)), col = c ? alt : rgb, al = light ? .09 : .12;
+      const g = ctx.createRadialGradient(cx, cy, 0, cx, cy, R);
+      g.addColorStop(0, `rgba(${col},${al})`); g.addColorStop(1, `rgba(${col},0)`);
+      ctx.fillStyle = g; ctx.fillRect(0, 0, w, h);
+    });
+  }
+  function step(net) {
+    pts.forEach(p => {
+      p.x += p.vx; p.y += p.vy;
+      if (p.x < -10) p.x = w + 10; else if (p.x > w + 10) p.x = -10;
+      if (p.y < -10) p.y = h + 10; else if (p.y > h + 10) p.y = -10;
+      if (net && ptr.on) { const dx = p.x - ptr.x, dy = p.y - ptr.y, d = Math.hypot(dx, dy); if (d > 0 && d < 110) { p.x += dx / d * .6; p.y += dy / d * .6; } }
+    });
+  }
+  function links() {
+    const max = 130, base = light ? .14 : .2;
+    ctx.lineWidth = 1;
+    for (let i = 0; i < pts.length; i++) for (let j = i + 1; j < pts.length; j++) {
+      const a = pts[i], b = pts[j], d = Math.hypot(a.x - b.x, a.y - b.y);
+      if (d < max) { ctx.strokeStyle = `rgba(${rgb},${(1 - d / max) * base})`; ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke(); }
+    }
+    if (ptr.on) pts.forEach(p => {
+      const d = Math.hypot(p.x - ptr.x, p.y - ptr.y);
+      if (d < 160) { ctx.strokeStyle = `rgba(${rgb},${(1 - d / 160) * .45})`; ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(ptr.x, ptr.y); ctx.stroke(); }
+    });
+  }
+  function dots(t, net) {
+    pts.forEach(p => {
+      const tw = .5 + .5 * Math.sin(t * 1.2 + p.p);
+      ctx.fillStyle = `rgba(${rgb},${(net ? .5 : .15 + .35 * tw) * (light ? .8 : 1)})`;
+      ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, 6.283); ctx.fill();
+    });
+  }
+  function draw(ts) {
+    const t = ts / 1000, net = settings.bg === 'network';
+    ctx.clearRect(0, 0, w, h);
+    if (!net) blobs(t);
+    step(net); if (net) links(); dots(t, net);
+  }
+  function loop(ts) { raf = requestAnimationFrame(loop); if (ts - last < 32) return; last = ts; draw(ts); }   // ~30fps keeps it light
+  function refresh() {
+    rgb = getComputedStyle(document.documentElement).getPropertyValue('--accrgb').trim() || '61,220,132';
+    alt = ALT[document.documentElement.dataset.accent || 'green'] || ALT.green;
+    light = document.documentElement.dataset.theme === 'light';
+    if (!raf && settings.bg !== 'off' && w) draw(performance.now());
+  }
+  function start() {
+    cancelAnimationFrame(raf); raf = 0;
+    const off = settings.bg === 'off';
+    cv.style.display = off ? 'none' : 'block';
+    if (off) return;
+    resize(); refresh(); seed();
+    if (still() || document.hidden) draw(performance.now()); else raf = requestAnimationFrame(loop);
+  }
+  function resize() {
+    const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+    w = innerWidth; h = innerHeight;
+    cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+  window.addEventListener('resize', () => { if (settings.bg === 'off') return; resize(); seed(); if (!raf) draw(performance.now()); });
+  document.addEventListener('visibilitychange', () => {
+    if (settings.bg === 'off') return;
+    if (document.hidden) { cancelAnimationFrame(raf); raf = 0; } else if (!raf && !still()) raf = requestAnimationFrame(loop);
+  });
+  window.addEventListener('pointermove', e => { ptr.x = e.clientX; ptr.y = e.clientY; ptr.on = true; }, { passive: true });
+  document.addEventListener('pointerleave', () => { ptr.on = false; });
+  matchMedia('(prefers-reduced-motion: reduce)').addEventListener('change', start);
+  return { start, refresh };
+})();
+
+/* ---------- UI language (English / Arabic with RTL) ---------- */
+const AR = {
+  '＋ New chat': '＋ محادثة جديدة', 'New chat': 'محادثة جديدة', 'Search chats': 'ابحث في المحادثات', '⚙ Settings': '⚙ الإعدادات', 'Settings': 'الإعدادات',
+  'Personal AI': 'مساعدك الذكي', 'Open menu': 'فتح القائمة', 'Click to rename': 'اضغط لإعادة التسمية', 'Export conversation (.md)': 'تصدير المحادثة (.md)',
+  'Export conversation': 'تصدير المحادثة', 'Clear conversation': 'مسح المحادثة', 'Message Xi…': 'اكتب رسالتك إلى Xi…', 'Message': 'رسالة', 'Send': 'إرسال',
+  'Stop generation': 'إيقاف التوليد', 'Enter to send · Shift+Enter for a new line · Xi can make mistakes, verify important info.': 'Enter للإرسال · Shift+Enter لسطر جديد · قد يخطئ Xi، تحقق من المعلومات المهمة.',
+  'Close': 'إغلاق', 'AI provider': 'مزوّد الذكاء الاصطناعي', 'Provider': 'المزوّد', 'Claude (built in, no key needed)': 'Claude (مدمج، بدون مفتاح)',
+  'Custom instructions (sent as system instruction)': 'تعليمات مخصصة (تُرسل كتعليمات للنظام)', "Leave empty to use Xi's default behaviour": 'اتركه فارغاً لاستخدام السلوك الافتراضي',
+  'Appearance': 'المظهر', 'Theme': 'الثيم', 'Dark': 'داكن', 'Light': 'فاتح', 'Match system': 'حسب النظام', 'Accent color': 'لون التمييز', 'Green': 'أخضر', 'Blue': 'أزرق',
+  'Violet': 'بنفسجي', 'Amber': 'كهرماني', 'Interface language': 'لغة الواجهة', 'Animated background': 'الخلفية المتحركة', 'Aurora': 'شفق', 'Network': 'شبكة', 'Off': 'إيقاف', 'Instagram Vision': 'رؤية انستغرام', "Why can't I paste a Reel link?": 'ليش ما أكدر ألصق رابط الريل؟', 'Instagram does not give apps a video file from a public link. Its official API only returns media owned by an Instagram professional account that has authorized an app, and it needs a Meta app and a server to keep access tokens safe. Scraping breaks the platform rules, so Xi does not do it. Only analyze videos you own or have permission to use.': 'انستغرام لا يعطي التطبيقات ملف فيديو من رابط عام. واجهته الرسمية تعيد فقط وسائط حساب مهني منح تطبيقاً الإذن، وتحتاج تطبيق Meta وخادماً لحماية الرموز. سحب المحتوى يخالف قواعد المنصة فلا يفعله Xi. حلّل فقط فيديوهات تملكها أو لديك إذن باستخدامها.', 'Your video is uploaded to Google to be analyzed and Google deletes it after 48 hours. Your Gemini key is kept in this browser, so use this only on your own device.': 'يُرفع الفيديو إلى Google لتحليله وتحذفه بعد 48 ساعة. مفتاح Gemini محفوظ في هذا المتصفح، فاستخدم هذا على جهازك الشخصي فقط.', 'Focus (optional)': 'تركيز التحليل (اختياري)', 'Analyze video': 'حلّل الفيديو', 'Recent analyses': 'التحليلات الأخيرة', 'Vision model (video analysis)': 'نموذج الرؤية (تحليل الفيديو)', '⬆ Choose video (MP4, MOV, WEBM)': '⬆ اختر فيديو (MP4 أو MOV أو WEBM)', 'Invalid model name': 'اسم نموذج غير صالح', '⤓ Export conversation': '⤓ تصدير المحادثة', '⌫ Clear conversation': '⌫ مسح المحادثة', 'More': 'المزيد', 'Pin': 'تثبيت', 'Unpin': 'إلغاء التثبيت', 'On': 'تشغيل', 'Modo assistant': 'مساعد مودو', 'Add your Gemini key in Settings to use this mode': 'أضف مفتاح Gemini في الإعدادات لاستخدام هذا الوضع', 'Professional mode': 'الوضع الاحترافي', 'Sign in with Claude': 'تسجيل الدخول بحساب Claude', 'Guest mode': 'وضع الضيف', 'No sign-in': 'بدون تسجيل دخول', 'Uses your own Claude account. No API key needed. Works on the shared link.': 'يستخدم حسابك الخاص في Claude. لا يحتاج مفتاح API. يعمل على الرابط المشترك.', 'Use your own free Gemini key. Works when you open the downloaded file on your device or host it on your own site.': 'استخدم مفتاح Gemini المجاني الخاص بك. يعمل عند فتح الملف المحمّل على جهازك أو استضافته في موقعك.', 'Active here ✓': 'مفعّل هنا ✓', 'Open the Claude version': 'افتح نسخة Claude', 'Needs the standalone file (not available on this shared link)': 'يحتاج الملف المستقل (غير متاح على هذا الرابط المشترك)', 'Data': 'البيانات',
+  'Conversations are stored only in this browser (localStorage). They are sent to the AI provider only to generate replies.': 'المحادثات تُحفظ في هذا المتصفح فقط (localStorage)، وتُرسل إلى مزوّد الذكاء فقط لتوليد الردود.',
+  'In this shared version Xi asks Claude through the page that hosts it, so no API key is needed. The first message asks you for permission once. Your conversations stay in this browser.': 'في هذه النسخة المشتركة يسأل Xi نموذج Claude عبر الصفحة المستضيفة، فلا حاجة لمفتاح API. أول رسالة تطلب إذنك مرة واحدة، ومحادثاتك تبقى في هذا المتصفح.',
+  'Delete all conversations': 'حذف كل المحادثات', 'About Xi': 'عن Xi',
+  'Xi is a personal AI chat interface built with plain HTML, CSS and JavaScript in a single file. Replies come from the provider you configure; Xi never fabricates answers — if the API fails you will see the error.': 'Xi واجهة محادثة ذكاء اصطناعي شخصية مبنية بـ HTML وCSS وJavaScript في ملف واحد. الردود تأتي من المزوّد المضبوط، ولا يختلق Xi أي إجابة؛ إن فشل الاتصال سترى رسالة الخطأ.',
+  'How can I help you today?': 'كيف أقدر أساعدك اليوم؟', 'Ask anything — explanations, code, writing, summaries or translations. Xi remembers the context of this conversation.': 'اسأل أي شيء: شرح، برمجة، كتابة، تلخيص أو ترجمة. يتذكر Xi سياق هذه المحادثة.',
+  'No conversations yet': 'لا توجد محادثات بعد', 'No matching chats': 'لا توجد نتائج', 'Copy': 'نسخ', 'Copied ✓': 'تم النسخ ✓', 'Failed': 'فشل',
+  '↻ Regenerate': '↻ إعادة التوليد', '↻ Try again': '↻ حاول مرة أخرى', 'Generation stopped.': 'تم إيقاف التوليد.', 'The response reached the model’s length limit.': 'وصل الرد إلى الحد الأقصى للطول.',
+  'Rename': 'إعادة تسمية', 'Delete': 'حذف', 'Rename conversation': 'إعادة تسمية المحادثة', 'Delete conversation': 'حذف المحادثة', 'Cancel': 'إلغاء', 'OK': 'موافق', 'Save': 'حفظ',
+  'Clear': 'مسح', 'Delete all': 'حذف الكل', 'Clear all messages in this conversation?': 'مسح كل رسائل هذه المحادثة؟',
+  'Delete ALL conversations from this browser? This cannot be undone.': 'حذف كل المحادثات من هذا المتصفح؟ لا يمكن التراجع.',
+  'Nothing to clear': 'لا يوجد ما يُمسح', 'Nothing to export': 'لا يوجد ما يُصدَّر', 'Stop generation first': 'أوقف التوليد أولاً', 'Wait for Xi to finish or press stop': 'انتظر انتهاء Xi أو اضغط إيقاف',
+  'Title cannot be empty': 'لا يمكن ترك العنوان فارغاً', 'Start a conversation first': 'ابدأ محادثة أولاً', 'All conversations deleted': 'تم حذف كل المحادثات',
+  'Instructions saved': 'تم حفظ التعليمات', 'Could not save the file': 'تعذّر حفظ الملف'
+};
+const I18N_ATTRS = ['placeholder', 'title', 'aria-label'];
+const origText = new Map(), origAttr = new Map();
+function trNode(n) {
+  if (settings.lang !== 'ar') return;
+  if (n.nodeType === 3) {
+    const v = n.nodeValue, k = v.trim(), p = n.parentElement;
+    if (!k || !AR[k] || (p && p.closest('.content') && !p.closest('.cb header'))) return;
+    origText.set(n, v); n.nodeValue = v.replace(k, AR[k]);
+  } else if (n.nodeType === 1) {
+    I18N_ATTRS.forEach(a => { const v = n.getAttribute(a); if (v && AR[v]) { const m = origAttr.get(n) || {}; m[a] = v; origAttr.set(n, m); n.setAttribute(a, AR[v]); } });
+  }
+}
+function trTree(root) {
+  trNode(root); if (root.nodeType !== 1) return;
+  const w = document.createTreeWalker(root, NodeFilter.SHOW_ELEMENT | NodeFilter.SHOW_TEXT); let n;
+  while ((n = w.nextNode())) trNode(n);
+}
+function applyLang() {
+  const ar = settings.lang === 'ar';
+  document.documentElement.lang = ar ? 'ar' : 'en'; document.documentElement.dir = ar ? 'rtl' : 'ltr';
+  if (ar) trTree(document.body);
+  else {
+    origText.forEach((o, n) => { if (n.isConnected) n.nodeValue = o; }); origText.clear();
+    origAttr.forEach((m, e) => { if (e.isConnected) for (const a in m) e.setAttribute(a, m[a]); }); origAttr.clear();
+  }
+}
+function startI18n() {
+  new MutationObserver(list => {
+    if (settings.lang !== 'ar') return;
+    list.forEach(m => {
+      if (m.type === 'childList') m.addedNodes.forEach(trTree);
+      else if (m.type === 'characterData') trNode(m.target);
+      else if (m.type === 'attributes') trNode(m.target);
+    });
+  }).observe(document.body, { childList: true, subtree: true, characterData: true, attributes: true, attributeFilter: I18N_ATTRS });
+  applyLang();
+  // Swipe from the screen edge to open the drawer, swipe back to close it (mobile).
+  let tx = 0, ty = 0;
+  document.addEventListener('touchstart', e => { const t = e.touches[0]; tx = t.clientX; ty = t.clientY; }, { passive: true });
+  document.addEventListener('touchend', e => {
+    if (innerWidth > 820) return;
+    const t = e.changedTouches[0], dx = t.clientX - tx, dy = t.clientY - ty;
+    if (Math.abs(dx) < 70 || Math.abs(dx) < Math.abs(dy) * 1.5) return;
+    const rtl = document.documentElement.dir === 'rtl', open = $('#app').classList.contains('nav-open'), toward = rtl ? dx < 0 : dx > 0;
+    if (!open && toward && (rtl ? tx > innerWidth - 32 : tx < 32)) openNav();
+    else if (open && !toward) closeNav();
+  }, { passive: true });
+}
+function init() {
+  applyTheme(); Bg.start(); startI18n(); bindSettings(); Vision.init(); refreshBadge(); (function () { const b = $('#syncStatus'); if (b) b.textContent = ''; })();
+  if (activeId && !active()) activeId = null;
+  if (!activeId && convs.length) activeId = convs.slice().sort((a, b) => b.updated - a.updated)[0].id;
+  Modo.apply(); applyMode(); renderList(); renderChat(); setBusyUI();
+  setTimeout(Modo.hello, 900);
+  let tries = 0;   // the claude.ai host can attach a moment after load: re-check briefly
+  const iv = setInterval(() => { if (hosted() || ++tries > 20) { clearInterval(iv); applyMode(); if (hosted()) Cloud.init(); if (!busy && (!active() || !active().messages.length)) renderChat(); } }, 150);
+  $('#newChat').addEventListener('click', () => { newChat(); closeNav(); });
+  $('#openSettings').addEventListener('click', () => { closeNav(); openSettings(); });
+  $('#settingsTop').addEventListener('click', openSettings);
+  $('#menu').addEventListener('click', openNav);
+  $('#scrim').addEventListener('click', closeNav);
+  $('#title').addEventListener('click', () => { const c = active(); if (c) renameConv(c.id); else toast('Start a conversation first'); });
+  $('#clearBtn').addEventListener('click', clearConversation);
+  $('#exportBtn').addEventListener('click', exportConversation);
+  $('#search').addEventListener('input', renderList);
+  const inp = $('#input');
+  inp.addEventListener('input', autoGrow);
+  inp.addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey && !e.isComposing) { e.preventDefault(); sendMessage(inp.value); } });
+  $('#send').addEventListener('click', () => { if (busy) busy.ctrl.abort(); else sendMessage(inp.value); });
+  const pop = $('#pop'), more = $('#moreBtn');
+  const closePop = () => { pop.hidden = true; more.setAttribute('aria-expanded', 'false'); };
+  more.addEventListener('click', e => { e.stopPropagation(); pop.hidden = !pop.hidden; more.setAttribute('aria-expanded', String(!pop.hidden)); });
+  pop.addEventListener('click', closePop);
+  document.addEventListener('click', e => { if (!pop.hidden && !pop.contains(e.target)) closePop(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeNav(); closePop(); } });
+  window.addEventListener('storage', e => { if (e.key === 'xi.convs' && !busy) { convs = LS.get('xi.convs', []); renderList(); renderChat(true); } });
+}
+init();
+})();
+</script>
+</body>
+</html>
