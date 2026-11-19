@@ -38,7 +38,7 @@ const $=id=>document.getElementById(id);
 const game=new Chess();
 const glyph={wk:"♔",wq:"♕",wr:"♖",wb:"♗",wn:"♘",wp:"♙",bk:"♚",bq:"♛",br:"♜",bb:"♝",bn:"♞",bp:"♟"};
 let selected=null,legalTargets=[],flipped=false,lastMove=null,pendingPromotion=null;
-const openings={london:"rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",caro:"rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"};
+const openings={london:["d4","d5","Bf4","Nf6","e3","e6","Nd2","Bd6"],caro:["e4","c6","d4","d5","Nc3","dxe4","Nxe4","Bf5"]};
 function toast(msg){$("toast").textContent=msg;$("toast").classList.add("show");clearTimeout(toast.timer);toast.timer=setTimeout(()=>$("toast").classList.remove("show"),1900)}
 function stateText(){if(game.isCheckmate())return (game.turn()==="w"?"Black":"White")+" wins by checkmate.";if(game.isStalemate())return "Draw by stalemate.";if(game.isThreefoldRepetition())return "Draw by threefold repetition.";if(game.isInsufficientMaterial())return "Draw — insufficient material.";if(game.isDraw())return "Draw.";return (game.turn()==="w"?"White":"Black")+" to move"+(game.isCheck()?" · Check":"")+(game.isGameOver()?" · Game over":"");}
 function render(){
@@ -58,7 +58,7 @@ function onSquare(square){if(game.isGameOver())return;const piece=game.get(squar
 function makeMove(from,to,promotion){try{const move=game.move({from,to,...(promotion?{promotion}:{})});selected=null;legalTargets=[];render();if(move)saveGame();}catch(e){toast("That move is not legal.");selected=null;legalTargets=[];render()}}
 function openPromotion(from,to){pendingPromotion={from,to};const root=$("promotionChoices");root.innerHTML="";const color=game.turn();["q","r","b","n"].forEach(type=>{const b=document.createElement("button");b.textContent=glyph[color+type];b.setAttribute("aria-label","Promote to "+({q:"queen",r:"rook",b:"bishop",n:"knight"}[type]));b.addEventListener("click",()=>{$("promotionModal").classList.remove("open");makeMove(from,to,type);pendingPromotion=null});root.append(b)});$("promotionModal").classList.add("open")}
 function saveGame(){try{localStorage.setItem("matudi-chess-last-game",JSON.stringify({fen:game.fen(),pgn:game.pgn(),updatedAt:Date.now()}))}catch{}}
-function reset(fen){try{game.load(fen||"start");selected=null;legalTargets=[];render();saveGame()}catch{toast("Invalid FEN position.")}}
+function reset(fen){try{if(fen)game.load(fen);else game.reset();selected=null;legalTargets=[];render();saveGame()}catch{toast("Invalid FEN position.")}}
 $("undo").addEventListener("click",()=>{if(game.undo()){selected=null;legalTargets=[];render();saveGame()}});
 $("newGame").addEventListener("click",()=>reset());
 $("flip").addEventListener("click",()=>{flipped=!flipped;render()});
@@ -67,7 +67,7 @@ $("copyFen").addEventListener("click",async()=>{try{await navigator.clipboard.wr
 $("loadFen").addEventListener("click",()=>{const fen=$("fenInput").value.trim();if(!fen)return toast("Paste a FEN first");try{game.load(fen);selected=null;legalTargets=[];render();saveGame();toast("Position loaded")}catch{toast("FEN is not valid")}});
 $("saveNotes").addEventListener("click",()=>{try{localStorage.setItem("matudi-chess-notes-v2",$("notes").value);$("notesState").textContent="Notes saved on this device."}catch{$("notesState").textContent="Could not save notes."}});
 $("notes").value=localStorage.getItem("matudi-chess-notes-v2")||localStorage.getItem("chess-notes")||"";
-document.querySelectorAll("[data-opening]").forEach(b=>b.addEventListener("click",()=>{reset(openings[b.dataset.opening]);toast(b.dataset.opening==="london"?"London study board loaded":"Caro-Kann study board loaded")}));
+document.querySelectorAll("[data-opening]").forEach(b=>b.addEventListener("click",()=>{game.reset();for(const san of openings[b.dataset.opening])game.move(san);selected=null;legalTargets=[];render();saveGame();toast(b.dataset.opening==="london"?"London System line loaded":"Caro-Kann line loaded")}));
 document.addEventListener("keydown",e=>{if(e.key==="Escape"){$("promotionModal").classList.remove("open");pendingPromotion=null;selected=null;legalTargets=[];render()}});
 render();
 </script>
