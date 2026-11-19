@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#09090b">
+<title>MAT-STUDIO — Independent Projects by Matudi</title>
+<meta name="description" content="MAT-STUDIO is the central hub for Matudi's independent digital projects.">
+<style>
+:root{color-scheme:dark;--bg:#09090b;--panel:#121216;--panel2:#18181e;--line:#292930;--muted:#9696a3;--text:#f5f5f7;--accent:#fa2d48;--accent2:#ff7181}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(ellipse at 80% -10%,#40121d 0,transparent 34%),radial-gradient(ellipse at 0 35%,#19131b 0,transparent 35%),var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;min-height:100vh}
+a{color:inherit;text-decoration:none}.wrap{width:min(1120px,calc(100% - 40px));margin:auto}
+nav{height:76px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #ffffff12}
+.brand{display:flex;align-items:center;gap:12px;font-weight:850;letter-spacing:.12em}.mark{width:36px;height:36px;border-radius:11px;background:linear-gradient(145deg,#ff5269,#a70e29);display:grid;place-items:center;font-size:17px;box-shadow:0 7px 25px #fa2d4830}
+.navlinks{display:flex;gap:26px;color:#b7b7c0;font-size:13px}.navlinks a:hover{color:white}
+.lang{border:1px solid var(--line);border-radius:999px;padding:8px 13px;color:#c9c9d0;font-size:12px}
+.hero{padding:94px 0 74px;max-width:780px}.eyebrow{color:var(--accent2);font-size:11px;font-weight:800;letter-spacing:.22em;text-transform:uppercase;display:flex;align-items:center;gap:10px}.eyebrow:before{content:"";width:25px;height:1px;background:var(--accent)}
+h1{font-size:clamp(48px,8vw,86px);line-height:.98;letter-spacing:-.075em;margin:24px 0 22px;font-weight:850}.gradient{background:linear-gradient(100deg,#fff 15%,#ff7181 90%);background-clip:text;color:transparent}
+.lead{font-size:clamp(16px,2vw,19px);line-height:1.8;color:#aaaab5;max-width:620px}.hero-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:30px}.btn{padding:13px 18px;border-radius:12px;font-size:13px;font-weight:750;border:1px solid var(--line);background:#ffffff08}.btn.primary{background:var(--accent);border-color:var(--accent);color:white;box-shadow:0 8px 30px #fa2d4828}.btn:hover{transform:translateY(-2px);transition:.2s}
+.meta{display:flex;gap:25px;flex-wrap:wrap;margin-top:48px;color:#858590;font-size:11px;letter-spacing:.12em;text-transform:uppercase}.meta strong{color:#eee;font-size:13px;display:block;margin-bottom:5px;letter-spacing:0}
+.section-head{display:flex;justify-content:space-between;align-items:end;margin:8px 0 22px;gap:20px}.section-head h2{font-size:27px;letter-spacing:-.04em;margin:0}.section-head p{margin:8px 0 0;color:var(--muted);font-size:13px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.card{min-height:210px;border:1px solid var(--line);border-radius:18px;padding:22px;background:linear-gradient(145deg,#18181e,#101014);position:relative;overflow:hidden;transition:.2s}.card:hover{border-color:#fa2d4866;transform:translateY(-3px)}.card:after{content:"";position:absolute;width:150px;height:150px;border-radius:50%;right:-80px;top:-85px;background:#fa2d4810;filter:blur(4px)}
+.card-top{display:flex;align-items:center;justify-content:space-between}.iconbox{width:42px;height:42px;border-radius:13px;background:#fa2d4818;border:1px solid #fa2d4826;display:grid;place-items:center;font-size:19px}.status{font-size:10px;color:#aaaab5;border:1px solid #ffffff1c;border-radius:99px;padding:6px 9px}.card h3{font-size:17px;margin:23px 0 8px;letter-spacing:-.025em}.card p{font-size:12px;line-height:1.65;color:#9999a5;margin:0;max-width:290px}.card .tag{display:inline-block;margin-top:17px;color:#ff8392;font-size:10px;letter-spacing:.08em;text-transform:uppercase}
+.principles{margin:82px 0 70px;padding:28px;border:1px solid var(--line);border-radius:20px;background:#ffffff05;display:grid;grid-template-columns:1.1fr 2fr;gap:30px}.principles h2{font-size:23px;letter-spacing:-.04em;margin:0}.principles p{font-size:12px;color:var(--muted);line-height:1.7;margin:9px 0 0}.rules{display:grid;grid-template-columns:repeat(3,1fr);gap:15px}.rule{border-left:1px solid #ffffff20;padding-left:14px}.rule b{font-size:12px;display:block;margin-bottom:7px}.rule span{font-size:11px;color:var(--muted);line-height:1.6}
+footer{border-top:1px solid #ffffff14;padding:25px 0 34px;color:#777783;font-size:11px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}.footer-brand{color:#ddd;font-weight:800;letter-spacing:.12em}
+@media(max-width:760px){.grid{grid-template-columns:repeat(2,1fr)}.principles{grid-template-columns:1fr}.rules{grid-template-columns:1fr}.rule{padding:0 0 0 13px}.hero{padding:75px 0 60px}.navlinks{gap:14px}.navlinks a:nth-child(2){display:none}}
+@media(max-width:480px){.wrap{width:min(100% - 28px,1120px)}.grid{grid-template-columns:1fr}.card{min-height:180px}.navlinks{font-size:11px;gap:12px}.lang{display:none}h1{font-size:54px}.meta{gap:17px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<nav><a class="brand" href="#"><span class="mark">M</span><span>MAT-STUDIO</span></a><div class="navlinks"><a href="#projects">Projects</a><a href="#principles">Principles</a><a href="https://github.com/Mtudi/MAT-STUDIO" target="_blank" rel="noreferrer">GitHub ↗</a></div><span class="lang">IRAQ · DIGITAL WORKSPACE</span></nav>
+<main>
+<section class="hero">
+<div class="eyebrow">A PERSONAL DIGITAL ECOSYSTEM</div>
+<h1>Ideas into<br><span class="gradient">Experiences.</span></h1>
+<p class="lead">MAT-STUDIO is the central hub for independent projects by Matudi — a growing collection of tools, experiments, and creative products, built one project at a time.</p>
+<div class="hero-actions"><a class="btn primary" href="#projects">Explore projects <span aria-hidden="true">↘</span></a><a class="btn" href="https://github.com/Mtudi" target="_blank" rel="noreferrer">GitHub profile ↗</a></div>
+<div class="meta"><div><strong>07</strong>Listed projects</div><div><strong>Independent</strong>By design</div><div><strong>Building</strong>In public</div></div>
+</section>
+<section id="projects">
+<div class="section-head"><div><h2>Selected projects</h2><p>Different ideas. One home.</p></div><span class="status">PROJECT DIRECTORY</span></div>
+<div class="grid">
+<article class="card"><div class="card-top"><span class="iconbox">✳</span><span class="status">In development</span></div><h3>Xi Personal AI</h3><p>A personal AI assistant concept focused on a clean, useful everyday workspace.</p><span class="tag">AI · Assistant</span></article>
+<article class="card"><div class="card-top"><span class="iconbox">♫</span><span class="status">In development</span></div><h3>MATSONG</h3><p>An independent music player with a distinctive crimson visual identity.</p><span class="tag">Music · Player</span></article>
+<article class="card"><div class="card-top"><span class="iconbox">♞</span><span class="status">In development</span></div><h3>MATUDI Chess Lab</h3><p>A chess learning and analysis space built around deliberate improvement.</p><span class="tag">Chess · Learning</span></article>
+<article class="card"><div class="card-top"><span class="iconbox">✦</span><span class="status">Planned</span></div><h3>MATUDI Christmas</h3><p>A seasonal creative web experience.</p><span class="tag">Creative · Seasonal</span></article>
+<article class="card"><div class="card-top"><span class="iconbox">⌘</span><span class="status">Existing project</span></div><h3>MATUDI AI Workspace</h3><p>An earlier AI workspace project, kept independent from newer experiments.</p><span class="tag">AI · Workspace</span></article>
+<article class="card"><div class="card-top"><span class="iconbox">◈</span><span class="status">Planned</span></div><h3>MATUDI Portfolio</h3><p>A home for selected work, skills, and future collaborations.</p><span class="tag">Personal · Portfolio</span></article>
+<article class="card"><div class="card-top"><span class="iconbox">文</span><span class="status">Planned</span></div><h3>MATUDI DEUTSCH</h3><p>A focused learning project for the German language journey.</p><span class="tag">Language · Education</span></article>
+</div>
+</section>
+<section class="principles" id="principles"><div><h2>Built with intention.</h2><p>A simple foundation for creating, maintaining, and growing independent digital products.</p></div><div class="rules"><div class="rule"><b>Independent projects</b><span>Each product keeps its own identity, structure, and roadmap.</span></div><div class="rule"><b>One source of truth</b><span>Source code and meaningful changes are tracked in GitHub.</span></div><div class="rule"><b>Deploy when ready</b><span>Web projects go live through Vercel when they are ready to share.</span></div></div></section>
+</main>
+<footer><span class="footer-brand">MAT-STUDIO</span><span>Designed & curated by Matudi · © 2026</span><span>Independent by design.</span></footer>
+</div>
+</body>
+</html>
