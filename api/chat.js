@@ -54,6 +54,7 @@ module.exports = async function handler(req, res) {
       },
       body: JSON.stringify({
         model: "openrouter/free",
+        stream: body.stream === true,
         messages: [
           {
             role: "system",
@@ -80,19 +81,80 @@ module.exports = async function handler(req, res) {
       })
     });
 
-    const data = await upstream.json().catch(() => ({}));
     if (!upstream.ok) {
+      const errorData = await upstream.json().catch(() => ({}));
       return res.status(upstream.status === 429 ? 429 : 502).json({
         error: upstream.status === 429
           ? "The free model limit was reached. Try again later."
           : "The AI provider could not complete this request. Try again shortly."
       });
     }
-    const answer = data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content;
-    if (typeof answer !== "string" || !answer.trim()) {
-      return res.status(502).json({ error: "The model returned an empty response." });
+
+    if (body.stream !== true) {
+      const data = await upstream.json().catch(() => ({}));
+      const answer = data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content;
+      if (typeof answer !== "string" || !answer.trim()) {
+        return res.status(502).json({ error: "The model returned an empty response." });
+      }
+      return res.status(200).json({ answer: answer.trim(), model: data.model || "openrouter/free" });
     }
-    return res.status(200).json({ answer: answer.trim(), model: data.model || "openrouter/free" });
+
+    if (!upstream.body || typeof upstream.body.getReader !== "function") {
+      return res.status(502).json({ error: "Streaming is unavailable for this provider response." });
+    }
+
+    res.statusCode = 200;
+    res.setHeader("Content-Type", "text/event-stream; charset=utf-8");
+    res.setHeader("Cache-Control", "no-cache, no-transform");
+    res.setHeader("Connection", "keep-alive");
+    res.setHeader("X-Accel-Buffering", "no");
+    if (typeof res.flushHeaders === "function") res.flushHeaders();
+
+    const reader = upstream.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = "";
+    let model = "openrouter/free";
+    let streamedText = "";
+    const sendEvent = payload => res.write("data: " + JSON.stringify(payload) + "\\n\\n");
+    const consumeFrame = frame => {
+      const dataLines = frame.split("\\n").filter(line => line.startsWith("data:"));
+      if (!dataLines.length) return;
+      const raw = dataLines.map(line => line.slice(5).trim()).join("\\n");
+      if (!raw || raw === "[DONE]") return;
+      let packet;
+      try { packet = JSON.parse(raw); } catch { return; }
+      if (packet.model) model = packet.model;
+      const token = packet.choices && packet.choices[0] && packet.choices[0].delta && packet.choices[0].delta.content;
+      if (typeof token === "string" && token) {
+        streamedText += token;
+        sendEvent({ token });
+      }
+    };
+
+    try {
+      while (true) {
+        const part = await reader.read();
+        if (part.done) break;
+        buffer += decoder.decode(part.value, { stream: true }).replace(/\\r\\n/g, "\\n");
+        let boundary;
+        while ((boundary = buffer.indexOf("\\n\\n")) !== -1) {
+          const frame = buffer.slice(0, boundary);
+          buffer = buffer.slice(boundary + 2);
+          consumeFrame(frame);
+        }
+      }
+      buffer += decoder.decode().replace(/\\r\\n/g, "\\n");
+      if (buffer.trim()) consumeFrame(buffer);
+      if (!streamedText.trim()) {
+        sendEvent({ error: "The model returned an empty response." });
+      } else {
+        sendEvent({ done: true, model });
+      }
+    } catch (_) {
+      sendEvent({ error: "The response stream was interrupted. Please try again." });
+    } finally {
+      res.end();
+    }
   } catch (_) {
     return res.status(502).json({ error: "Could not reach the AI provider. Try again shortly." });
   }
