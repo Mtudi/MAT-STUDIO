@@ -45,13 +45,13 @@ function updateHistory(){
 }
 function addMessage(role,text){const wrap=document.createElement('div');wrap.className='message '+role;const avatar=document.createElement('div');avatar.className='avatar';avatar.textContent=role==='user'?'You':'✦';const bubble=document.createElement('div');bubble.className='bubble';bubble.textContent=text;if(role==='assistant'){const copy=document.createElement('button');copy.className='copy-message';copy.type='button';copy.textContent='Copy';copy.setAttribute('aria-label','Copy assistant response');copy.addEventListener('click',async()=>{try{if(navigator.clipboard?.writeText){await navigator.clipboard.writeText(text)}else{const temp=document.createElement('textarea');temp.value=text;temp.style.position='fixed';temp.style.opacity='0';document.body.append(temp);temp.select();document.execCommand('copy');temp.remove()}copy.textContent='Copied';setTimeout(()=>copy.textContent='Copy',1400)}catch{copy.textContent='Try again';setTimeout(()=>copy.textContent='Copy',1400)}});bubble.append(copy)}wrap.append(avatar,bubble);$('chatlog').append(wrap);$('chatlog').scrollTop=$('chatlog').scrollHeight}
 function renderChat(){const log=$('chatlog');log.innerHTML='';if(!chatHistory.length){const empty=document.createElement('div');empty.className='empty-state';empty.innerHTML='<div class="mascot"><div class="mascot-orbit"></div><div class="mascot-core"></div><i class="spark"></i></div><h2>Hey bro, I\'m <span class="accent">MATUDI AI.</span></h2><p>Your ideas deserve room to grow. Ask me anything, build a plan, explore an idea, or work through a difficult problem.</p><div class="suggestions"><button data-prompt="Help me plan a new project from zero.">Plan a project</button><button data-prompt="Review this idea critically and find its weaknesses.">Critique an idea</button><button data-prompt="Teach me something step by step.">Learn something</button></div>';log.append(empty);empty.querySelectorAll('[data-prompt]').forEach(b=>b.addEventListener('click',()=>{$('chatInput').value=b.dataset.prompt;$('chatInput').focus()}));return}chatHistory.forEach(m=>addMessage(m.role,m.content))}
-function saveConversation(newMessages=[]){
+function saveConversation(newMessages=[],syncNow=true){
   if(!chatHistory.length)return;
   const first=chatHistory.find(m=>m.role==='user');const title=(first?.content||'New conversation').replace(/\s+/g,' ').slice(0,48);
   let c=conversations.find(x=>x.id===activeConversationId);
   if(!c){activeConversationId=currentUser?makeId():String(Date.now());c={id:activeConversationId,title,messages:[],updatedAt:Date.now(),cloud:!!currentUser};conversations.unshift(c)}
   c.title=title;c.messages=chatHistory.slice(-16);c.updatedAt=Date.now();conversations.sort((a,b)=>(b.updatedAt||0)-(a.updatedAt||0));conversations=conversations.slice(0,30);persist();updateHistory();
-  if(c.cloud&&currentUser)syncConversation(c,newMessages).catch(()=>{$('cloudStatus').textContent='Cloud save failed · check connection'});
+  if(syncNow&&c.cloud&&currentUser)syncConversation(c,newMessages).catch(()=>{$('cloudStatus').textContent='Cloud save failed · check connection'});
 }
 async function syncConversation(c,newMessages=[]){
   if(!supabaseClient||!currentUser||!c.cloud)return;
@@ -85,9 +85,9 @@ function setThinking(on){$('sendBtn').disabled=on;$('chatStatus').textContent=on
 async function sendChat(){
   const text=$('chatInput').value.trim(),code=$('accessCode').value.trim()||sessionStorage.getItem('maw-session-code')||'';
   if(!code){$('chatStatus').textContent='Enter your workspace access code.';$('accessCode').focus();return}
-  if(!text)return;$('chatInput').value='';chatHistory.push({role:'user',content:text});if(chatHistory.length>16)chatHistory=chatHistory.slice(-16);renderChat();saveConversation([{role:'user',content:text}]);setThinking(true);
+  if(!text)return;$('chatInput').value='';chatHistory.push({role:'user',content:text});if(chatHistory.length>16)chatHistory=chatHistory.slice(-16);renderChat();saveConversation([],false);setThinking(true);
   try{const response=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({accessCode:code,messages:chatHistory})});const data=await response.json();if(!response.ok){if(response.status===401){sessionStorage.removeItem('maw-session-code');$('accessCode').value=''}throw new Error(data.error||'Request failed')}
-    sessionStorage.setItem('maw-session-code',code);chatHistory.push({role:'assistant',content:data.answer});if(chatHistory.length>16)chatHistory=chatHistory.slice(-16);renderChat();saveConversation([{role:'assistant',content:data.answer}]);$('chatStatus').textContent='Model: '+data.model+(currentUser?' · Cloud synced':' · Saved on this device');
+    sessionStorage.setItem('maw-session-code',code);chatHistory.push({role:'assistant',content:data.answer});if(chatHistory.length>16)chatHistory=chatHistory.slice(-16);renderChat();saveConversation([{role:'user',content:text},{role:'assistant',content:data.answer}]);$('chatStatus').textContent='Model: '+data.model+(currentUser?' · Cloud synced':' · Saved on this device');
   }catch(error){chatHistory.pop();renderChat();saveConversation();$('chatStatus').textContent=error.message||'Could not send message.'}finally{setThinking(false);$('chatInput').focus()}
 }
 $('sendBtn').addEventListener('click',sendChat);$('chatInput').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendChat()}});
