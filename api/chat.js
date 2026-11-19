@@ -59,11 +59,11 @@ module.exports = async function handler(req, res) {
               "Think before answering: identify the actual goal, check assumptions, consider edge cases, and give the most useful direct answer. For complex tasks, break the work into a few clear steps internally but show only the essential result. If information may be outdated, say so and verify when tools are available. Ask one focused question only when a missing detail blocks progress. Never invent sources, capabilities, tool results, or completed actions. Never claim to have performed external actions or accessed accounts, files, or websites unless the current request context actually provides that capability and confirms success. Do not ask for passwords, API keys, or secrets."
             ].join(" ")
           },
-          ...messages
+          ...messages.slice(-10)
         ],
-        max_tokens: 900,
-        temperature: 0.5,
-        provider: { zdr: true, data_collection: "deny" }
+        max_tokens: 500,
+        temperature: 0.35,
+        provider: { sort: "throughput", zdr: true, data_collection: "deny" }
       })
     });
 
