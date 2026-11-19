@@ -326,6 +326,21 @@ body{background:var(--studio-bg)!important;color:var(--studio-text)!important}
 @media(max-width:600px){.message.assistant{gap:10px!important}.message.assistant .avatar.xi-chat-avatar{width:36px!important;height:36px!important;flex-basis:36px!important;border-radius:12px!important}.empty-state .mascot-stage{transform:scale(.92);transform-origin:top center;margin-bottom:0}}
 @media(prefers-reduced-motion:reduce){.mascot-speech{animation:none}}
 
+
+/* Xi live character states and accessible conversation rhythm */
+.message.assistant .xi-chat-avatar{transition:transform .22s ease,box-shadow .22s ease}
+.message.assistant .xi-chat-avatar.xi-speaking{box-shadow:0 0 0 3px #fa536922,0 0 22px #fa536944!important;transform:translateY(-1px)}
+.message.assistant .xi-chat-avatar.xi-speaking img{animation:xiSpeak 1.15s ease-in-out infinite}
+.xi-thinking-bubble{display:flex!important;align-items:center;gap:12px;min-height:48px}
+.xi-thinking-label{font-size:13px;color:var(--muted,#aaa);font-weight:550}
+.xi-thinking-dots{display:inline-flex;align-items:center;gap:4px}
+.xi-thinking-dots i{width:5px;height:5px;border-radius:50%;background:var(--accent,#fa5369);opacity:.35;animation:xiDot 1.05s ease-in-out infinite}
+.xi-thinking-dots i:nth-child(2){animation-delay:.15s}.xi-thinking-dots i:nth-child(3){animation-delay:.3s}
+@keyframes xiDot{0%,70%,100%{opacity:.3;transform:translateY(0)}35%{opacity:1;transform:translateY(-4px)}}
+@keyframes xiSpeak{0%,100%{transform:scale(1)}50%{transform:scale(1.035)}}
+@media(max-width:600px){.xi-thinking-bubble{min-height:42px;padding:10px 12px}.xi-thinking-label{font-size:12px}}
+@media(prefers-reduced-motion:reduce){.xi-speaking img,.xi-thinking-dots i{animation:none!important}.message.assistant .xi-chat-avatar{transition:none}}
+
 </style><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/github-dark.min.css">
 </head>
 <body>
@@ -535,7 +550,19 @@ function newChat(){activeConversationId=null;chatHistory=[];renderChat();updateH
 $('clearChatBtn').addEventListener('click',newChat);
 $('conversationPicker').addEventListener('change',e=>{if(e.target.value)loadConversation(e.target.value)});
 $('historySearch').addEventListener('input',updateHistory);
-function setThinking(on){$('sendBtn').disabled=on;$('chatInput').disabled=on;$('clearChatBtn').disabled=on;$('newChatBtn').disabled=on;$('conversationPicker').disabled=on;if(on)$('chatStatus').textContent='Xi is thinking…';document.querySelector('.chat-card')?.setAttribute('aria-busy',String(on));$('sendBtn').textContent=on?'…':'↑'}
+function removeXiThinking(){document.querySelector('.xi-thinking-row')?.remove()}
+function setThinking(on){
+  $('sendBtn').disabled=on;$('chatInput').disabled=on;$('clearChatBtn').disabled=on;$('newChatBtn').disabled=on;$('conversationPicker').disabled=on;
+  if(on){
+    $('chatStatus').textContent='Xi is thinking…';
+    removeXiThinking();
+    const row=document.createElement('div');row.className='message assistant xi-thinking-row';row.setAttribute('role','status');row.setAttribute('aria-label','Xi is thinking');
+    const avatar=document.createElement('div');avatar.className='avatar xi-chat-avatar';avatar.innerHTML='<img src="data:image/webp;base64,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" alt="">';
+    const bubble=document.createElement('div');bubble.className='bubble xi-thinking-bubble';bubble.innerHTML='<span class="xi-thinking-label">Xi is thinking</span><span class="xi-thinking-dots" aria-hidden="true"><i></i><i></i><i></i></span>';
+    row.append(avatar,bubble);$('chatlog').append(row);$('chatlog').scrollTop=$('chatlog').scrollHeight;
+  }else{removeXiThinking()}
+  document.querySelector('.chat-card')?.setAttribute('aria-busy',String(on));$('sendBtn').textContent=on?'…':'↑';
+}
 async function sendChat(){
   if(isSending)return;
   const text=$('chatInput').value.trim(),code=$('accessCode').value.trim()||localStorage.getItem('maw-access-code-v1')||'';
@@ -560,7 +587,7 @@ async function sendChat(){
         const raw=line.slice(5).trim();if(!raw)continue;
         let packet;try{packet=JSON.parse(raw)}catch{continue}
         if(packet.error)throw new Error(packet.error);
-        if(typeof packet.token==='string'&&packet.token){assistantMessage.content+=packet.token;if(bubble)bubble.textContent=assistantMessage.content;$('chatlog').scrollTop=$('chatlog').scrollHeight}
+        if(typeof packet.token==='string'&&packet.token){removeXiThinking();document.querySelector('.message.assistant:last-of-type .xi-chat-avatar')?.classList.add('xi-speaking');assistantMessage.content+=packet.token;if(bubble)bubble.textContent=assistantMessage.content;$('chatlog').scrollTop=$('chatlog').scrollHeight}
         if(packet.done&&packet.model)model=packet.model;
       }
     };
