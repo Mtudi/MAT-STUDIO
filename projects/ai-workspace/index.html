@@ -145,7 +145,7 @@ function loadConversation(id){const c=conversations.find(x=>x.id===id);if(!c)ret
 function newChat(){activeConversationId=null;chatHistory=[];renderChat();updateHistory();$('chatStatus').textContent='New conversation · saved automatically'}
 $('clearChatBtn').addEventListener('click',newChat);
 $('conversationPicker').addEventListener('change',e=>{if(e.target.value)loadConversation(e.target.value)});
-function setThinking(on){$('sendBtn').disabled=on;$('chatInput').disabled=on;$('clearChatBtn').disabled=on;$('newChatBtn').disabled=on;$('conversationPicker').disabled=on;$('chatStatus').textContent=on?'Xi is thinking…':'Ready';$('chat-card')?.setAttribute('aria-busy',String(on));$('sendBtn').textContent=on?'…':'↑'}
+function setThinking(on){$('sendBtn').disabled=on;$('chatInput').disabled=on;$('clearChatBtn').disabled=on;$('newChatBtn').disabled=on;$('conversationPicker').disabled=on;$('chatStatus').textContent=on?'Xi is thinking…':'Ready';document.querySelector('.chat-card')?.setAttribute('aria-busy',String(on));$('sendBtn').textContent=on?'…':'↑'}
 async function sendChat(){
   if(isSending)return;
   const text=$('chatInput').value.trim(),code=$('accessCode').value.trim()||localStorage.getItem('maw-access-code-v1')||'';
