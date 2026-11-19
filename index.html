@@ -2,7 +2,7 @@
 <html lang="en" data-theme="light">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#f5f5f7"><meta name="description" content="MAT-STUDIO — your personal digital command center.">
+<meta name="theme-color" content="#f5f5f7"><meta name="description" content="MAT-STUDIO — a personal digital command center for creative work, learning, and tools.">
 <title>MAT-STUDIO — Command Center</title>
 <style>
 :root{color-scheme:light;--bg:#f5f5f7;--panel:rgba(255,255,255,.78);--solid:#fff;--soft:#ececf0;--line:rgba(60,60,67,.13);--text:#1d1d1f;--muted:#6e6e73;--muted2:#8e8e93;--blue:#007aff;--shadow:0 18px 55px rgba(0,0,0,.06);--nav:rgba(245,245,247,.82);--ease:cubic-bezier(.2,.75,.25,1)}
@@ -21,14 +21,76 @@ main{padding:48px 0 60px}.welcome{display:flex;justify-content:space-between;ali
 @media(max-width:900px){.layout{grid-template-columns:1fr}.sidebar{grid-template-columns:repeat(2,minmax(0,1fr))}.xi-card{grid-row:span 2}}
 @media(max-width:620px){.shell{width:calc(100% - 28px)}.topbar{height:64px}.cmdbtn{font-size:0;width:39px;justify-content:center;padding:0}.cmdbtn kbd{display:none}main{padding-top:32px}.welcome{display:block}.welcome-actions{margin-top:18px}.stats{grid-template-columns:repeat(2,1fr);gap:9px}.stat{padding:14px}.statvalue{font-size:22px}.layout{gap:17px}.projects{grid-template-columns:1fr}.project{min-height:160px}.sidebar{grid-template-columns:1fr}.xi-card{grid-row:auto}.sectionhead{align-items:start;flex-direction:column}.search{width:100%}.footer{flex-direction:column}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{transition-duration:.01ms!important;scroll-behavior:auto!important}}
+
+/* MAT-STUDIO 3.1 — product-grade refinement */
+:root{--radius-card:24px;--ease:cubic-bezier(.22,.72,.18,1)}
+html{scroll-padding-top:88px}
+body{letter-spacing:-.012em}
+.shell{width:min(1320px,calc(100% - 64px))}
+.topbar{height:76px}
+.brand{font-size:15px;letter-spacing:-.045em}
+.mark{height:38px;width:38px;border-radius:13px}
+.iconbtn,.cmdbtn{min-height:44px}
+main{padding:64px 0 72px}
+.welcome{position:relative;isolation:isolate;padding:34px 0 30px;margin-bottom:22px}
+.welcome:before{content:"";position:absolute;z-index:-1;inset:-24px -28px;border-radius:32px;background:radial-gradient(ellipse at 12% 0,color-mix(in srgb,var(--blue) 10%,transparent),transparent 62%)}
+.eyebrow{font-size:11px;letter-spacing:.15em}
+.welcome h1{font-size:clamp(42px,6vw,68px);letter-spacing:-.078em;line-height:.98;margin:15px 0 14px}
+.welcome p{font-size:15px;max-width:540px;line-height:1.7}
+.btn{min-height:44px;padding:0 18px;font-size:13px;transition:transform .28s var(--ease),box-shadow .28s,background .2s}
+.stats{gap:14px;margin:32px 0 42px}
+.stat{border-radius:21px;padding:20px 22px;transition:transform .25s var(--ease),border-color .25s}
+.stat:hover{transform:translateY(-2px);border-color:color-mix(in srgb,var(--blue) 30%,var(--line))}
+.statlabel{font-size:12px}.statvalue{font-size:29px}.statnote{font-size:11px}
+.layout{grid-template-columns:minmax(0,1fr) 310px;gap:24px}
+.sectionhead{margin-bottom:18px}
+.sectionhead h2{font-size:23px;letter-spacing:-.05em}
+.sectionhead p{font-size:12px}
+.search{height:44px;font-size:13px;border-radius:14px}
+.projects{gap:16px}
+.project{min-height:218px;padding:22px;border-radius:var(--radius-card);transition:transform .38s var(--ease),box-shadow .38s,border-color .3s}
+.project:after{content:"";position:absolute;right:-42px;top:24px;width:150px;height:150px;border-radius:50%;border:1px solid color-mix(in srgb,var(--accent) 17%,transparent);background:radial-gradient(circle at 35% 35%,color-mix(in srgb,var(--accent) 13%,transparent),transparent 68%);pointer-events:none;transition:transform .5s var(--ease),opacity .3s;opacity:.8}
+.project:hover:after{transform:scale(1.22) translate(-5px,5px);opacity:1}
+.project:hover{transform:translateY(-5px)}
+.projecticon{width:48px;height:48px;border-radius:16px;font-size:22px;position:relative;z-index:1}
+.pin{width:44px;height:44px;font-size:16px;position:relative;z-index:2}
+.project h3{font-size:19px;letter-spacing:-.045em;margin:23px 0 7px}
+.project p{font-size:13px;line-height:1.65;max-width:390px}
+.projectbottom{margin-top:19px}
+.tag{font-size:10px;letter-spacing:.09em}
+.launch{font-size:12px}
+.sidebar{gap:16px}
+.sidecard{padding:22px;border-radius:22px}
+.sidehead h3{font-size:15px}.sidehead span{font-size:11px}
+.xi-orb{height:50px;width:50px;border-radius:17px;font-size:23px}
+.xi-card h3{font-size:21px}.xi-card p{font-size:13px;line-height:1.7}
+.recentitem{min-height:48px}.recentname{font-size:12px}.recenttime{font-size:10px}
+.quicklink{min-height:44px;font-size:12px}
+.footer{font-size:11px;padding-top:25px}
+:where(a,button,input):focus-visible{outline:3px solid color-mix(in srgb,var(--blue) 70%,white);outline-offset:3px}
+button{touch-action:manipulation}
+@media(max-width:900px){.layout{grid-template-columns:1fr}.sidebar{grid-template-columns:repeat(2,minmax(0,1fr))}.xi-card{grid-row:span 2}}
+@media(max-width:620px){
+ .shell{width:calc(100% - 32px)}.topbar{height:64px}main{padding:34px 0 48px}
+ .welcome{padding:24px 0 20px}.welcome:before{inset:-12px -12px;border-radius:24px}
+ .welcome h1{font-size:clamp(39px,11vw,52px)}.welcome p{font-size:14px}
+ .welcome-actions{gap:8px}.btn{min-height:46px;padding:0 14px;font-size:12px}
+ .stats{gap:9px;margin:24px 0 32px}.stat{padding:15px 16px;border-radius:17px}.statvalue{font-size:25px}
+ .projects{gap:12px}.project{min-height:196px;padding:19px;border-radius:21px}
+ .project h3{font-size:18px;margin-top:19px}.project p{font-size:13px}
+ .sidebar{grid-template-columns:1fr}.xi-card{grid-row:auto}
+ .sectionhead h2{font-size:21px}
+}
+@media(prefers-reduced-motion:reduce){.project:after{transition:none}.stat:hover,.project:hover,.btn:hover{transform:none}}
+
 </style>
 </head>
 <body>
 <header class="topbar"><div class="shell nav"><a class="brand" href="./"><span class="mark">M</span><span>MAT-STUDIO <span style="color:var(--muted);font-weight:500">/ COMMAND CENTER</span></span></a><div class="navright"><button class="cmdbtn" id="openPalette" type="button">Quick actions <kbd>Ctrl K</kbd></button><button class="iconbtn" id="themeToggle" aria-label="Toggle theme" title="Toggle appearance">☼</button></div></div></header>
 <main class="shell">
-<section class="welcome"><div><div class="eyebrow">Your personal digital ecosystem</div><h1>Good to see you.</h1><p>One calm space to launch, organize, and return to your projects.</p></div><div class="welcome-actions"><a class="btn primary" href="projects/ai-workspace/">✳ Open Xi</a><a class="btn" href="projects/ai-workspace/?prompt=Review%20MAT-STUDIO%20and%20recommend%20the%20best%20next%20upgrade.%20Be%20critical%20and%20prioritize%20by%20impact.">Ask Xi: next upgrade ↗</a><a class="btn" href="#all-projects">Browse projects ↘</a></div></section>
-<section class="stats" aria-label="Studio overview"><div class="stat"><div class="statlabel">Your projects</div><div class="statvalue">07</div><div class="statnote">One connected studio</div></div><div class="stat"><div class="statlabel">Pinned projects</div><div class="statvalue" id="pinnedCount">02</div><div class="statnote">Saved on this device</div></div><div class="stat"><div class="statlabel">Recently opened</div><div class="statvalue" id="recentCount">00</div><div class="statnote">Your local activity</div></div><div class="stat"><div class="statlabel">Studio status</div><div class="statvalue" style="font-size:19px">Ready</div><div class="statnote">Project launcher online</div></div></section>
-<div class="layout"><section id="all-projects"><div class="sectionhead"><div><h2>Project library</h2><p>Launch an app or pin it for quick access.</p></div><input id="projectSearch" class="search" type="search" placeholder="Search projects…" aria-label="Search projects"></div><div class="projects" id="projectGrid">
+<section class="welcome"><div><div class="eyebrow">MATUDI DIGITAL ECOSYSTEM · 2026</div><h1>Good to see you.</h1><p>Your work, tools, and ideas — brought together in one focused space.</p></div><div class="welcome-actions"><a class="btn primary" href="projects/ai-workspace/">✳ Open Xi</a><a class="btn" href="projects/ai-workspace/?prompt=Review%20MAT-STUDIO%20and%20recommend%20the%20best%20next%20upgrade.%20Be%20critical%20and%20prioritize%20by%20impact.">Ask Xi: next upgrade ↗</a><a class="btn" href="#all-projects">Browse projects ↘</a></div></section>
+<section class="stats" aria-label="Studio overview"><div class="stat"><div class="statlabel">Your projects</div><div class="statvalue">07</div><div class="statnote">One connected studio</div></div><div class="stat"><div class="statlabel">Pinned projects</div><div class="statvalue" id="pinnedCount">02</div><div class="statnote">Pinned on this device</div></div><div class="stat"><div class="statlabel">Recently opened</div><div class="statvalue" id="recentCount">00</div><div class="statnote">Your local activity</div></div><div class="stat"><div class="statlabel">Studio status</div><div class="statvalue" style="font-size:19px">Ready</div><div class="statnote">Project launcher online</div></div></section>
+<div class="layout"><section id="all-projects"><div class="sectionhead"><div><h2>Project library</h2><p>Your tools, in one place. Pick up where you left off.</p></div><input id="projectSearch" class="search" type="search" placeholder="Search projects…" aria-label="Search projects"></div><div class="projects" id="projectGrid">
 <a class="project" href="projects/xi/" data-id="xi" data-name="Xi Personal AI" style="--accent:#007aff"><div class="projecttop"><span class="projecticon">✳</span><button class="pin active" type="button" aria-label="Unpin Xi" title="Unpin project">★</button></div><h3>Xi Personal AI</h3><p>Your personal AI assistant for thinking, planning, research, and creating.</p><div class="projectbottom"><span class="tag">AI · Assistant</span><span class="launch">Open project ↗</span></div></a>
 <a class="project" href="projects/matsong/" data-id="matsong" data-name="MATSONG" style="--accent:#ff375f"><div class="projecttop"><span class="projecticon">♫</span><button class="pin" type="button" aria-label="Pin MATSONG" title="Pin project">☆</button></div><h3>MATSONG</h3><p>Your independent music player, library, and listening space.</p><div class="projectbottom"><span class="tag">Music · Player</span><span class="launch">Open project ↗</span></div></a>
 <a class="project" href="projects/chess-lab/" data-id="chess" data-name="MATUDI Chess Lab" style="--accent:#30a46c"><div class="projecttop"><span class="projecticon">♞</span><button class="pin" type="button" aria-label="Pin Chess Lab" title="Pin project">☆</button></div><h3>MATUDI Chess Lab</h3><p>A focused place for chess practice, study, and improvement.</p><div class="projectbottom"><span class="tag">Chess · Training</span><span class="launch">Open project ↗</span></div></a>
