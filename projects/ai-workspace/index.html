@@ -265,6 +265,40 @@ body{background:var(--studio-bg)!important;color:var(--studio-text)!important}
 .message.assistant .bubble a:hover{text-decoration-thickness:2px}
 .message.assistant .bubble .katex{font-size:1.03em}
 @media(max-width:700px){.message.assistant .bubble{font-size:14px!important;line-height:1.82!important}.message.assistant .code-panel pre{font-size:12px;padding:13px}.message.assistant .bubble th,.message.assistant .bubble td{padding:8px 10px}}
+
+/* Xi response typography and rich-content system */
+.message.assistant .bubble{white-space:normal!important;overflow-wrap:anywhere;word-break:normal}
+.message.assistant .bubble>p{margin:0 0 1.05em;line-height:1.88}
+.message.assistant .bubble>p:last-child{margin-bottom:0}
+.message.assistant .bubble h1,.message.assistant .bubble h2,.message.assistant .bubble h3,.message.assistant .bubble h4{color:var(--studio-text);letter-spacing:-.035em;line-height:1.3;margin:1.45em 0 .55em;font-weight:760}
+.message.assistant .bubble h1{font-size:1.65em}.message.assistant .bubble h2{font-size:1.38em}.message.assistant .bubble h3{font-size:1.15em}.message.assistant .bubble h4{font-size:1.02em}
+.message.assistant .bubble ul,.message.assistant .bubble ol{padding-left:1.55em;margin:.55em 0 1.1em;line-height:1.85}
+.message.assistant .bubble li{padding-left:.22em;margin:.22em 0}
+.message.assistant .bubble li::marker{color:var(--studio-accent)}
+.message.assistant .bubble blockquote{margin:1em 0;padding:.25em 0 .25em 1em;border-left:3px solid var(--studio-accent);color:var(--studio-muted);background:color-mix(in srgb,var(--studio-accent) 5%,transparent);border-radius:0 10px 10px 0}
+.message.assistant .bubble blockquote p{margin:.45em 0}
+.message.assistant .bubble hr{border:0;border-top:1px solid var(--studio-line);margin:1.5em 0}
+.message.assistant .bubble table{display:block;width:100%;max-width:100%;overflow-x:auto;border-collapse:separate;border-spacing:0;margin:1em 0 1.25em;font-size:.91em;border:1px solid var(--studio-line);border-radius:12px}
+.message.assistant .bubble th,.message.assistant .bubble td{padding:10px 13px;text-align:left;border-right:1px solid var(--studio-line);border-bottom:1px solid var(--studio-line);min-width:100px}
+.message.assistant .bubble th{background:var(--studio-raised);font-weight:750;color:var(--studio-text)}
+.message.assistant .bubble tr:last-child td{border-bottom:0}.message.assistant .bubble th:last-child,.message.assistant .bubble td:last-child{border-right:0}
+.message.assistant .bubble :not(pre)>code{font: .88em ui-monospace,SFMono-Regular,Consolas,monospace;padding:.16em .42em;border-radius:6px;background:color-mix(in srgb,var(--studio-accent) 10%,var(--studio-raised));color:var(--studio-text);border:1px solid var(--studio-line)}
+.message.assistant .bubble a{color:var(--studio-accent);text-decoration:underline;text-decoration-color:color-mix(in srgb,var(--studio-accent) 45%,transparent);text-underline-offset:3px}
+.message.assistant .bubble a:hover{text-decoration-thickness:2px}
+.message.assistant .bubble img{max-width:100%;height:auto;border-radius:12px}
+.message.assistant .bubble .katex-display{overflow-x:auto;overflow-y:hidden;padding:.45em 0}
+.message.assistant .bubble .code-panel{margin:1.15em 0 1.3em;border-color:var(--studio-line);border-radius:14px;background:#10121a;box-shadow:0 8px 24px #00000012}
+.message.assistant .bubble .code-panel-head{padding:10px 13px;background:#191b27;border-color:#ffffff12}
+.message.assistant .bubble .code-panel pre{padding:16px;max-height:560px;overflow:auto;font-size:12.5px;line-height:1.72;tab-size:2}
+.message.assistant .bubble .code-panel code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace}
+.message.assistant .bubble .copy-snippet{margin-top:12px}
+.message.assistant .bubble .xi-streaming{white-space:pre-wrap}
+@media(max-width:650px){
+ .message.assistant .bubble{font-size:14px!important;line-height:1.82!important}
+ .message.assistant .bubble h1{font-size:1.45em}.message.assistant .bubble h2{font-size:1.25em}
+ .message.assistant .bubble th,.message.assistant .bubble td{padding:8px 10px;min-width:88px}
+ .message.assistant .bubble .code-panel pre{font-size:11.5px;padding:13px}
+}
 </style></head>
 <body>
 <div class="app">
@@ -340,13 +374,22 @@ function markdownHTML(value){
   return DOMPurify.sanitize(marked.parse(String(value)),{USE_PROFILES:{html:true}});
 }
 function renderAssistantContent(bubble,value){
-  bubble.innerHTML=markdownHTML(value);
+  const source=String(value??'');
+  bubble.innerHTML=markdownHTML(source);
   bubble.querySelectorAll('[data-copy-code]').forEach(button=>{
     const code=button.closest('.code-panel')?.querySelector('pre code');
     button.addEventListener('click',()=>copyToClipboard(code?.textContent||'',button));
   });
   if(window.renderMathInElement){
-    try{renderMathInElement(bubble,{delimiters:[{left:'$',right:'$',display:true},{left:'\\[',right:'\\]',display:true},{left:'
+    try{
+      renderMathInElement(bubble,{delimiters:[
+        {left:'$$',right:'$$',display:true},
+        {left:'\\[',right:'\\]',display:true},
+        {left:'\\(',right:'\\)',display:false}
+      ],throwOnError:false});
+    }catch(error){/* Keep readable source if math rendering fails. */}
+  }
+}
 function addMessage(role,text){
   const wrap=document.createElement('div');wrap.className='message '+role;
   const avatar=document.createElement('div');avatar.className='avatar';avatar.textContent=role==='user'?'You':'✦';
@@ -418,7 +461,7 @@ async function sendChat(){
         const raw=line.slice(5).trim();if(!raw)continue;
         let packet;try{packet=JSON.parse(raw)}catch{continue}
         if(packet.error)throw new Error(packet.error);
-        if(typeof packet.token==='string'&&packet.token){assistantMessage.content+=packet.token;if(bubble)renderAssistantContent(bubble,assistantMessage.content);$('chatlog').scrollTop=$('chatlog').scrollHeight}
+        if(typeof packet.token==='string'&&packet.token){assistantMessage.content+=packet.token;if(bubble){bubble.textContent=assistantMessage.content;bubble.classList.add('xi-streaming')} $('chatlog').scrollTop=$('chatlog').scrollHeight}
         if(packet.done&&packet.model)model=packet.model;
       }
     };
