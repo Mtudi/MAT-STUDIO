@@ -201,6 +201,40 @@ body{background:var(--studio-bg)!important;color:var(--studio-text)!important}
  .code-panel .code-copy{font-size:10px!important;padding:6px 9px!important}
 }
 
+
+/* Account & authentication live in a dedicated layer, never in the chat composer */
+.xi-account-trigger{width:39px;height:39px;display:inline-grid;place-items:center;border:1px solid var(--studio-line);border-radius:12px;background:var(--studio-surface);color:var(--studio-text);cursor:pointer;transition:background .2s,border-color .2s,transform .2s}
+.xi-account-trigger:hover{background:var(--studio-raised);border-color:color-mix(in srgb,var(--studio-accent) 40%,var(--studio-line));transform:translateY(-1px)}
+.xi-account-trigger svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.xi-account-modal[hidden]{display:none!important}
+.xi-account-modal{position:fixed;inset:0;z-index:1000;display:grid;place-items:center;padding:18px;background:rgba(7,9,18,.58);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+.xi-account-sheet{width:min(520px,100%);max-height:min(82dvh,720px);overflow:auto;border:1px solid var(--studio-line);border-radius:23px;background:var(--studio-surface);color:var(--studio-text);box-shadow:0 28px 100px #0005;animation:xiSheetIn .22s ease-out}
+.xi-account-sheet>header{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;padding:25px 26px 20px;border-bottom:1px solid var(--studio-line)}
+.xi-account-sheet>header small{font-size:10px;font-weight:800;letter-spacing:.16em;color:var(--studio-accent)}
+.xi-account-sheet h2{margin:7px 0 5px;font-size:23px;letter-spacing:-.045em}
+.xi-account-sheet p{margin:0;color:var(--studio-muted);font-size:12px;line-height:1.65}
+.xi-account-close{width:34px;height:34px;border:1px solid var(--studio-line);border-radius:10px;background:var(--studio-raised);color:var(--studio-text);font-size:22px;cursor:pointer}
+.xi-account-body{padding:22px 26px}
+.xi-account-section{margin-bottom:12px}
+.xi-account-section-title{font-size:13px;font-weight:750;margin-bottom:4px}
+.xi-account-section p{font-size:11px}
+.xi-account-body .access-row{display:flex!important;flex-wrap:wrap;gap:9px;margin:14px 0 0!important;padding:13px;border:1px solid var(--studio-line);border-radius:14px;background:var(--studio-raised)}
+.xi-account-body .access-row input{flex:1 1 210px;width:auto!important;max-width:none!important;min-width:0;padding:11px 12px!important;border:1px solid var(--studio-line)!important;border-radius:10px!important;background:var(--studio-surface)!important;color:var(--studio-text)!important;font-size:13px!important}
+.xi-account-body #chatStatus{flex-basis:100%;font-size:10px;color:var(--studio-muted)}
+.xi-account-body #forgetAccessCodeBtn{font-size:10px}
+.xi-account-divider{height:1px;background:var(--studio-line);margin:23px 0}
+.xi-account-body .cloud-row{display:flex!important;flex-wrap:wrap;gap:9px;margin:14px 0 0!important;padding:13px;border:1px solid var(--studio-line);border-radius:14px;background:var(--studio-raised)}
+.xi-account-body .cloud-row input{flex:1 1 200px;width:auto!important;min-width:0!important;padding:11px 12px!important;border:1px solid var(--studio-line)!important;border-radius:10px!important;background:var(--studio-surface)!important;color:var(--studio-text)!important;font-size:13px!important}
+.xi-account-body .cloud-row span{flex-basis:100%;font-size:10px;color:var(--studio-muted)}
+.xi-account-sheet>footer{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:15px 26px 20px;border-top:1px solid var(--studio-line)}
+.xi-account-sheet>footer span{font-size:10px;color:var(--studio-muted)}
+.xi-account-done{border:0;border-radius:10px;background:var(--studio-accent);color:white;padding:10px 17px;font-weight:700;cursor:pointer}
+.composer-wrap>.cloud-row,.composer-wrap>.access-row{display:none!important}
+.composer-note{justify-content:flex-start!important}
+@keyframes xiSheetIn{from{opacity:0;transform:translateY(9px) scale(.985)}to{opacity:1;transform:translateY(0) scale(1)}}
+@media(max-width:520px){.xi-account-modal{align-items:end;padding:0}.xi-account-sheet{width:100%;max-height:88dvh;border-radius:22px 22px 0 0}.xi-account-sheet>header,.xi-account-body{padding-left:20px;padding-right:20px}.xi-account-sheet>footer{padding-left:20px;padding-right:20px}}
+@media(prefers-reduced-motion:reduce){.xi-account-sheet{animation:none}}
+
 </style></head>
 <body>
 <div class="app">
@@ -217,7 +251,7 @@ body{background:var(--studio-bg)!important;color:var(--studio-text)!important}
 <section class="chat-card">
   <div class="chat-head"><div class="assistant-id"><div class="mini-mascot"></div><div><b>Xi</b><small>Personal AI · Ready to help</small></div></div><div class="chat-head-actions"><select id="conversationPicker" class="ghost" aria-label="Choose conversation"><option value="">Recent chats</option></select><button class="ghost" id="clearChatBtn">＋ New chat</button></div></div>
   <div class="messages" id="chatlog" aria-live="polite"><div class="empty-state" id="emptyState"><div class="mascot"><div class="mascot-orbit"></div><div class="mascot-core"></div><i class="spark"></i></div><h2>Hey bro, I'm <span class="accent">Xi.</span></h2><p>Your ideas deserve room to grow. Ask me anything, build a plan, explore an idea, or work through a difficult problem.</p></div></div>
-  <div class="composer-wrap"><div class="cloud-row" id="cloudLogin"><input id="cloudEmail" type="email" autocomplete="email" placeholder="Email for cloud sync" aria-label="Email for cloud sync"><button class="ghost" id="cloudLoginBtn" type="button">Send login link</button><span id="cloudStatus">Cloud sync off</span></div><div class="cloud-row hidden" id="cloudUser"><span id="cloudUserLabel"></span><button class="ghost" id="cloudLogoutBtn" type="button">Sign out</button></div><div class="access-row"><input id="accessCode" type="password" placeholder="Workspace access code" autocomplete="current-password" aria-label="Workspace access code"><span id="chatStatus">Ready · Chats save on this device.</span><button class="ghost" id="forgetAccessCodeBtn" type="button" title="Forget saved access code">Forget code</button></div><div class="composer"><textarea id="chatInput" rows="1" maxlength="5000" placeholder="Message Xi..."></textarea><button class="send" id="sendBtn" aria-label="Send message">↑</button></div><div class="composer-note"><span>Enter to send · Shift + Enter for new line</span><span>Access code remembered on this device · use only on your personal device</span></div></div>
+  <div class="composer-wrap"><div class="cloud-row" id="cloudLogin"><input id="cloudEmail" type="email" autocomplete="email" placeholder="Email for cloud sync" aria-label="Email for cloud sync"><button class="ghost" id="cloudLoginBtn" type="button">Send login link</button><span id="cloudStatus">Cloud sync off</span></div><div class="cloud-row hidden" id="cloudUser"><span id="cloudUserLabel"></span><button class="ghost" id="cloudLogoutBtn" type="button">Sign out</button></div><div class="access-row"><input id="accessCode" type="password" placeholder="Workspace access code" autocomplete="current-password" aria-label="Workspace access code"><span id="chatStatus">Ready · Chats save on this device.</span><button class="ghost" id="forgetAccessCodeBtn" type="button" title="Forget saved access code">Forget code</button></div><div class="composer"><textarea id="chatInput" rows="1" maxlength="5000" placeholder="Message Xi..."></textarea><button class="send" id="sendBtn" aria-label="Send message">↑</button></div><div class="composer-note"><span>Enter to send · Shift + Enter for new line</span></div></div>
 </section>
 
 </div><footer class="footer">MAT-STUDIO · Xi · Built for ideas that matter</footer>
@@ -340,7 +374,7 @@ function setThinking(on){$('sendBtn').disabled=on;$('chatInput').disabled=on;$('
 async function sendChat(){
   if(isSending)return;
   const text=$('chatInput').value.trim(),code=$('accessCode').value.trim()||localStorage.getItem('maw-access-code-v1')||'';
-  if(!code){$('chatStatus').textContent='Enter your workspace access code.';$('accessCode').focus();return}
+  if(!code){$('chatStatus').textContent='Enter your workspace access code.';window.xiOpenAccount?.();return}
   if(!text)return;isSending=true;$('chatInput').value='';chatHistory.push({role:'user',content:text});if(chatHistory.length>16)chatHistory=chatHistory.slice(-16);renderChat();saveConversation([],false);setThinking(true);
   let assistantMessage=null;
   try{
@@ -418,5 +452,35 @@ initCloud();
 </script>
 <script>
 (()=>{const actions=document.querySelector('.top-actions'),sidebar=document.querySelector('.sidebar');if(!actions||!sidebar||document.querySelector('.xi-mobile-menu'))return;const b=document.createElement('button');b.className='xi-mobile-menu';b.type='button';b.textContent='☰';b.setAttribute('aria-label','Open conversation navigation');b.setAttribute('aria-expanded','false');actions.prepend(b);const close=()=>{document.body.classList.remove('xi-nav-open');b.setAttribute('aria-expanded','false')};b.addEventListener('click',()=>{const open=document.body.classList.toggle('xi-nav-open');b.setAttribute('aria-expanded',String(open))});document.addEventListener('keydown',e=>{if(e.key==='Escape')close()});document.addEventListener('click',e=>{if(document.body.classList.contains('xi-nav-open')&&!sidebar.contains(e.target)&&!b.contains(e.target))close()});sidebar.addEventListener('click',e=>{if(e.target.closest('.history button')||e.target.closest('.new-chat'))close()});})();
+</script>
+
+<script>
+(()=>{
+ const actions=document.querySelector('.top-actions'),wrap=document.querySelector('.composer-wrap');
+ if(!actions||!wrap||document.getElementById('xiAccountModal'))return;
+ const trigger=document.createElement('button');
+ trigger.type='button';trigger.className='xi-account-trigger';trigger.id='xiAccountTrigger';
+ trigger.setAttribute('aria-label','Account and sign-in settings');trigger.title='Account & sign-in';trigger.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path d="M4.8 20c.7-3.7 3.2-5.5 7.2-5.5s6.5 1.8 7.2 5.5"/></svg>';
+ actions.prepend(trigger);
+ const modal=document.createElement('div');modal.className='xi-account-modal';modal.id='xiAccountModal';modal.hidden=true;
+ modal.innerHTML='<section class="xi-account-sheet" role="dialog" aria-modal="true" aria-labelledby="xiAccountTitle"><header><div><small>XI WORKSPACE</small><h2 id="xiAccountTitle">Account & access</h2><p>Sign-in and workspace security, kept separate from your conversations.</p></div><button type="button" class="xi-account-close" aria-label="Close">×</button></header><div class="xi-account-body"><div class="xi-account-section"><div class="xi-account-section-title">Workspace access</div><p>Enter your private access code to use Xi.</p></div><div id="xiAccessMount"></div><div class="xi-account-divider"></div><div class="xi-account-section"><div class="xi-account-section-title">Cloud account</div><p>Optional · sign in to sync conversations across devices.</p></div><div id="xiCloudMount"></div></div><footer><span id="xiAccountFootnote">Your access code stays on this device.</span><button type="button" class="xi-account-done">Done</button></footer></section>';
+ document.body.append(modal);
+ const access=document.querySelector('.access-row'),login=document.getElementById('cloudLogin'),user=document.getElementById('cloudUser');
+ if(access)document.getElementById('xiAccessMount').append(access);
+ if(login)document.getElementById('xiCloudMount').append(login);
+ if(user)document.getElementById('xiCloudMount').append(user);
+ const open=()=>{modal.hidden=false;document.body.classList.add('xi-account-open');setTimeout(()=>{const input=document.getElementById('accessCode');if(input&&!input.value)input.focus();else document.querySelector('.xi-account-close').focus()},30)};
+ const close=()=>{modal.hidden=true;document.body.classList.remove('xi-account-open');trigger.focus()};
+ window.xiOpenAccount=open;
+ trigger.addEventListener('click',open);
+ modal.querySelector('.xi-account-close').addEventListener('click',close);
+ modal.querySelector('.xi-account-done').addEventListener('click',close);
+ modal.addEventListener('click',e=>{if(e.target===modal)close()});
+ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!modal.hidden)close()});
+ const code=document.getElementById('accessCode');
+ if(code){code.placeholder='Workspace access code';code.autocomplete='current-password';code.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();localStorage.setItem('maw-access-code-v1',code.value.trim());document.getElementById('chatStatus').textContent='Access code saved on this device.';close();document.getElementById('chatInput').focus()}})}
+ document.getElementById('forgetAccessCodeBtn')?.addEventListener('click',()=>{document.getElementById('xiAccountFootnote').textContent='Saved access code cleared from this device.'});
+ document.getElementById('cloudStatus')?.setAttribute('aria-live','polite');
+})();
 </script>
 </body></html>
