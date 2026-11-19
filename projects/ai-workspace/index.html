@@ -202,103 +202,22 @@ body{background:var(--studio-bg)!important;color:var(--studio-text)!important}
 }
 
 
-/* Account & authentication live in a dedicated layer, never in the chat composer */
-.xi-account-trigger{width:39px;height:39px;display:inline-grid;place-items:center;border:1px solid var(--studio-line);border-radius:12px;background:var(--studio-surface);color:var(--studio-text);cursor:pointer;transition:background .2s,border-color .2s,transform .2s}
-.xi-account-trigger:hover{background:var(--studio-raised);border-color:color-mix(in srgb,var(--studio-accent) 40%,var(--studio-line));transform:translateY(-1px)}
-.xi-account-trigger svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
-.xi-account-modal[hidden]{display:none!important}
-.xi-account-modal{position:fixed;inset:0;z-index:1000;display:grid;place-items:center;padding:18px;background:rgba(7,9,18,.58);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
-.xi-account-sheet{width:min(520px,100%);max-height:min(82dvh,720px);overflow:auto;border:1px solid var(--studio-line);border-radius:23px;background:var(--studio-surface);color:var(--studio-text);box-shadow:0 28px 100px #0005;animation:xiSheetIn .22s ease-out}
-.xi-account-sheet>header{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;padding:25px 26px 20px;border-bottom:1px solid var(--studio-line)}
-.xi-account-sheet>header small{font-size:10px;font-weight:800;letter-spacing:.16em;color:var(--studio-accent)}
-.xi-account-sheet h2{margin:7px 0 5px;font-size:23px;letter-spacing:-.045em}
-.xi-account-sheet p{margin:0;color:var(--studio-muted);font-size:12px;line-height:1.65}
-.xi-account-close{width:34px;height:34px;border:1px solid var(--studio-line);border-radius:10px;background:var(--studio-raised);color:var(--studio-text);font-size:22px;cursor:pointer}
-.xi-account-body{padding:22px 26px}
-.xi-account-section{margin-bottom:12px}
-.xi-account-section-title{font-size:13px;font-weight:750;margin-bottom:4px}
-.xi-account-section p{font-size:11px}
-.xi-account-body .access-row{display:flex!important;flex-wrap:wrap;gap:9px;margin:14px 0 0!important;padding:13px;border:1px solid var(--studio-line);border-radius:14px;background:var(--studio-raised)}
-.xi-account-body .access-row input{flex:1 1 210px;width:auto!important;max-width:none!important;min-width:0;padding:11px 12px!important;border:1px solid var(--studio-line)!important;border-radius:10px!important;background:var(--studio-surface)!important;color:var(--studio-text)!important;font-size:13px!important}
-.xi-account-body #chatStatus{flex-basis:100%;font-size:10px;color:var(--studio-muted)}
-.xi-account-body #forgetAccessCodeBtn{font-size:10px}
-.xi-account-divider{height:1px;background:var(--studio-line);margin:23px 0}
-.xi-account-body .cloud-row{display:flex!important;flex-wrap:wrap;gap:9px;margin:14px 0 0!important;padding:13px;border:1px solid var(--studio-line);border-radius:14px;background:var(--studio-raised)}
-.xi-account-body .cloud-row input{flex:1 1 200px;width:auto!important;min-width:0!important;padding:11px 12px!important;border:1px solid var(--studio-line)!important;border-radius:10px!important;background:var(--studio-surface)!important;color:var(--studio-text)!important;font-size:13px!important}
-.xi-account-body .cloud-row span{flex-basis:100%;font-size:10px;color:var(--studio-muted)}
-.xi-account-sheet>footer{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:15px 26px 20px;border-top:1px solid var(--studio-line)}
-.xi-account-sheet>footer span{font-size:10px;color:var(--studio-muted)}
-.xi-account-done{border:0;border-radius:10px;background:var(--studio-accent);color:white;padding:10px 17px;font-weight:700;cursor:pointer}
-.composer-wrap>.cloud-row,.composer-wrap>.access-row{display:none!important}
-.composer-note{justify-content:flex-start!important}
-@keyframes xiSheetIn{from{opacity:0;transform:translateY(9px) scale(.985)}to{opacity:1;transform:translateY(0) scale(1)}}
-@media(max-width:520px){.xi-account-modal{align-items:end;padding:0}.xi-account-sheet{width:100%;max-height:88dvh;border-radius:22px 22px 0 0}.xi-account-sheet>header,.xi-account-body{padding-left:20px;padding-right:20px}.xi-account-sheet>footer{padding-left:20px;padding-right:20px}}
-@media(prefers-reduced-motion:reduce){.xi-account-sheet{animation:none}}
-
- 
-/* XI RESPONSE TYPOGRAPHY + RICH CONTENT */
-.message.assistant .bubble{font-size:15px!important;line-height:1.88!important;letter-spacing:-.006em}
-.message.assistant .bubble> :first-child{margin-top:0}
-.message.assistant .bubble h1,.message.assistant .bubble h2,.message.assistant .bubble h3{color:var(--studio-text);letter-spacing:-.035em;line-height:1.3;margin:1.35em 0 .55em;font-weight:720}
-.message.assistant .bubble h1{font-size:1.55em}.message.assistant .bubble h2{font-size:1.3em}.message.assistant .bubble h3{font-size:1.1em}
-.message.assistant .bubble p{margin:.72em 0;color:var(--studio-text)!important}
-.message.assistant .bubble ul,.message.assistant .bubble ol{padding-left:1.55em;margin:.7em 0 1em}
-.message.assistant .bubble li{padding-left:.25em;margin:.35em 0;line-height:1.8}
-.message.assistant .bubble li::marker{color:var(--studio-accent)}
-.message.assistant .bubble blockquote{margin:1em 0;padding:.15em 0 .15em 1em;border-left:3px solid var(--studio-accent);color:var(--studio-muted)}
-.message.assistant .bubble blockquote p{color:inherit!important}
-.message.assistant .bubble table{display:block;max-width:100%;overflow-x:auto;border-collapse:collapse;margin:1em 0;font-size:.92em}
-.message.assistant .bubble th,.message.assistant .bubble td{padding:10px 13px;border:1px solid var(--studio-line);text-align:left;white-space:normal}
-.message.assistant .bubble th{background:var(--studio-raised);font-weight:700}
-.message.assistant .bubble hr{border:0;border-top:1px solid var(--studio-line);margin:1.4em 0}
-.message.assistant .bubble :not(pre)>code{padding:.15em .42em;border-radius:6px;background:var(--studio-raised);color:var(--studio-accent);font: .88em ui-monospace,monospace}
-.message.assistant .code-panel{margin:1.1em 0;border-radius:14px;overflow:hidden;background:#10131c!important;border:1px solid #34394a!important}
-.message.assistant .code-panel pre{margin:0;padding:17px;overflow:auto;max-width:100%;font:13px/1.72 ui-monospace,SFMono-Regular,Consolas,monospace;tab-size:2}
-.message.assistant .code-panel code{font:inherit;text-shadow:none}
-.message.assistant .code-panel-head{min-height:42px;padding:8px 12px;background:#1b1e29!important;border-bottom:1px solid #34394a!important}
-.message.assistant .code-meta{display:flex;align-items:center;gap:8px}
-.message.assistant .code-meta small{opacity:.55;font-size:9px}
-.message.assistant .code-dot{width:7px;height:7px;border-radius:50%;background:#8a84ff}
-.message.assistant .code-copy{font-size:11px;padding:6px 10px}
-.message.assistant .katex-display{overflow-x:auto;overflow-y:hidden;padding:8px 0}
-.message.assistant .bubble a{color:var(--studio-accent)!important;text-underline-offset:3px}
-.message.assistant .bubble a:hover{text-decoration-thickness:2px}
-.message.assistant .bubble .katex{font-size:1.03em}
-@media(max-width:700px){.message.assistant .bubble{font-size:14px!important;line-height:1.82!important}.message.assistant .code-panel pre{font-size:12px;padding:13px}.message.assistant .bubble th,.message.assistant .bubble td{padding:8px 10px}}
-
-/* Xi response typography and rich-content system */
-.message.assistant .bubble{width:100%!important;max-width:920px!important;margin-inline:auto!important;white-space:normal!important;overflow-wrap:anywhere;word-break:normal}
-.message.assistant .bubble>p{margin:0 0 1.05em;line-height:1.88}
-.message.assistant .bubble>p:last-child{margin-bottom:0}
-.message.assistant .bubble h1,.message.assistant .bubble h2,.message.assistant .bubble h3,.message.assistant .bubble h4{color:var(--studio-text);letter-spacing:-.035em;line-height:1.3;margin:1.45em 0 .55em;font-weight:760}
-.message.assistant .bubble h1{font-size:1.65em}.message.assistant .bubble h2{font-size:1.38em}.message.assistant .bubble h3{font-size:1.15em}.message.assistant .bubble h4{font-size:1.02em}
-.message.assistant .bubble ul,.message.assistant .bubble ol{padding-left:1.55em;margin:.55em 0 1.1em;line-height:1.85}
-.message.assistant .bubble li{padding-left:.22em;margin:.22em 0}
-.message.assistant .bubble li::marker{color:var(--studio-accent)}
-.message.assistant .bubble blockquote{margin:1em 0;padding:.25em 0 .25em 1em;border-left:3px solid var(--studio-accent);color:var(--studio-muted);background:color-mix(in srgb,var(--studio-accent) 5%,transparent);border-radius:0 10px 10px 0}
-.message.assistant .bubble blockquote p{margin:.45em 0}
-.message.assistant .bubble hr{border:0;border-top:1px solid var(--studio-line);margin:1.5em 0}
-.message.assistant .bubble table{display:block;width:100%;max-width:100%;overflow-x:auto;border-collapse:separate;border-spacing:0;margin:1em 0 1.25em;font-size:.91em;border:1px solid var(--studio-line);border-radius:12px}
-.message.assistant .bubble th,.message.assistant .bubble td{padding:10px 13px;text-align:left;border-right:1px solid var(--studio-line);border-bottom:1px solid var(--studio-line);min-width:100px}
-.message.assistant .bubble th{background:var(--studio-raised);font-weight:750;color:var(--studio-text)}
-.message.assistant .bubble tr:last-child td{border-bottom:0}.message.assistant .bubble th:last-child,.message.assistant .bubble td:last-child{border-right:0}
-.message.assistant .bubble :not(pre)>code{font: .88em ui-monospace,SFMono-Regular,Consolas,monospace;padding:.16em .42em;border-radius:6px;background:color-mix(in srgb,var(--studio-accent) 10%,var(--studio-raised));color:var(--studio-text);border:1px solid var(--studio-line)}
-.message.assistant .bubble a{color:var(--studio-accent);text-decoration:underline;text-decoration-color:color-mix(in srgb,var(--studio-accent) 45%,transparent);text-underline-offset:3px}
-.message.assistant .bubble a:hover{text-decoration-thickness:2px}
-.message.assistant .bubble img{max-width:100%;height:auto;border-radius:12px}
-.message.assistant .bubble .katex-display{overflow-x:auto;overflow-y:hidden;padding:.45em 0}
-.message.assistant .bubble .code-panel{margin:1.15em 0 1.3em;border-color:var(--studio-line);border-radius:14px;background:#10121a;box-shadow:0 8px 24px #00000012}
-.message.assistant .bubble .code-panel-head{padding:10px 13px;background:#191b27;border-color:#ffffff12}
-.message.assistant .bubble .code-panel pre{padding:16px;max-height:560px;overflow:auto;font-size:12.5px;line-height:1.72;tab-size:2}
-.message.assistant .bubble .code-panel code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace}
-.message.assistant .bubble .copy-snippet{margin-top:12px}
-.message.assistant .bubble.xi-streaming{white-space:pre-wrap!important;max-width:920px!important;margin-inline:auto!important}
-@media(max-width:650px){
- .message.assistant .bubble{font-size:14px!important;line-height:1.82!important}
- .message.assistant .bubble h1{font-size:1.45em}.message.assistant .bubble h2{font-size:1.25em}
- .message.assistant .bubble th,.message.assistant .bubble td{padding:8px 10px;min-width:88px}
- .message.assistant .bubble .code-panel pre{font-size:11.5px;padding:13px}
-}
+/* Dedicated account panel */
+.access-row,.cloud-row{display:none!important}
+.xi-account-trigger{width:40px;height:40px;border:1px solid var(--studio-line);border-radius:13px;background:var(--studio-surface);color:var(--studio-text);display:grid;place-items:center;cursor:pointer;font-size:18px}
+.xi-account-trigger:hover{background:var(--studio-raised)}
+.xi-account-backdrop{position:fixed;inset:0;z-index:1000;background:#0809109c;backdrop-filter:blur(8px);display:grid;place-items:center;padding:20px;opacity:0;visibility:hidden;transition:opacity .2s ease,visibility .2s ease}
+.xi-account-backdrop.open{opacity:1;visibility:visible}
+.xi-account-dialog{width:min(480px,100%);max-height:min(760px,90dvh);overflow:auto;background:var(--studio-panel);color:var(--studio-text);border:1px solid var(--studio-line);border-radius:24px;padding:24px;box-shadow:0 24px 90px #0005;transform:translateY(10px);transition:transform .2s ease}
+.xi-account-backdrop.open .xi-account-dialog{transform:translateY(0)}
+.xi-account-head{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:20px}
+.xi-account-head h2{font-size:20px;margin:0}.xi-account-close{border:0;background:var(--studio-raised);color:inherit;border-radius:10px;width:36px;height:36px;font-size:20px;cursor:pointer}
+.xi-account-section{padding:16px 0;border-top:1px solid var(--studio-line)}.xi-account-section h3{font-size:14px;margin:0 0 6px}.xi-account-section p{font-size:12px;color:var(--studio-muted);margin:0 0 14px}
+.xi-account-section .access-row,.xi-account-section .cloud-row{display:flex!important;flex-wrap:wrap;gap:10px;align-items:center}
+.xi-account-section input{min-width:0;flex:1}
+.xi-account-foot{font-size:12px;color:var(--studio-muted);margin-top:16px}
+@media(max-width:600px){.xi-account-backdrop{align-items:end;padding:10px}.xi-account-dialog{border-radius:24px 24px 16px 16px;padding:20px;max-height:88dvh}}
+@media(prefers-reduced-motion:reduce){.xi-account-backdrop,.xi-account-dialog{transition:none}}
 </style></head>
 <body>
 <div class="app">
@@ -315,18 +234,11 @@ body{background:var(--studio-bg)!important;color:var(--studio-text)!important}
 <section class="chat-card">
   <div class="chat-head"><div class="assistant-id"><div class="mini-mascot"></div><div><b>Xi</b><small>Personal AI · Ready to help</small></div></div><div class="chat-head-actions"><select id="conversationPicker" class="ghost" aria-label="Choose conversation"><option value="">Recent chats</option></select><button class="ghost" id="clearChatBtn">＋ New chat</button></div></div>
   <div class="messages" id="chatlog" aria-live="polite"><div class="empty-state" id="emptyState"><div class="mascot"><div class="mascot-orbit"></div><div class="mascot-core"></div><i class="spark"></i></div><h2>Hey bro, I'm <span class="accent">Xi.</span></h2><p>Your ideas deserve room to grow. Ask me anything, build a plan, explore an idea, or work through a difficult problem.</p></div></div>
-  <div class="composer-wrap"><div class="cloud-row" id="cloudLogin"><input id="cloudEmail" type="email" autocomplete="email" placeholder="Email for cloud sync" aria-label="Email for cloud sync"><button class="ghost" id="cloudLoginBtn" type="button">Send login link</button><span id="cloudStatus">Cloud sync off</span></div><div class="cloud-row hidden" id="cloudUser"><span id="cloudUserLabel"></span><button class="ghost" id="cloudLogoutBtn" type="button">Sign out</button></div><div class="access-row"><input id="accessCode" type="password" placeholder="Workspace access code" autocomplete="current-password" aria-label="Workspace access code"><span id="chatStatus">Ready · Chats save on this device.</span><button class="ghost" id="forgetAccessCodeBtn" type="button" title="Forget saved access code">Forget code</button></div><div class="composer"><textarea id="chatInput" rows="1" maxlength="5000" placeholder="Message Xi..."></textarea><button class="send" id="sendBtn" aria-label="Send message">↑</button></div><div class="composer-note"><span>Enter to send · Shift + Enter for new line</span></div></div>
+  <div class="composer-wrap"><div class="cloud-row" id="cloudLogin"><input id="cloudEmail" type="email" autocomplete="email" placeholder="Email for cloud sync" aria-label="Email for cloud sync"><button class="ghost" id="cloudLoginBtn" type="button">Send login link</button><span id="cloudStatus">Cloud sync off</span></div><div class="cloud-row hidden" id="cloudUser"><span id="cloudUserLabel"></span><button class="ghost" id="cloudLogoutBtn" type="button">Sign out</button></div><div class="access-row"><input id="accessCode" type="password" placeholder="Workspace access code" autocomplete="current-password" aria-label="Workspace access code"><span id="chatStatus">Ready · Chats save on this device.</span><button class="ghost" id="forgetAccessCodeBtn" type="button" title="Forget saved access code">Forget code</button></div><div class="composer"><textarea id="chatInput" rows="1" maxlength="5000" placeholder="Message Xi..."></textarea><button class="send" id="sendBtn" aria-label="Send message">↑</button></div><div class="composer-note"><span>Enter to send · Shift + Enter for new line</span><span>Access code remembered on this device · use only on your personal device</span></div></div>
 </section>
 
 </div><footer class="footer">MAT-STUDIO · Xi · Built for ideas that matter</footer>
 </main></div>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.11.1/styles/github-dark.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css">
-<script defer src="https://cdn.jsdelivr.net/npm/marked@15.0.12/marked.min.js"></script>
-<script defer src="https://cdn.jsdelivr.net/npm/dompurify@3.2.6/dist/purify.min.js"></script>
-<script defer src="https://cdn.jsdelivr.net/npm/highlight.js@11.11.1/lib/highlight.min.js"></script>
-<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"></script>
-<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 const $=id=>document.getElementById(id);
@@ -360,35 +272,40 @@ async function copyToClipboard(value,button){
 function makeCopyButton(value,compact=false){
   const button=document.createElement('button');button.type='button';button.className=compact?'inline-copy':'copy-snippet';button.textContent=compact?'⧉':'Copy';button.setAttribute('aria-label','Copy this item');button.title='Copy to clipboard';button.addEventListener('click',()=>copyToClipboard(value,button));return button;
 }
-function escapeHTML(value){return String(value).replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]))}
-function markdownHTML(value){
-  if(!window.marked||!window.DOMPurify)return '<p>'+escapeHTML(value).replace(/\n/g,'<br>')+'</p>';
-  const renderer=new marked.Renderer();
-  renderer.code=({text,lang})=>{
-    const language=(lang||'text').split(/[\s,]/)[0].toLowerCase();
-    let highlighted=escapeHTML(text);
-    if(window.hljs&&language&&language!=='text'&&hljs.getLanguage(language)){try{highlighted=hljs.highlight(text,{language}).value}catch{}}
-    return '<section class="code-panel"><div class="code-panel-head"><div class="code-meta"><i class="code-dot"></i><span class="code-language">'+escapeHTML(language.toUpperCase())+'</span><small>CODE BLOCK</small></div><button type="button" class="copy-snippet code-copy" data-copy-code="1">Copy code</button></div><pre tabindex="0" aria-label="'+escapeHTML(language)+' code"><code class="language-'+escapeHTML(language)+'">'+highlighted+'</code></pre></section>';
-  };
-  marked.setOptions({gfm:true,breaks:false,renderer});
-  return DOMPurify.sanitize(marked.parse(String(value)),{USE_PROFILES:{html:true}});
+function appendFormattedText(target,value){
+  const parts=value.split(/(`[^`\n]+`)/g);
+  parts.forEach(part=>{
+    if(part.startsWith('`')&&part.endsWith('`')&&part.length>2){const code=document.createElement('code');code.className='inline-code';code.textContent=part.slice(1,-1);const group=document.createElement('span');group.className='inline-code-group';group.append(code,makeCopyButton(part.slice(1,-1),true));target.append(group)}
+    else target.append(document.createTextNode(part));
+  });
 }
 function renderAssistantContent(bubble,value){
-  const source=String(value??'');
-  bubble.innerHTML=markdownHTML(source);
-  bubble.querySelectorAll('[data-copy-code]').forEach(button=>{
-    const code=button.closest('.code-panel')?.querySelector('pre code');
-    button.addEventListener('click',()=>copyToClipboard(code?.textContent||'',button));
+  const blocks=value.split(/```([\s\S]*?)```/g);
+  blocks.forEach((part,index)=>{
+    if(index%2===1){
+      const match=part.match(/^([\w+#.-]+)?\s*\n/);
+      const language=match?.[1]||'Plain text';
+      const lines=match?part.slice(match[0].length):part;
+      const panel=document.createElement('section');panel.className='code-panel';
+      const head=document.createElement('div');head.className='code-panel-head';
+      const meta=document.createElement('div');meta.className='code-meta';
+      const dot=document.createElement('i');dot.className='code-dot';
+      const label=document.createElement('span');label.className='code-language';label.textContent=language.toUpperCase();
+      const hint=document.createElement('small');hint.textContent='CODE BLOCK';
+      meta.append(dot,label,hint);
+      const copy=makeCopyButton(lines);copy.textContent='Copy code';copy.classList.add('code-copy');
+      head.append(meta,copy);
+      const pre=document.createElement('pre');pre.setAttribute('tabindex','0');pre.setAttribute('aria-label',language+' code');
+      const code=document.createElement('code');code.textContent=lines;pre.append(code);
+      panel.append(head,pre);bubble.append(panel);
+    }else if(part){
+      const chunks=part.split(/(https?:\/\/[^\s<]+)/g);
+      chunks.forEach(chunk=>{
+        if(/^https?:\/\//.test(chunk)){const group=document.createElement('span');group.className='inline-code-group';const link=document.createElement('a');link.href=chunk.replace(/[),.!?]+$/,'');link.textContent=chunk;link.target='_blank';link.rel='noopener noreferrer';group.append(link,makeCopyButton(link.href,true));bubble.append(group)}
+        else appendFormattedText(bubble,chunk);
+      });
+    }
   });
-  if(window.renderMathInElement){
-    try{
-      renderMathInElement(bubble,{delimiters:[
-        {left:'$$',right:'$$',display:true},
-        {left:'\\[',right:'\\]',display:true},
-        {left:'\\(',right:'\\)',display:false}
-      ],throwOnError:false});
-    }catch(error){/* Keep readable source if math rendering fails. */}
-  }
 }
 function addMessage(role,text){
   const wrap=document.createElement('div');wrap.className='message '+role;
@@ -440,167 +357,7 @@ function setThinking(on){$('sendBtn').disabled=on;$('chatInput').disabled=on;$('
 async function sendChat(){
   if(isSending)return;
   const text=$('chatInput').value.trim(),code=$('accessCode').value.trim()||localStorage.getItem('maw-access-code-v1')||'';
-  if(!code){$('chatStatus').textContent='Enter your workspace access code.';window.xiOpenAccount?.();return}
-  if(!text)return;isSending=true;$('chatInput').value='';chatHistory.push({role:'user',content:text});if(chatHistory.length>16)chatHistory=chatHistory.slice(-16);renderChat();saveConversation([],false);setThinking(true);
-  let assistantMessage=null;
-  try{
-    const response=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({accessCode:code,messages:chatHistory,stream:true})});
-    if(!response.ok){
-      const data=await response.json().catch(()=>({}));
-      if(response.status===401){localStorage.removeItem('maw-access-code-v1');sessionStorage.removeItem('maw-session-code');$('accessCode').value=''}
-      throw new Error(data.error||(response.status===429?'Too many requests · wait a minute and try again.':'Request failed'));
-    }
-    if(!response.body||typeof response.body.getReader!=='function')throw new Error('Streaming is not supported by this browser.');
-    localStorage.setItem('maw-access-code-v1',code);sessionStorage.setItem('maw-session-code',code);
-    assistantMessage={role:'assistant',content:''};chatHistory.push(assistantMessage);addMessage('assistant','');
-    const bubble=$('chatlog').lastElementChild?.querySelector('.bubble');
-    const reader=response.body.getReader(),decoder=new TextDecoder();let buffer='',model='openrouter/free';
-    const processFrame=frame=>{
-      const dataLines=frame.split(/\r?\n/).filter(line=>line.startsWith('data:'));
-      for(const line of dataLines){
-        const raw=line.slice(5).trim();if(!raw)continue;
-        let packet;try{packet=JSON.parse(raw)}catch{continue}
-        if(packet.error)throw new Error(packet.error);
-        if(typeof packet.token==='string'&&packet.token){assistantMessage.content+=packet.token;if(bubble){bubble.textContent=assistantMessage.content;bubble.classList.add('xi-streaming')} $('chatlog').scrollTop=$('chatlog').scrollHeight}
-        if(packet.done&&packet.model)model=packet.model;
-      }
-    };
-    while(true){
-      const part=await reader.read();if(part.done)break;
-      buffer+=decoder.decode(part.value,{stream:true});buffer=buffer.replace(/\r\n/g,'\n');
-      let boundary;while((boundary=buffer.indexOf('\n\n'))!==-1){const frame=buffer.slice(0,boundary);buffer=buffer.slice(boundary+2);processFrame(frame)}
-    }
-    buffer+=decoder.decode().replace(/\r\n/g,'\n');if(buffer.trim())processFrame(buffer);
-    if(!assistantMessage.content.trim())throw new Error('Xi returned an empty response. Please try again.');
-    if(chatHistory.length>16)chatHistory=chatHistory.slice(-16);
-    renderChat();saveConversation([{role:'user',content:text},{role:'assistant',content:assistantMessage.content}]);
-    $('chatStatus').textContent='Model: '+model+(currentUser?' · Cloud synced':' · Saved on this device');
-  }catch(error){
-    if(assistantMessage&&assistantMessage.content.trim()){
-      renderChat();saveConversation([{role:'user',content:text},{role:'assistant',content:assistantMessage.content}]);
-      $('chatStatus').textContent='Stream interrupted · partial answer saved.';
-    }else{
-      if(assistantMessage&&chatHistory[chatHistory.length-1]===assistantMessage)chatHistory.pop();
-      if(chatHistory[chatHistory.length-1]?.role==='user')chatHistory.pop();
-      renderChat();saveConversation();$('chatStatus').textContent=error.message||'Could not send message.';
-    }
-  }finally{isSending=false;setThinking(false);$('chatInput').focus()}
-}
-$('sendBtn').addEventListener('click',sendChat);$('chatInput').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendChat()}});
-$('forgetAccessCodeBtn').addEventListener('click',()=>{localStorage.removeItem('maw-access-code-v1');sessionStorage.removeItem('maw-session-code');$('accessCode').value='';$('chatStatus').textContent='Saved access code forgotten on this device.'});
-$('cloudLoginBtn').addEventListener('click',async()=>{
-  const email=$('cloudEmail').value.trim();if(!supabaseClient){$('cloudStatus').textContent='Cloud service unavailable';return}
-  if(!email){$('cloudStatus').textContent='Enter your email first';$('cloudEmail').focus();return}
-  $('cloudLoginBtn').disabled=true;$('cloudStatus').textContent='Sending secure link…';
-  try{const {error}=await supabaseClient.auth.signInWithOtp({email,options:{emailRedirectTo:window.location.href.split('#')[0],shouldCreateUser:true}});if(error)throw error;$('cloudStatus').textContent='Login link sent · check your email'}
-  catch(e){$('cloudStatus').textContent=e.message||'Could not send login link'}finally{$('cloudLoginBtn').disabled=false}
-});
-$('cloudLogoutBtn').addEventListener('click',async()=>{if(!supabaseClient)return;const {error}=await supabaseClient.auth.signOut();if(error){$('cloudStatus').textContent=error.message;return}currentUser=null;$('cloudLogin').classList.remove('hidden');$('cloudUser').classList.add('hidden');$('cloudStatus').textContent='Signed out · new chats stay on this device'});
-function showAuth(){
-  const signed=!!currentUser;$('cloudLogin').classList.toggle('hidden',signed);$('cloudUser').classList.toggle('hidden',!signed);
-  $('cloudUserLabel').textContent=signed?'Signed in · '+(currentUser.email||'account'):'';
-  if(signed){$('cloudStatus').textContent='Connecting cloud…';loadCloudConversations()}
-}
-async function initCloud(){
-  try{
-    const cfgRes=await fetch('/api/supabase-config',{cache:'no-store'});if(!cfgRes.ok)throw new Error('Cloud config unavailable');
-    const cfg=await cfgRes.json();if(!window.supabase?.createClient)throw new Error('Supabase client did not load');
-    supabaseClient=window.supabase.createClient(cfg.url,cfg.publishableKey,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
-    const {data,error}=await supabaseClient.auth.getSession();if(error)throw error;currentUser=data.session?.user||null;showAuth();
-    supabaseClient.auth.onAuthStateChange((_event,session)=>{currentUser=session?.user||null;showAuth()});
-  }catch(e){$('cloudStatus').textContent='Cloud unavailable · '+(e.message||'offline')}
-}
-if(conversations.length)loadConversation(conversations[0].id);else updateHistory();
-initCloud();
-</script>
-<script>
-(()=>{const root=document.documentElement,key='mat-studio-theme';let saved=null;try{saved=localStorage.getItem(key)}catch{}const systemDark=window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches;const header=document.querySelector('.top-actions');if(header&&!document.getElementById('studioThemeToggle')){const b=document.createElement('button');b.id='studioThemeToggle';b.className='studio-theme-toggle';b.type='button';b.title='Toggle appearance';b.addEventListener('click',()=>set(root.dataset.studioTheme==='dark'?'light':'dark'));header.appendChild(b)}function set(t,save=true){root.dataset.studioTheme=t;const b=document.getElementById('studioThemeToggle');if(b){b.textContent=t==='dark'?'☀':'☾';b.setAttribute('aria-label',t==='dark'?'Switch to light appearance':'Switch to dark appearance')}if(save){try{localStorage.setItem(key,t)}catch{}}}set(saved||(systemDark?'dark':'light'),false)})();
-</script>
-<script>
-(()=>{const actions=document.querySelector('.top-actions'),sidebar=document.querySelector('.sidebar');if(!actions||!sidebar||document.querySelector('.xi-mobile-menu'))return;const b=document.createElement('button');b.className='xi-mobile-menu';b.type='button';b.textContent='☰';b.setAttribute('aria-label','Open conversation navigation');b.setAttribute('aria-expanded','false');actions.prepend(b);const close=()=>{document.body.classList.remove('xi-nav-open');b.setAttribute('aria-expanded','false')};b.addEventListener('click',()=>{const open=document.body.classList.toggle('xi-nav-open');b.setAttribute('aria-expanded',String(open))});document.addEventListener('keydown',e=>{if(e.key==='Escape')close()});document.addEventListener('click',e=>{if(document.body.classList.contains('xi-nav-open')&&!sidebar.contains(e.target)&&!b.contains(e.target))close()});sidebar.addEventListener('click',e=>{if(e.target.closest('.history button')||e.target.closest('.new-chat'))close()});})();
-</script>
-
-<script>
-(()=>{
- const actions=document.querySelector('.top-actions'),wrap=document.querySelector('.composer-wrap');
- if(!actions||!wrap||document.getElementById('xiAccountModal'))return;
- const trigger=document.createElement('button');
- trigger.type='button';trigger.className='xi-account-trigger';trigger.id='xiAccountTrigger';
- trigger.setAttribute('aria-label','Account and sign-in settings');trigger.title='Account & sign-in';trigger.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path d="M4.8 20c.7-3.7 3.2-5.5 7.2-5.5s6.5 1.8 7.2 5.5"/></svg>';
- actions.prepend(trigger);
- const modal=document.createElement('div');modal.className='xi-account-modal';modal.id='xiAccountModal';modal.hidden=true;
- modal.innerHTML='<section class="xi-account-sheet" role="dialog" aria-modal="true" aria-labelledby="xiAccountTitle"><header><div><small>XI WORKSPACE</small><h2 id="xiAccountTitle">Account & access</h2><p>Sign-in and workspace security, kept separate from your conversations.</p></div><button type="button" class="xi-account-close" aria-label="Close">×</button></header><div class="xi-account-body"><div class="xi-account-section"><div class="xi-account-section-title">Workspace access</div><p>Enter your private access code to use Xi.</p></div><div id="xiAccessMount"></div><div class="xi-account-divider"></div><div class="xi-account-section"><div class="xi-account-section-title">Cloud account</div><p>Optional · sign in to sync conversations across devices.</p></div><div id="xiCloudMount"></div></div><footer><span id="xiAccountFootnote">Your access code stays on this device.</span><button type="button" class="xi-account-done">Done</button></footer></section>';
- document.body.append(modal);
- const access=document.querySelector('.access-row'),login=document.getElementById('cloudLogin'),user=document.getElementById('cloudUser');
- if(access)document.getElementById('xiAccessMount').append(access);
- if(login)document.getElementById('xiCloudMount').append(login);
- if(user)document.getElementById('xiCloudMount').append(user);
- const open=()=>{modal.hidden=false;document.body.classList.add('xi-account-open');setTimeout(()=>{const input=document.getElementById('accessCode');if(input&&!input.value)input.focus();else document.querySelector('.xi-account-close').focus()},30)};
- const close=()=>{modal.hidden=true;document.body.classList.remove('xi-account-open');trigger.focus()};
- window.xiOpenAccount=open;
- trigger.addEventListener('click',open);
- modal.querySelector('.xi-account-close').addEventListener('click',close);
- modal.querySelector('.xi-account-done').addEventListener('click',close);
- modal.addEventListener('click',e=>{if(e.target===modal)close()});
- document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!modal.hidden)close()});
- const code=document.getElementById('accessCode');
- if(code){code.placeholder='Workspace access code';code.autocomplete='current-password';code.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();localStorage.setItem('maw-access-code-v1',code.value.trim());document.getElementById('chatStatus').textContent='Access code saved on this device.';close();document.getElementById('chatInput').focus()}})}
- document.getElementById('forgetAccessCodeBtn')?.addEventListener('click',()=>{document.getElementById('xiAccountFootnote').textContent='Saved access code cleared from this device.'});
- document.getElementById('cloudStatus')?.setAttribute('aria-live','polite');
-})();
-</script>
-</body></html>,right:'
-function addMessage(role,text){
-  const wrap=document.createElement('div');wrap.className='message '+role;
-  const avatar=document.createElement('div');avatar.className='avatar';avatar.textContent=role==='user'?'You':'✦';
-  const bubble=document.createElement('div');bubble.className='bubble';
-  if(role==='assistant'){renderAssistantContent(bubble,text);bubble.append(makeCopyButton(text))}
-  else bubble.textContent=text;
-  wrap.append(avatar,bubble);$('chatlog').append(wrap);$('chatlog').scrollTop=$('chatlog').scrollHeight;
-}
-function renderChat(){const log=$('chatlog');log.innerHTML='';if(!chatHistory.length){const empty=document.createElement('div');empty.className='empty-state';empty.innerHTML='<div class="mascot"><div class="mascot-orbit"></div><div class="mascot-core"></div><i class="spark"></i></div><h2>Hey bro, I\'m <span class="accent">Xi.</span></h2><p>Your ideas deserve room to grow. Ask me anything, build a plan, explore an idea, or work through a difficult problem.</p><div class="suggestions"><button data-prompt="Help me plan a new project from zero.">Plan a project</button><button data-prompt="Review this idea critically and find its weaknesses.">Critique an idea</button><button data-prompt="Teach me something step by step.">Learn something</button></div>';log.append(empty);empty.querySelectorAll('[data-prompt]').forEach(b=>b.addEventListener('click',()=>{$('chatInput').value=b.dataset.prompt;$('chatInput').focus()}));return}chatHistory.forEach(m=>addMessage(m.role,m.content))}
-function saveConversation(newMessages=[],syncNow=true){
-  if(!chatHistory.length)return;
-  const first=chatHistory.find(m=>m.role==='user');const title=(first?.content||'New conversation').replace(/\s+/g,' ').slice(0,48);
-  let c=conversations.find(x=>x.id===activeConversationId);
-  if(!c){activeConversationId=currentUser?makeId():String(Date.now());c={id:activeConversationId,title,messages:[],updatedAt:Date.now(),cloud:!!currentUser};conversations.unshift(c)}
-  c.title=title;c.messages=chatHistory.slice(-16);c.updatedAt=Date.now();conversations.sort((a,b)=>(b.updatedAt||0)-(a.updatedAt||0));conversations=conversations.slice(0,30);persist();updateHistory();
-  if(syncNow&&c.cloud&&currentUser)syncConversation(c,newMessages).catch(()=>{$('cloudStatus').textContent='Cloud save failed · check connection'});
-}
-async function syncConversation(c,newMessages=[]){
-  if(!supabaseClient||!currentUser||!c.cloud)return;
-  const {error:upsertError}=await supabaseClient.from('ai_conversations').upsert({id:c.id,user_id:currentUser.id,title:c.title,updated_at:new Date().toISOString()},{onConflict:'id'});
-  if(upsertError)throw upsertError;
-  if(newMessages.length){const {error}=await supabaseClient.from('ai_messages').insert(newMessages.map(m=>({conversation_id:c.id,role:m.role,content:m.content})));if(error)throw error}
-  $('cloudStatus').textContent='Cloud synced · '+(currentUser.email||'signed in');
-}
-async function loadCloudConversations(){
-  if(!supabaseClient||!currentUser||cloudLoading)return;cloudLoading=true;
-  try{
-    const {data,error}=await supabaseClient.from('ai_conversations').select('id,title,updated_at').order('updated_at',{ascending:false}).limit(30);
-    if(error)throw error;
-    const remote=await Promise.all((data||[]).map(async row=>{
-      const {data:msgs,error:msgError}=await supabaseClient.from('ai_messages').select('role,content,created_at').eq('conversation_id',row.id).order('created_at',{ascending:true});
-      if(msgError)throw msgError;
-      const messages=(msgs||[]).map(m=>({role:m.role,content:m.content}));
-      return {id:row.id,title:row.title,messages:messages.slice(-16),updatedAt:Date.parse(row.updated_at)||Date.now(),cloud:true};
-    }));
-    const locals=conversations.filter(c=>!c.cloud);
-    conversations=[...remote,...locals].sort((a,b)=>(b.updatedAt||0)-(a.updatedAt||0)).slice(0,30);persist();updateHistory();
-    if(!chatHistory.length&&remote.length)loadConversation(remote[0].id);
-    $('cloudStatus').textContent='Cloud sync ready · '+remote.length+' saved';
-  }catch(e){$('cloudStatus').textContent='Cloud load issue · '+(e.message||'try again')}finally{cloudLoading=false}
-}
-function loadConversation(id){const c=conversations.find(x=>x.id===id);if(!c)return;activeConversationId=id;chatHistory=Array.isArray(c.messages)?c.messages.slice(-16):[];renderChat();updateHistory();$('chatStatus').textContent=c.cloud?'Restored from cloud':'Restored from this device'}
-function newChat(){activeConversationId=null;chatHistory=[];renderChat();updateHistory();$('chatStatus').textContent='New conversation · saved automatically'}
-$('clearChatBtn').addEventListener('click',newChat);
-$('conversationPicker').addEventListener('change',e=>{if(e.target.value)loadConversation(e.target.value)});
-$('historySearch').addEventListener('input',updateHistory);
-function setThinking(on){$('sendBtn').disabled=on;$('chatInput').disabled=on;$('clearChatBtn').disabled=on;$('newChatBtn').disabled=on;$('conversationPicker').disabled=on;if(on)$('chatStatus').textContent='Xi is thinking…';document.querySelector('.chat-card')?.setAttribute('aria-busy',String(on));$('sendBtn').textContent=on?'…':'↑'}
-async function sendChat(){
-  if(isSending)return;
-  const text=$('chatInput').value.trim(),code=$('accessCode').value.trim()||localStorage.getItem('maw-access-code-v1')||'';
-  if(!code){$('chatStatus').textContent='Enter your workspace access code.';window.xiOpenAccount?.();return}
+  if(!code){$('chatStatus').textContent='Enter your workspace access code.';$('accessCode').focus();return}
   if(!text)return;isSending=true;$('chatInput').value='';chatHistory.push({role:'user',content:text});if(chatHistory.length>16)chatHistory=chatHistory.slice(-16);renderChat();saveConversation([],false);setThinking(true);
   let assistantMessage=null;
   try{
@@ -682,193 +439,17 @@ initCloud();
 
 <script>
 (()=>{
- const actions=document.querySelector('.top-actions'),wrap=document.querySelector('.composer-wrap');
- if(!actions||!wrap||document.getElementById('xiAccountModal'))return;
- const trigger=document.createElement('button');
- trigger.type='button';trigger.className='xi-account-trigger';trigger.id='xiAccountTrigger';
- trigger.setAttribute('aria-label','Account and sign-in settings');trigger.title='Account & sign-in';trigger.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path d="M4.8 20c.7-3.7 3.2-5.5 7.2-5.5s6.5 1.8 7.2 5.5"/></svg>';
- actions.prepend(trigger);
- const modal=document.createElement('div');modal.className='xi-account-modal';modal.id='xiAccountModal';modal.hidden=true;
- modal.innerHTML='<section class="xi-account-sheet" role="dialog" aria-modal="true" aria-labelledby="xiAccountTitle"><header><div><small>XI WORKSPACE</small><h2 id="xiAccountTitle">Account & access</h2><p>Sign-in and workspace security, kept separate from your conversations.</p></div><button type="button" class="xi-account-close" aria-label="Close">×</button></header><div class="xi-account-body"><div class="xi-account-section"><div class="xi-account-section-title">Workspace access</div><p>Enter your private access code to use Xi.</p></div><div id="xiAccessMount"></div><div class="xi-account-divider"></div><div class="xi-account-section"><div class="xi-account-section-title">Cloud account</div><p>Optional · sign in to sync conversations across devices.</p></div><div id="xiCloudMount"></div></div><footer><span id="xiAccountFootnote">Your access code stays on this device.</span><button type="button" class="xi-account-done">Done</button></footer></section>';
- document.body.append(modal);
- const access=document.querySelector('.access-row'),login=document.getElementById('cloudLogin'),user=document.getElementById('cloudUser');
- if(access)document.getElementById('xiAccessMount').append(access);
- if(login)document.getElementById('xiCloudMount').append(login);
- if(user)document.getElementById('xiCloudMount').append(user);
- const open=()=>{modal.hidden=false;document.body.classList.add('xi-account-open');setTimeout(()=>{const input=document.getElementById('accessCode');if(input&&!input.value)input.focus();else document.querySelector('.xi-account-close').focus()},30)};
- const close=()=>{modal.hidden=true;document.body.classList.remove('xi-account-open');trigger.focus()};
- window.xiOpenAccount=open;
- trigger.addEventListener('click',open);
- modal.querySelector('.xi-account-close').addEventListener('click',close);
- modal.querySelector('.xi-account-done').addEventListener('click',close);
- modal.addEventListener('click',e=>{if(e.target===modal)close()});
- document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!modal.hidden)close()});
- const code=document.getElementById('accessCode');
- if(code){code.placeholder='Workspace access code';code.autocomplete='current-password';code.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();localStorage.setItem('maw-access-code-v1',code.value.trim());document.getElementById('chatStatus').textContent='Access code saved on this device.';close();document.getElementById('chatInput').focus()}})}
+ const actions=document.querySelector('.top-actions'),access=document.querySelector('.access-row');
+ const cloudLogin=document.getElementById('cloudLogin'),cloudUser=document.getElementById('cloudUser');
+ if(!actions||document.getElementById('xiAccountModal'))return;
+ const trigger=document.createElement('button');trigger.type='button';trigger.className='xi-account-trigger';trigger.id='xiAccountTrigger';trigger.setAttribute('aria-label','Account and access');trigger.title='Account & access';trigger.textContent='♙';actions.prepend(trigger);
+ const backdrop=document.createElement('div');backdrop.className='xi-account-backdrop';backdrop.id='xiAccountModal';
+ backdrop.innerHTML='<section class="xi-account-dialog" role="dialog" aria-modal="true" aria-labelledby="xiAccountTitle"><header class="xi-account-head"><div><h2 id="xiAccountTitle">Account & access</h2><p class="xi-account-foot">Manage workspace access and cloud sync.</p></div><button type="button" class="xi-account-close" aria-label="Close">×</button></header><div class="xi-account-section"><h3>Workspace access</h3><p>Your private Xi access code.</p><div id="xiAccessSlot"></div></div><div class="xi-account-section"><h3>Cloud account</h3><p>Sign in to sync conversations across devices.</p><div id="xiCloudSlot"></div></div><div class="xi-account-foot" id="xiAccountFootnote">Your conversation stays separate from account settings.</div></section>';
+ document.body.append(backdrop);if(access)document.getElementById('xiAccessSlot').append(access);if(cloudLogin)document.getElementById('xiCloudSlot').append(cloudLogin);if(cloudUser)document.getElementById('xiCloudSlot').append(cloudUser);
+ const close=()=>{backdrop.classList.remove('open');trigger.focus()},open=()=>{backdrop.classList.add('open');backdrop.querySelector('input')?.focus()};window.xiOpenAccount=open;trigger.addEventListener('click',open);
+ backdrop.querySelector('.xi-account-close').addEventListener('click',close);backdrop.addEventListener('click',e=>{if(e.target===backdrop)close()});document.addEventListener('keydown',e=>{if(e.key==='Escape'&&backdrop.classList.contains('open'))close()});
+ const code=document.getElementById('accessCode');code?.addEventListener('keydown',e=>{if(e.key==='Enter'){const value=code.value.trim();if(value){try{localStorage.setItem('maw-access-code-v1',value)}catch{}document.getElementById('chatStatus').textContent='Access code saved on this device.';close();document.getElementById('chatInput').focus()}}});
  document.getElementById('forgetAccessCodeBtn')?.addEventListener('click',()=>{document.getElementById('xiAccountFootnote').textContent='Saved access code cleared from this device.'});
- document.getElementById('cloudStatus')?.setAttribute('aria-live','polite');
-})();
-</script>
-</body></html>,display:false},{left:'\\(',right:'\\)',display:false}],throwOnError:false})}catch{}
-  }
-}
-function addMessage(role,text){
-  const wrap=document.createElement('div');wrap.className='message '+role;
-  const avatar=document.createElement('div');avatar.className='avatar';avatar.textContent=role==='user'?'You':'✦';
-  const bubble=document.createElement('div');bubble.className='bubble';
-  if(role==='assistant'){renderAssistantContent(bubble,text);bubble.append(makeCopyButton(text))}
-  else bubble.textContent=text;
-  wrap.append(avatar,bubble);$('chatlog').append(wrap);$('chatlog').scrollTop=$('chatlog').scrollHeight;
-}
-function renderChat(){const log=$('chatlog');log.innerHTML='';if(!chatHistory.length){const empty=document.createElement('div');empty.className='empty-state';empty.innerHTML='<div class="mascot"><div class="mascot-orbit"></div><div class="mascot-core"></div><i class="spark"></i></div><h2>Hey bro, I\'m <span class="accent">Xi.</span></h2><p>Your ideas deserve room to grow. Ask me anything, build a plan, explore an idea, or work through a difficult problem.</p><div class="suggestions"><button data-prompt="Help me plan a new project from zero.">Plan a project</button><button data-prompt="Review this idea critically and find its weaknesses.">Critique an idea</button><button data-prompt="Teach me something step by step.">Learn something</button></div>';log.append(empty);empty.querySelectorAll('[data-prompt]').forEach(b=>b.addEventListener('click',()=>{$('chatInput').value=b.dataset.prompt;$('chatInput').focus()}));return}chatHistory.forEach(m=>addMessage(m.role,m.content))}
-function saveConversation(newMessages=[],syncNow=true){
-  if(!chatHistory.length)return;
-  const first=chatHistory.find(m=>m.role==='user');const title=(first?.content||'New conversation').replace(/\s+/g,' ').slice(0,48);
-  let c=conversations.find(x=>x.id===activeConversationId);
-  if(!c){activeConversationId=currentUser?makeId():String(Date.now());c={id:activeConversationId,title,messages:[],updatedAt:Date.now(),cloud:!!currentUser};conversations.unshift(c)}
-  c.title=title;c.messages=chatHistory.slice(-16);c.updatedAt=Date.now();conversations.sort((a,b)=>(b.updatedAt||0)-(a.updatedAt||0));conversations=conversations.slice(0,30);persist();updateHistory();
-  if(syncNow&&c.cloud&&currentUser)syncConversation(c,newMessages).catch(()=>{$('cloudStatus').textContent='Cloud save failed · check connection'});
-}
-async function syncConversation(c,newMessages=[]){
-  if(!supabaseClient||!currentUser||!c.cloud)return;
-  const {error:upsertError}=await supabaseClient.from('ai_conversations').upsert({id:c.id,user_id:currentUser.id,title:c.title,updated_at:new Date().toISOString()},{onConflict:'id'});
-  if(upsertError)throw upsertError;
-  if(newMessages.length){const {error}=await supabaseClient.from('ai_messages').insert(newMessages.map(m=>({conversation_id:c.id,role:m.role,content:m.content})));if(error)throw error}
-  $('cloudStatus').textContent='Cloud synced · '+(currentUser.email||'signed in');
-}
-async function loadCloudConversations(){
-  if(!supabaseClient||!currentUser||cloudLoading)return;cloudLoading=true;
-  try{
-    const {data,error}=await supabaseClient.from('ai_conversations').select('id,title,updated_at').order('updated_at',{ascending:false}).limit(30);
-    if(error)throw error;
-    const remote=await Promise.all((data||[]).map(async row=>{
-      const {data:msgs,error:msgError}=await supabaseClient.from('ai_messages').select('role,content,created_at').eq('conversation_id',row.id).order('created_at',{ascending:true});
-      if(msgError)throw msgError;
-      const messages=(msgs||[]).map(m=>({role:m.role,content:m.content}));
-      return {id:row.id,title:row.title,messages:messages.slice(-16),updatedAt:Date.parse(row.updated_at)||Date.now(),cloud:true};
-    }));
-    const locals=conversations.filter(c=>!c.cloud);
-    conversations=[...remote,...locals].sort((a,b)=>(b.updatedAt||0)-(a.updatedAt||0)).slice(0,30);persist();updateHistory();
-    if(!chatHistory.length&&remote.length)loadConversation(remote[0].id);
-    $('cloudStatus').textContent='Cloud sync ready · '+remote.length+' saved';
-  }catch(e){$('cloudStatus').textContent='Cloud load issue · '+(e.message||'try again')}finally{cloudLoading=false}
-}
-function loadConversation(id){const c=conversations.find(x=>x.id===id);if(!c)return;activeConversationId=id;chatHistory=Array.isArray(c.messages)?c.messages.slice(-16):[];renderChat();updateHistory();$('chatStatus').textContent=c.cloud?'Restored from cloud':'Restored from this device'}
-function newChat(){activeConversationId=null;chatHistory=[];renderChat();updateHistory();$('chatStatus').textContent='New conversation · saved automatically'}
-$('clearChatBtn').addEventListener('click',newChat);
-$('conversationPicker').addEventListener('change',e=>{if(e.target.value)loadConversation(e.target.value)});
-$('historySearch').addEventListener('input',updateHistory);
-function setThinking(on){$('sendBtn').disabled=on;$('chatInput').disabled=on;$('clearChatBtn').disabled=on;$('newChatBtn').disabled=on;$('conversationPicker').disabled=on;if(on)$('chatStatus').textContent='Xi is thinking…';document.querySelector('.chat-card')?.setAttribute('aria-busy',String(on));$('sendBtn').textContent=on?'…':'↑'}
-async function sendChat(){
-  if(isSending)return;
-  const text=$('chatInput').value.trim(),code=$('accessCode').value.trim()||localStorage.getItem('maw-access-code-v1')||'';
-  if(!code){$('chatStatus').textContent='Enter your workspace access code.';window.xiOpenAccount?.();return}
-  if(!text)return;isSending=true;$('chatInput').value='';chatHistory.push({role:'user',content:text});if(chatHistory.length>16)chatHistory=chatHistory.slice(-16);renderChat();saveConversation([],false);setThinking(true);
-  let assistantMessage=null;
-  try{
-    const response=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({accessCode:code,messages:chatHistory,stream:true})});
-    if(!response.ok){
-      const data=await response.json().catch(()=>({}));
-      if(response.status===401){localStorage.removeItem('maw-access-code-v1');sessionStorage.removeItem('maw-session-code');$('accessCode').value=''}
-      throw new Error(data.error||(response.status===429?'Too many requests · wait a minute and try again.':'Request failed'));
-    }
-    if(!response.body||typeof response.body.getReader!=='function')throw new Error('Streaming is not supported by this browser.');
-    localStorage.setItem('maw-access-code-v1',code);sessionStorage.setItem('maw-session-code',code);
-    assistantMessage={role:'assistant',content:''};chatHistory.push(assistantMessage);addMessage('assistant','');
-    const bubble=$('chatlog').lastElementChild?.querySelector('.bubble');
-    const reader=response.body.getReader(),decoder=new TextDecoder();let buffer='',model='openrouter/free';
-    const processFrame=frame=>{
-      const dataLines=frame.split(/\r?\n/).filter(line=>line.startsWith('data:'));
-      for(const line of dataLines){
-        const raw=line.slice(5).trim();if(!raw)continue;
-        let packet;try{packet=JSON.parse(raw)}catch{continue}
-        if(packet.error)throw new Error(packet.error);
-        if(typeof packet.token==='string'&&packet.token){assistantMessage.content+=packet.token;if(bubble)bubble.textContent=assistantMessage.content;$('chatlog').scrollTop=$('chatlog').scrollHeight}
-        if(packet.done&&packet.model)model=packet.model;
-      }
-    };
-    while(true){
-      const part=await reader.read();if(part.done)break;
-      buffer+=decoder.decode(part.value,{stream:true});buffer=buffer.replace(/\r\n/g,'\n');
-      let boundary;while((boundary=buffer.indexOf('\n\n'))!==-1){const frame=buffer.slice(0,boundary);buffer=buffer.slice(boundary+2);processFrame(frame)}
-    }
-    buffer+=decoder.decode().replace(/\r\n/g,'\n');if(buffer.trim())processFrame(buffer);
-    if(!assistantMessage.content.trim())throw new Error('Xi returned an empty response. Please try again.');
-    if(chatHistory.length>16)chatHistory=chatHistory.slice(-16);
-    renderChat();saveConversation([{role:'user',content:text},{role:'assistant',content:assistantMessage.content}]);
-    $('chatStatus').textContent='Model: '+model+(currentUser?' · Cloud synced':' · Saved on this device');
-  }catch(error){
-    if(assistantMessage&&assistantMessage.content.trim()){
-      renderChat();saveConversation([{role:'user',content:text},{role:'assistant',content:assistantMessage.content}]);
-      $('chatStatus').textContent='Stream interrupted · partial answer saved.';
-    }else{
-      if(assistantMessage&&chatHistory[chatHistory.length-1]===assistantMessage)chatHistory.pop();
-      if(chatHistory[chatHistory.length-1]?.role==='user')chatHistory.pop();
-      renderChat();saveConversation();$('chatStatus').textContent=error.message||'Could not send message.';
-    }
-  }finally{isSending=false;setThinking(false);$('chatInput').focus()}
-}
-$('sendBtn').addEventListener('click',sendChat);$('chatInput').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendChat()}});
-$('forgetAccessCodeBtn').addEventListener('click',()=>{localStorage.removeItem('maw-access-code-v1');sessionStorage.removeItem('maw-session-code');$('accessCode').value='';$('chatStatus').textContent='Saved access code forgotten on this device.'});
-$('cloudLoginBtn').addEventListener('click',async()=>{
-  const email=$('cloudEmail').value.trim();if(!supabaseClient){$('cloudStatus').textContent='Cloud service unavailable';return}
-  if(!email){$('cloudStatus').textContent='Enter your email first';$('cloudEmail').focus();return}
-  $('cloudLoginBtn').disabled=true;$('cloudStatus').textContent='Sending secure link…';
-  try{const {error}=await supabaseClient.auth.signInWithOtp({email,options:{emailRedirectTo:window.location.href.split('#')[0],shouldCreateUser:true}});if(error)throw error;$('cloudStatus').textContent='Login link sent · check your email'}
-  catch(e){$('cloudStatus').textContent=e.message||'Could not send login link'}finally{$('cloudLoginBtn').disabled=false}
-});
-$('cloudLogoutBtn').addEventListener('click',async()=>{if(!supabaseClient)return;const {error}=await supabaseClient.auth.signOut();if(error){$('cloudStatus').textContent=error.message;return}currentUser=null;$('cloudLogin').classList.remove('hidden');$('cloudUser').classList.add('hidden');$('cloudStatus').textContent='Signed out · new chats stay on this device'});
-function showAuth(){
-  const signed=!!currentUser;$('cloudLogin').classList.toggle('hidden',signed);$('cloudUser').classList.toggle('hidden',!signed);
-  $('cloudUserLabel').textContent=signed?'Signed in · '+(currentUser.email||'account'):'';
-  if(signed){$('cloudStatus').textContent='Connecting cloud…';loadCloudConversations()}
-}
-async function initCloud(){
-  try{
-    const cfgRes=await fetch('/api/supabase-config',{cache:'no-store'});if(!cfgRes.ok)throw new Error('Cloud config unavailable');
-    const cfg=await cfgRes.json();if(!window.supabase?.createClient)throw new Error('Supabase client did not load');
-    supabaseClient=window.supabase.createClient(cfg.url,cfg.publishableKey,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
-    const {data,error}=await supabaseClient.auth.getSession();if(error)throw error;currentUser=data.session?.user||null;showAuth();
-    supabaseClient.auth.onAuthStateChange((_event,session)=>{currentUser=session?.user||null;showAuth()});
-  }catch(e){$('cloudStatus').textContent='Cloud unavailable · '+(e.message||'offline')}
-}
-if(conversations.length)loadConversation(conversations[0].id);else updateHistory();
-initCloud();
-</script>
-<script>
-(()=>{const root=document.documentElement,key='mat-studio-theme';let saved=null;try{saved=localStorage.getItem(key)}catch{}const systemDark=window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches;const header=document.querySelector('.top-actions');if(header&&!document.getElementById('studioThemeToggle')){const b=document.createElement('button');b.id='studioThemeToggle';b.className='studio-theme-toggle';b.type='button';b.title='Toggle appearance';b.addEventListener('click',()=>set(root.dataset.studioTheme==='dark'?'light':'dark'));header.appendChild(b)}function set(t,save=true){root.dataset.studioTheme=t;const b=document.getElementById('studioThemeToggle');if(b){b.textContent=t==='dark'?'☀':'☾';b.setAttribute('aria-label',t==='dark'?'Switch to light appearance':'Switch to dark appearance')}if(save){try{localStorage.setItem(key,t)}catch{}}}set(saved||(systemDark?'dark':'light'),false)})();
-</script>
-<script>
-(()=>{const actions=document.querySelector('.top-actions'),sidebar=document.querySelector('.sidebar');if(!actions||!sidebar||document.querySelector('.xi-mobile-menu'))return;const b=document.createElement('button');b.className='xi-mobile-menu';b.type='button';b.textContent='☰';b.setAttribute('aria-label','Open conversation navigation');b.setAttribute('aria-expanded','false');actions.prepend(b);const close=()=>{document.body.classList.remove('xi-nav-open');b.setAttribute('aria-expanded','false')};b.addEventListener('click',()=>{const open=document.body.classList.toggle('xi-nav-open');b.setAttribute('aria-expanded',String(open))});document.addEventListener('keydown',e=>{if(e.key==='Escape')close()});document.addEventListener('click',e=>{if(document.body.classList.contains('xi-nav-open')&&!sidebar.contains(e.target)&&!b.contains(e.target))close()});sidebar.addEventListener('click',e=>{if(e.target.closest('.history button')||e.target.closest('.new-chat'))close()});})();
-</script>
-
-<script>
-(()=>{
- const actions=document.querySelector('.top-actions'),wrap=document.querySelector('.composer-wrap');
- if(!actions||!wrap||document.getElementById('xiAccountModal'))return;
- const trigger=document.createElement('button');
- trigger.type='button';trigger.className='xi-account-trigger';trigger.id='xiAccountTrigger';
- trigger.setAttribute('aria-label','Account and sign-in settings');trigger.title='Account & sign-in';trigger.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path d="M4.8 20c.7-3.7 3.2-5.5 7.2-5.5s6.5 1.8 7.2 5.5"/></svg>';
- actions.prepend(trigger);
- const modal=document.createElement('div');modal.className='xi-account-modal';modal.id='xiAccountModal';modal.hidden=true;
- modal.innerHTML='<section class="xi-account-sheet" role="dialog" aria-modal="true" aria-labelledby="xiAccountTitle"><header><div><small>XI WORKSPACE</small><h2 id="xiAccountTitle">Account & access</h2><p>Sign-in and workspace security, kept separate from your conversations.</p></div><button type="button" class="xi-account-close" aria-label="Close">×</button></header><div class="xi-account-body"><div class="xi-account-section"><div class="xi-account-section-title">Workspace access</div><p>Enter your private access code to use Xi.</p></div><div id="xiAccessMount"></div><div class="xi-account-divider"></div><div class="xi-account-section"><div class="xi-account-section-title">Cloud account</div><p>Optional · sign in to sync conversations across devices.</p></div><div id="xiCloudMount"></div></div><footer><span id="xiAccountFootnote">Your access code stays on this device.</span><button type="button" class="xi-account-done">Done</button></footer></section>';
- document.body.append(modal);
- const access=document.querySelector('.access-row'),login=document.getElementById('cloudLogin'),user=document.getElementById('cloudUser');
- if(access)document.getElementById('xiAccessMount').append(access);
- if(login)document.getElementById('xiCloudMount').append(login);
- if(user)document.getElementById('xiCloudMount').append(user);
- const open=()=>{modal.hidden=false;document.body.classList.add('xi-account-open');setTimeout(()=>{const input=document.getElementById('accessCode');if(input&&!input.value)input.focus();else document.querySelector('.xi-account-close').focus()},30)};
- const close=()=>{modal.hidden=true;document.body.classList.remove('xi-account-open');trigger.focus()};
- window.xiOpenAccount=open;
- trigger.addEventListener('click',open);
- modal.querySelector('.xi-account-close').addEventListener('click',close);
- modal.querySelector('.xi-account-done').addEventListener('click',close);
- modal.addEventListener('click',e=>{if(e.target===modal)close()});
- document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!modal.hidden)close()});
- const code=document.getElementById('accessCode');
- if(code){code.placeholder='Workspace access code';code.autocomplete='current-password';code.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();localStorage.setItem('maw-access-code-v1',code.value.trim());document.getElementById('chatStatus').textContent='Access code saved on this device.';close();document.getElementById('chatInput').focus()}})}
- document.getElementById('forgetAccessCodeBtn')?.addEventListener('click',()=>{document.getElementById('xiAccountFootnote').textContent='Saved access code cleared from this device.'});
- document.getElementById('cloudStatus')?.setAttribute('aria-live','polite');
 })();
 </script>
 </body></html>
