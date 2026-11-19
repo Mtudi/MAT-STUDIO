@@ -22,7 +22,7 @@
 <section class="chat-card">
   <div class="chat-head"><div class="assistant-id"><div class="mini-mascot"></div><div><b>Xi</b><small>Personal AI · Ready to help</small></div></div><div class="chat-head-actions"><select id="conversationPicker" class="ghost" aria-label="Choose conversation"><option value="">Recent chats</option></select><button class="ghost" id="clearChatBtn">＋ New chat</button></div></div>
   <div class="messages" id="chatlog" aria-live="polite"><div class="empty-state" id="emptyState"><div class="mascot"><div class="mascot-orbit"></div><div class="mascot-core"></div><i class="spark"></i></div><h2>Hey bro, I'm <span class="accent">Xi.</span></h2><p>Your ideas deserve room to grow. Ask me anything, build a plan, explore an idea, or work through a difficult problem.</p></div></div>
-  <div class="composer-wrap"><div class="cloud-row" id="cloudLogin"><input id="cloudEmail" type="email" autocomplete="email" placeholder="Email for cloud sync" aria-label="Email for cloud sync"><button class="ghost" id="cloudLoginBtn" type="button">Send login link</button><span id="cloudStatus">Cloud sync off</span></div><div class="cloud-row hidden" id="cloudUser"><span id="cloudUserLabel"></span><button class="ghost" id="cloudLogoutBtn" type="button">Sign out</button></div><div class="access-row"><input id="accessCode" type="password" placeholder="Workspace access code" autocomplete="current-password" aria-label="Workspace access code"><span id="chatStatus">Ready · Chats save on this device.</span></div><div class="composer"><textarea id="chatInput" rows="1" maxlength="5000" placeholder="Message Xi..."></textarea><button class="send" id="sendBtn" aria-label="Send message">↑</button></div><div class="composer-note"><span>Enter to send · Shift + Enter for new line</span><span>Private session · access code never saved permanently</span></div></div>
+  <div class="composer-wrap"><div class="cloud-row" id="cloudLogin"><input id="cloudEmail" type="email" autocomplete="email" placeholder="Email for cloud sync" aria-label="Email for cloud sync"><button class="ghost" id="cloudLoginBtn" type="button">Send login link</button><span id="cloudStatus">Cloud sync off</span></div><div class="cloud-row hidden" id="cloudUser"><span id="cloudUserLabel"></span><button class="ghost" id="cloudLogoutBtn" type="button">Sign out</button></div><div class="access-row"><input id="accessCode" type="password" placeholder="Workspace access code" autocomplete="current-password" aria-label="Workspace access code"><span id="chatStatus">Ready · Chats save on this device.</span><button class="ghost" id="forgetAccessCodeBtn" type="button" title="Forget saved access code">Forget code</button></div><div class="composer"><textarea id="chatInput" rows="1" maxlength="5000" placeholder="Message Xi..."></textarea><button class="send" id="sendBtn" aria-label="Send message">↑</button></div><div class="composer-note"><span>Enter to send · Shift + Enter for new line</span><span>Access code remembered on this device · use only on your personal device</span></div></div>
 </section>
 
 </div><footer class="footer">MAT-STUDIO · Xi · Built for ideas that matter</footer>
@@ -32,6 +32,7 @@
 const $=id=>document.getElementById(id);
 const readStore=(key,fallback)=>{try{const value=JSON.parse(localStorage.getItem(key)||'null');return Array.isArray(value)?value:fallback}catch{return fallback}};
 let conversations=readStore('maw-conversations-v1',[]),activeConversationId=null,chatHistory=[];
+try{$('accessCode').value=localStorage.getItem('maw-access-code-v1')||''}catch{}
 let supabaseClient=null,currentUser=null,cloudLoading=false;
 const makeId=()=> 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,ch=>{const n=Math.random()*16|0;return(ch==='x'?n:(n&3|8)).toString(16)});
 
@@ -127,14 +128,15 @@ $('clearChatBtn').addEventListener('click',newChat);
 $('conversationPicker').addEventListener('change',e=>{if(e.target.value)loadConversation(e.target.value)});
 function setThinking(on){$('sendBtn').disabled=on;$('chatStatus').textContent=on?'Xi is thinking…':'Ready'}
 async function sendChat(){
-  const text=$('chatInput').value.trim(),code=$('accessCode').value.trim()||sessionStorage.getItem('maw-session-code')||'';
+  const text=$('chatInput').value.trim(),code=$('accessCode').value.trim()||localStorage.getItem('maw-access-code-v1')||'';
   if(!code){$('chatStatus').textContent='Enter your workspace access code.';$('accessCode').focus();return}
   if(!text)return;$('chatInput').value='';chatHistory.push({role:'user',content:text});if(chatHistory.length>16)chatHistory=chatHistory.slice(-16);renderChat();saveConversation([],false);setThinking(true);
-  try{const response=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({accessCode:code,messages:chatHistory})});const data=await response.json();if(!response.ok){if(response.status===401){sessionStorage.removeItem('maw-session-code');$('accessCode').value=''}throw new Error(data.error||'Request failed')}
-    sessionStorage.setItem('maw-session-code',code);chatHistory.push({role:'assistant',content:data.answer});if(chatHistory.length>16)chatHistory=chatHistory.slice(-16);renderChat();saveConversation([{role:'user',content:text},{role:'assistant',content:data.answer}]);$('chatStatus').textContent='Model: '+data.model+(currentUser?' · Cloud synced':' · Saved on this device');
+  try{const response=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({accessCode:code,messages:chatHistory})});const data=await response.json();if(!response.ok){if(response.status===401){localStorage.removeItem('maw-access-code-v1');sessionStorage.removeItem('maw-session-code');$('accessCode').value=''}throw new Error(data.error||'Request failed')}
+    localStorage.setItem('maw-access-code-v1',code);sessionStorage.setItem('maw-session-code',code);chatHistory.push({role:'assistant',content:data.answer});if(chatHistory.length>16)chatHistory=chatHistory.slice(-16);renderChat();saveConversation([{role:'user',content:text},{role:'assistant',content:data.answer}]);$('chatStatus').textContent='Model: '+data.model+(currentUser?' · Cloud synced':' · Saved on this device');
   }catch(error){chatHistory.pop();renderChat();saveConversation();$('chatStatus').textContent=error.message||'Could not send message.'}finally{setThinking(false);$('chatInput').focus()}
 }
 $('sendBtn').addEventListener('click',sendChat);$('chatInput').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendChat()}});
+$('forgetAccessCodeBtn').addEventListener('click',()=>{localStorage.removeItem('maw-access-code-v1');sessionStorage.removeItem('maw-session-code');$('accessCode').value='';$('chatStatus').textContent='Saved access code forgotten on this device.'});
 $('cloudLoginBtn').addEventListener('click',async()=>{
   const email=$('cloudEmail').value.trim();if(!supabaseClient){$('cloudStatus').textContent='Cloud service unavailable';return}
   if(!email){$('cloudStatus').textContent='Enter your email first';$('cloudEmail').focus();return}
