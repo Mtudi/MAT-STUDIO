@@ -948,20 +948,20 @@ const Cloud = (() => {
  const sent=new Map();
  const makeCloudId=()=>crypto.randomUUID?crypto.randomUUID():'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,c=>{const r=Math.random()*16|0;return(c==='x'?r:(r&3|8)).toString(16);});
  const status=msg=>{if($('#cloudStatus'))$('#cloudStatus').textContent=msg;$('#syncStatus').textContent=msg;$('#syncChip').textContent=user?'☁ Synced to MAT-STUDIO account':'Local history · cloud optional';$('#cloudLoginBtn').hidden=!!user;$('#cloudEmail').hidden=!!user;$('#cloudLogoutBtn').hidden=!user;};
- const signature=c=>JSON.stringify((c.messages||[]).map(m=>[m.role,m.text||'']));
+ const messageList=c=>(c.messages||[]).map(m=>[m.role,m.text||'']);
  const stamp=v=>{const n=Date.parse(v||'');return Number.isFinite(n)?n:Date.now();};
  async function syncOne(c){
   if(!client||!user||!c)return;
   if(!c.cloudId)c.cloudId=makeCloudId();
-  const id=c.cloudId,sig=signature(c),prior=sent.get(id);
+  const id=c.cloudId,current=messageList(c),prior=sent.get(id);
   const {error:head}=await client.from('ai_conversations').upsert({id,user_id:user.id,title:c.title||'New chat',updated_at:new Date(c.updated||Date.now()).toISOString()},{onConflict:'id'});
   if(head)throw head;
   let start=0;
-  if(prior&&sig.startsWith(prior.signature.slice(0,-1)))start=prior.count;
+  if(prior&&prior.messages.length<=current.length&&prior.messages.every((m,i)=>m[0]===current[i][0]&&m[1]===current[i][1]))start=prior.messages.length;
   else if(prior){const {error}=await client.from('ai_messages').delete().eq('conversation_id',id);if(error)throw error;}
   const add=(c.messages||[]).slice(start).filter(m=>String(m.text||'').trim());
   if(add.length){const {error}=await client.from('ai_messages').insert(add.map(m=>({conversation_id:id,role:m.role,content:m.text||''})));if(error)throw error;}
-  sent.set(id,{count:(c.messages||[]).length,signature:sig});c.cloud=true;
+  sent.set(id,{messages:current});c.cloud=true;
  }
  async function flush(){if(!client||!user)return;for(const c of convs.slice()){try{await syncOne(c);}catch(e){status('Cloud save issue · '+(e.message||'check connection'));return;}}status('Cloud synced · '+convs.length+' conversations');}
  function queue(){if(!client||!user)return;clearTimeout(timer);timer=setTimeout(flush,900);}
@@ -974,7 +974,7 @@ const Cloud = (() => {
     const t=stamp(row.updated_at),remote={id:String(row.id),cloudId:String(row.id),title:row.title||'New chat',created:t,updated:t,cloud:true,messages:(msgs||[]).map((m,i)=>({id:uid()+i,role:m.role,text:m.content||'',ts:stamp(m.created_at)}))};
     const ix=convs.findIndex(c=>c.cloudId===remote.cloudId||c.id===remote.id);
     if(ix<0)convs.push(remote);else if((convs[ix].updated||0)<=t)convs[ix]=remote;
-    sent.set(remote.cloudId,{count:remote.messages.length,signature:signature(remote)});
+    sent.set(remote.cloudId,{messages:messageList(remote)});
    }
    convs.sort((a,b)=>(b.updated||0)-(a.updated||0));convs=convs.slice(0,30);
    if(activeId&&!active())activeId=null;if(!activeId&&convs.length)activeId=convs[0].id;
