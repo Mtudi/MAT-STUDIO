@@ -131,13 +131,12 @@ async function showSpotifyProfile(){
 }
 async function restoreSpotifySession(){
  const refresh=sessionStorage.getItem('matsong_spotify_refresh');
- const expires=Number(sessionStorage.getItem('matsong_spotify_expires')||0);
  if(!refresh){spotifyStatus('Connect your Spotify account','Sign in securely to MATSONG using Spotify.');return}
  try{
-  let token;
-  if(expires>Date.now()+60000){spotifyStatus('Restoring Spotify session…','Checking your account.');}
-  else {token=await spotifyToken({client_id:SPOTIFY_CLIENT_ID,grant_type:'refresh_token',refresh_token:refresh});spotifyAccessToken=token.access_token;if(token.refresh_token)sessionStorage.setItem('matsong_spotify_refresh',token.refresh_token);sessionStorage.setItem('matsong_spotify_expires',String(Date.now()+token.expires_in*1000))}
-  if(!spotifyAccessToken&&expires>Date.now())return;
+  const token=await spotifyToken({client_id:SPOTIFY_CLIENT_ID,grant_type:'refresh_token',refresh_token:refresh});
+  spotifyAccessToken=token.access_token;
+  if(token.refresh_token)sessionStorage.setItem('matsong_spotify_refresh',token.refresh_token);
+  sessionStorage.setItem('matsong_spotify_expires',String(Date.now()+token.expires_in*1000));
   await showSpotifyProfile();
  }catch(e){sessionStorage.removeItem('matsong_spotify_refresh');sessionStorage.removeItem('matsong_spotify_expires');spotifyStatus('Reconnect Spotify',e.message)}
 }
