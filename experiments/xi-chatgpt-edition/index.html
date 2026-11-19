@@ -372,7 +372,7 @@ const saveConvs = () => LS.set('chatgpt.xi.convs', convs);
 const saveSettings = () => LS.set('chatgpt.xi.settings', settings);
 
 function inline(parent, s) {
-  const re = /(\`[^\`\n]+\`)|(\*\*[^*\n]+\*\*)|(\*[^*\n]+\*)|(\[[^\]\n]+\]\(https?:\/\/[^\s)]+\))/g;
+  const re = /(`[^`\n]+`)|(\*\*[^*\n]+\*\*)|(\*[^*\n]+\*)|(\[[^\]\n]+\]\(https?:\/\/[^\s)]+\))/g;
   let i = 0, m;
   while ((m = re.exec(s))) {
     if (m.index > i) parent.append(s.slice(i, m.index));
@@ -431,7 +431,7 @@ const HASH_LANGS = /^(py|python|sh|bash|shell|zsh|ruby|rb|yaml|yml|toml|r|perl|m
 
 function highlight(code, lang, pre) {
   const com = HASH_LANGS.test(lang) ? '\\/\\/[^\\n]*|#[^\\n]*|\\/\\*[\\s\\S]*?\\*\\/' : '\\/\\/[^\\n]*|\\/\\*[\\s\\S]*?\\*\\/|<!--[\\s\\S]*?-->';
-  const re = new RegExp('(' + com + ')|("(?:\\\\.|[^"\\\\\\n])*"|\'(?:\\\\.|[^\'\\\\\\n])*\'|\`(?:\\\\.|[^\`\\\\])*\`)|(\\b\\d[\\d_.]*\\b)|([A-Za-z_$][\\w$]*)', 'g');
+  const re = new RegExp('(' + com + ')|("(?:\\\\.|[^"\\\\\\n])*"|\'(?:\\\\.|[^\'\\\\\\n])*\'|`(?:\\\\.|[^`\\\\])*`)|(\\b\\d[\\d_.]*\\b)|([A-Za-z_$][\\w$]*)', 'g');
   let i = 0, m;
   const span = (cls, txt) => pre.append(el('span', cls, txt));
   while ((m = re.exec(code))) {
@@ -463,7 +463,7 @@ function codeBlock(lang, code) {
 
 function renderMd(text, root) {
   root.textContent = '';
-  text.split('\`\`\`').forEach((p, idx) => {
+  text.split('```').forEach((p, idx) => {
     if (idx % 2 === 1) {
       const nl = p.indexOf('\n');
       let lang = '', code = p;
