@@ -1470,8 +1470,8 @@ function init() {
   if (!activeId && convs.length) activeId = convs.slice().sort((a, b) => b.updated - a.updated)[0].id;
   Modo.apply(); applyMode(); updateAccessStatus(); renderList(); renderChat(); setBusyUI();
   setTimeout(Modo.hello, 900);
-  let tries = 0;   // the claude.ai host can attach a moment after load: re-check briefly
-  const iv = setInterval(() => { if (hosted() || ++tries > 20) { clearInterval(iv); applyMode(); if (hosted()) Cloud.init(); if (!busy && (!active() || !active().messages.length)) renderChat(); } }, 150);
+  $('#syncChip').textContent = 'Local history · this device';
+  $('#syncStatus').textContent = 'Conversations are saved on this device.';
   $('#newChat').addEventListener('click', () => { newChat(); closeNav(); });
   $('#openSettings').addEventListener('click', () => { closeNav(); openSettings(); });
   $('#settingsTop').addEventListener('click', openSettings);
