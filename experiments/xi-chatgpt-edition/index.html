@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" data-theme="dark" data-accent="green">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="dark light">
+<title>Xi — ChatGPT Edition</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600&display=swap">
+<style>
+:root{--accrgb:16,163,127;--onacc:#041410;--bg:#0b0c0c;--panel:#121413;--panel2:#191c1b;--line:#262b29;--text:#ecefed;--mute:#8e9692;--acc:#10a37f;--acc2:#0d8a6b;--accbg:rgba(var(--accrgb),.12);--user:#1b2622;--code:#0e100f;--danger:#ff7b7b;--r:14px;--font:Inter,"IBM Plex Sans Arabic",system-ui,-apple-system,"Segoe UI",Roboto,"Noto Sans Arabic",sans-serif;--mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+[data-theme=light]{--bg:#f7f8f8;--panel:#ffffff;--panel2:#eef1f0;--line:#dde2e0;--text:#141716;--mute:#646e6a;--acc:#0d8a6b;--acc2:#096e55;--accbg:rgba(13,138,107,.1);--user:#e6f2ee;--code:#f1f4f3;--danger:#c92a2a;--accrgb:13,138,107;--onacc:#fff}
+[data-accent=blue]{--acc:#5aa9ff;--acc2:#3b8fe8;--accrgb:90,169,255}
+[data-accent=violet]{--acc:#a78bfa;--acc2:#8b6cf0;--accrgb:167,139,250}
+[data-accent=amber]{--acc:#fbbf24;--acc2:#e0a40f;--accrgb:251,191,36}
+[data-theme=light][data-accent=blue]{--acc:#1d6fd1;--acc2:#1658a8;--accrgb:29,111,209}
+[data-theme=light][data-accent=violet]{--acc:#7c4dff;--acc2:#6538e0;--accrgb:124,77,255}
+[data-theme=light][data-accent=amber]{--acc:#c27c0e;--acc2:#a2660a;--accrgb:194,124,14}
+*{box-sizing:border-box;margin:0}
+html,body{height:100%}
+body{font:15px/1.65 var(--font);background:var(--bg);color:var(--text);overflow:hidden;-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer;background:none;border:0}
+:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+::-webkit-scrollbar{width:8px;height:8px}::-webkit-scrollbar-thumb{background:var(--line);border-radius:8px}::-webkit-scrollbar-thumb:hover{background:var(--mute)}
+*{scrollbar-width:thin;scrollbar-color:var(--line) transparent}
+::selection{background:rgba(var(--accrgb),.28)}
+.app{display:grid;grid-template-columns:284px minmax(0,1fr);height:100dvh;position:relative;z-index:1}
+.side{background:var(--panel);border-inline-end:1px solid var(--line);display:flex;flex-direction:column;gap:10px;padding:14px;min-height:0}
+.brand{display:flex;align-items:center;gap:10px;padding:4px 4px 8px}
+.brand small{display:block;color:var(--mute);font-size:12px;line-height:1.2}
+.brand b{font-size:17px;letter-spacing:.2px}
+.logo{width:36px;height:36px;border-radius:11px;display:grid;place-items:center;font-weight:700;font-size:18px;color:var(--acc);background:var(--accbg);border:1px solid rgba(var(--accrgb),.35)}
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;padding:10px 14px;border-radius:12px;border:1px solid var(--line);transition:.16s}
+.btn:hover{background:var(--panel2);border-color:var(--mute)}
+.btn.primary{background:var(--acc);color:var(--onacc);border-color:var(--acc);font-weight:600}
+.btn.primary:hover{background:var(--acc2);border-color:var(--acc2)}
+.btn.danger{color:var(--danger);border-color:rgba(255,123,123,.4)}
+.search{width:100%;padding:9px 12px;border-radius:10px;border:1px solid var(--line);background:var(--bg)}
+.list{flex:1;overflow:auto;display:flex;flex-direction:column;gap:2px;min-height:0}
+.item{display:flex;align-items:center;gap:4px;border-radius:10px;border:1px solid transparent;transition:.14s}
+.item:hover{background:var(--panel2)}
+.item.on{background:var(--accbg);border-color:rgba(var(--accrgb),.32)}
+.item .pick{flex:1;min-width:0;text-align:start;padding:8px 10px}
+.item .t{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:14px}
+.item .d{display:block;color:var(--mute);font-size:11.5px}
+.item .mini{opacity:0;width:28px;height:28px;border-radius:8px;color:var(--mute)}
+.item:hover .mini,.item:focus-within .mini,.item.on .mini,.item .mini.pinned{opacity:1}
+.item .mini.pinned{color:var(--acc)}
+.item .mini:hover{background:var(--line);color:var(--text)}
+.empty{color:var(--mute);text-align:center;padding:24px 8px;font-size:13px}
+.main{display:flex;flex-direction:column;min-width:0;min-height:0;position:relative}
+.top{display:flex;align-items:center;gap:6px;padding:10px 14px;border-bottom:1px solid var(--line);padding-top:max(10px,env(safe-area-inset-top))}
+.ttl{flex:1;min-width:0;text-align:start;font-weight:600;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:6px 8px;border-radius:8px}
+.ttl:hover{background:var(--panel2)}
+.badge{font:12px var(--mono);color:var(--acc);background:var(--accbg);border:1px solid rgba(var(--accrgb),.28);padding:3px 10px;border-radius:99px;white-space:nowrap;max-width:36vw;overflow:hidden;text-overflow:ellipsis}
+.icon{width:36px;height:36px;border-radius:10px;color:var(--mute);font-size:17px;flex:none;transition:.14s}
+.icon:hover{background:var(--panel2);color:var(--text)}
+#menu{display:none}
+.more{position:relative}
+.pop{position:absolute;inset-inline-end:0;top:44px;min-width:210px;background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:6px;box-shadow:0 14px 34px rgba(0,0,0,.35);z-index:15}
+.pop[hidden]{display:none}
+.mi{display:block;width:100%;text-align:start;padding:9px 12px;border-radius:8px;font-size:14px}
+.mi:hover,.mi:focus-visible{background:var(--accbg)}
+.chat{flex:1;overflow-y:auto;overflow-x:hidden;scroll-behavior:smooth;min-height:0}
+.inner{max-width:820px;margin:0 auto;padding:22px 16px 18px;display:flex;flex-direction:column;gap:20px;min-height:100%}
+.welcome{margin:auto;text-align:center;padding:24px 0;animation:rise .4s ease}
+.welcome .logo{width:62px;height:62px;font-size:30px;margin:0 auto 16px;border-radius:18px}
+.welcome h2{font-size:clamp(22px,4.5vw,32px);letter-spacing:-.4px}
+.welcome p{color:var(--mute);margin:8px auto 20px;max-width:480px}
+.notice{margin:0 auto 18px;max-width:520px;padding:10px 14px;border-radius:12px;border:1px solid rgba(255,123,123,.4);color:var(--danger);font-size:14px}
+.notice button{text-decoration:underline;color:inherit;font-weight:600}
+.chips{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;max-width:580px;margin:0 auto}
+.chip{padding:12px 14px;border-radius:12px;border:1px solid var(--line);background:var(--panel);text-align:start;font-size:14px;transition:.16s}
+.chip:hover{border-color:var(--acc);transform:translateY(-1px);background:var(--accbg)}
+.chip span{display:block;color:var(--mute);font-size:12px;margin-top:2px}
+.msg{display:flex;gap:12px;animation:rise .22s ease;min-width:0}
+.msg.user{justify-content:flex-end}
+.msg.user .body{max-width:85%;background:var(--user);border:1px solid var(--line);border-radius:var(--r) var(--r) 4px var(--r);padding:10px 14px}
+.msg.user .content{white-space:pre-wrap;overflow-wrap:anywhere}
+.avatar{flex:none;width:30px;height:30px;border-radius:9px;display:grid;place-items:center;font-weight:700;color:var(--acc);background:var(--accbg);border:1px solid rgba(var(--accrgb),.3);margin-top:2px}
+.msg.ai .body{flex:1;min-width:0}
+.content{overflow-wrap:anywhere}
+.content>*+*{margin-top:.75em}
+.content h2,.content h3,.content h4{line-height:1.35;margin-top:1.1em}
+.content h2{font-size:1.25em}.content h3{font-size:1.12em}
+.content ul,.content ol{padding-inline-start:1.4em}.content li+li{margin-top:.25em}
+.content a{color:var(--acc);text-underline-offset:3px}
+.content blockquote{border-inline-start:3px solid var(--acc);padding:2px 12px;color:var(--mute)}
+.content hr{border:0;border-top:1px solid var(--line)}
+code.ic{font:.88em var(--mono);background:var(--panel2);border:1px solid var(--line);padding:1px 6px;border-radius:6px;direction:ltr;unicode-bidi:isolate}
+.cb{border:1px solid var(--line);border-radius:12px;background:var(--code);overflow:hidden;direction:ltr;text-align:left}
+.cb header{display:flex;justify-content:space-between;align-items:center;padding:6px 8px 6px 14px;border-bottom:1px solid var(--line);color:var(--mute);font:12px var(--mono)}
+.cb header button{color:var(--mute);padding:3px 10px;border-radius:7px;font-size:12px}
+.cb header button:hover{background:var(--panel2);color:var(--text)}
+.cb pre{overflow-x:auto;padding:12px 14px;font:13px/1.55 var(--mono);tab-size:2}
+.tk-k{color:#c792ea}.tk-s{color:#a5d66f}.tk-c{color:#6b7a70;font-style:italic}.tk-n{color:#f5a97f}.tk-f{color:#6cb6ff}
+[data-theme=light] .tk-k{color:#8a3fb8}[data-theme=light] .tk-s{color:#3f7d12}[data-theme=light] .tk-n{color:#b4570f}[data-theme=light] .tk-f{color:#1c6bc4}
+.err{color:var(--danger);border:1px solid rgba(255,123,123,.4);border-radius:10px;padding:8px 12px;font-size:14px;margin-top:8px}
+.note{color:var(--mute);font-size:12.5px;margin-top:6px}
+.acts{display:flex;gap:4px;margin-top:6px}
+.acts button{color:var(--mute);font-size:12.5px;padding:3px 10px;border-radius:8px;border:1px solid transparent}
+.acts button:hover{border-color:var(--line);background:var(--panel2);color:var(--text)}
+.dots{display:inline-flex;gap:5px;padding:8px 0}
+.dots i{width:7px;height:7px;border-radius:50%;background:var(--acc);animation:blink 1.2s infinite both}
+.dots i:nth-child(2){animation-delay:.15s}.dots i:nth-child(3){animation-delay:.3s}
+.cursor::after{content:"";display:inline-block;width:7px;height:1.05em;background:var(--acc);margin-inline-start:2px;vertical-align:-2px;animation:blink 1s infinite}
+@keyframes blink{0%,80%,100%{opacity:.25}40%{opacity:1}}
+@keyframes rise{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.composer{padding:8px 14px max(14px,env(safe-area-inset-bottom))}
+.box{max-width:820px;margin:0 auto;display:flex;align-items:flex-end;gap:8px;background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:8px 8px 8px 16px;transition:.16s}
+[dir=rtl] .box{padding:8px 16px 8px 8px}
+.box:focus-within{border-color:var(--acc);box-shadow:0 0 0 3px var(--accbg)}
+.box textarea{flex:1;border:0;background:none;resize:none;outline:0;max-height:200px;min-height:28px;padding:5px 0;line-height:1.5}
+.send{flex:none;width:38px;height:38px;border-radius:12px;background:var(--acc);color:var(--onacc);font-size:18px;font-weight:700;transition:.14s}
+.send:hover:not(:disabled){background:var(--acc2)}
+.send:disabled{opacity:.35;cursor:not-allowed}
+.send.stop{background:var(--panel2);color:var(--text);border:1px solid var(--line)}
+.hint{max-width:820px;margin:6px auto 0;text-align:center;color:var(--mute);font-size:11.5px}
+dialog{margin:auto;width:min(560px,calc(100vw - 24px));max-height:calc(100dvh - 24px);overflow:auto;background:var(--panel);color:var(--text);border:1px solid var(--line);border-radius:18px;padding:0}
+dialog::backdrop{background:rgba(0,0,0,.6);backdrop-filter:blur(3px)}
+.dh{display:flex;justify-content:space-between;align-items:center;padding:16px 20px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--panel);z-index:1}
+.dh h2{font-size:17px}
+.sec{padding:16px 20px;border-bottom:1px solid var(--line);display:grid;gap:8px}
+.sec:last-child{border:0}
+.sec h3{font-size:12px;text-transform:uppercase;letter-spacing:.7px;color:var(--mute)}
+.sec label{font-size:13px;color:var(--mute)}
+.sec p{color:var(--mute);font-size:13px}
+.fld{width:100%;padding:9px 12px;border-radius:10px;border:1px solid var(--line);background:var(--bg)}
+.row{display:flex;gap:8px}.row>.fld{flex:1;min-width:0}
+.row .btn{padding:8px 12px;white-space:nowrap}
+textarea.fld{resize:vertical;min-height:70px}
+.warn{border:1px solid rgba(255,196,0,.35);background:rgba(255,196,0,.07);border-radius:10px;padding:10px 12px;font-size:13px;color:var(--text)}
+.toast{position:fixed;left:50%;bottom:90px;transform:translate(-50%,20px);background:var(--panel2);border:1px solid var(--line);padding:9px 16px;border-radius:99px;font-size:13.5px;opacity:0;pointer-events:none;transition:.22s;z-index:99;max-width:90vw}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+.scrim{display:none}
+@media (max-width:820px){
+ .app{grid-template-columns:minmax(0,1fr)}
+ .side{position:fixed;inset:0 auto 0 0;width:min(86vw,320px);z-index:30;transform:translateX(-102%);transition:transform .24s;padding-top:max(14px,env(safe-area-inset-top))}
+ [dir=rtl] .side{inset:0 0 0 auto;transform:translateX(102%)}
+ .nav-open .side{transform:none}
+ .scrim{display:block;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:20;opacity:0;pointer-events:none;transition:.24s}
+ .nav-open .scrim{opacity:1;pointer-events:auto}
+ #menu{display:inline-block}
+ .item .mini{opacity:1}
+ .chips{grid-template-columns:1fr}
+ .hint,.badge{display:none}
+ .icon{width:40px;height:40px}.send{width:42px;height:42px}.item .pick{padding:11px 10px}
+ dialog{margin:auto 0 0;width:100%;max-height:92dvh;border-radius:18px 18px 0 0}
+}
+</style>
+</head>
+<body>
+<noscript><p style="padding:24px">يرجى تفعيل JavaScript لتشغيل الواجهة.</p></noscript>
+<div class="app" id="app">
+ <aside class="side" id="side" aria-label="الشريط الجانبي">
+  <div class="brand">
+   <div class="logo" aria-hidden="true">◎</div>
+   <div><b>Xi · ChatGPT</b><small>مساعد محادثة OpenAI</small></div>
+  </div>
+  <button class="btn primary" id="newChat">＋ محادثة جديدة</button>
+  <input class="search" id="search" type="search" placeholder="ابحث في المحادثات" aria-label="ابحث في المحادثات" autocomplete="off">
+  <nav class="list" id="list" aria-label="المحادثات"></nav>
+  <button class="btn" id="openSettings">⚙ الإعدادات</button>
+ </aside>
+ <div class="scrim" id="scrim"></div>
+ <main class="main">
+  <header class="top">
+   <button class="icon" id="menu" aria-label="فتح القائمة">☰</button>
+   <button class="ttl" id="title" title="اضغط لإعادة التسمية">Xi · ChatGPT</button>
+   <span class="badge" id="badge">gpt-4o-mini</span>
+   <div class="more">
+    <button class="icon" id="moreBtn" aria-label="المزيد" aria-haspopup="menu" aria-expanded="false">⋯</button>
+    <div class="pop" id="pop" role="menu" hidden>
+     <button class="mi" id="exportBtn" role="menuitem">⤓ تصدير المحادثة (.md)</button>
+     <button class="mi" id="clearBtn" role="menuitem">⌫ مسح المحادثة</button>
+     <button class="mi" id="settingsTop" role="menuitem">⚙ الإعدادات</button>
+    </div>
+   </div>
+  </header>
+  <section class="chat" id="chat"><div class="inner" id="msgs" role="log" aria-live="polite"></div></section>
+  <footer class="composer">
+   <div class="box">
+    <textarea id="input" rows="1" placeholder="اسأل ChatGPT…" aria-label="رسالة" maxlength="30000" dir="auto"></textarea>
+    <button class="send" id="send" aria-label="إرسال" disabled>↑</button>
+   </div>
+   <div class="hint">Enter للإرسال · Shift+Enter لسطر جديد · قد يرتكب النموذج أخطاءً، تحقق من المعلومات المهمة.</div>
+  </footer>
+ </main>
+</div>
+
+<dialog id="settings" aria-labelledby="sTitle">
+ <div class="dh"><h2 id="sTitle">الإعدادات</h2><button class="icon" id="closeSettings" aria-label="إغلاق">✕</button></div>
+ <div class="sec">
+  <h3>إعدادات ChatGPT / OpenAI</h3>
+  <label for="apiKey">مفتاح OpenAI API (يبدأ عادةً بـ sk-)</label>
+  <div class="row">
+   <input class="fld" id="apiKey" type="password" autocomplete="off" spellcheck="false" placeholder="الصق مفتاح OpenAI API هنا">
+   <button class="btn" id="toggleKey" type="button">إظهار</button>
+  </div>
+  <div class="row">
+   <button class="btn primary" id="saveKey" type="button">حفظ المفتاح</button>
+   <button class="btn" id="removeKey" type="button">حذف المفتاح</button>
+  </div>
+  <p id="keyStatus"></p>
+  <label for="baseUrl">رابط نقطة النهاية (Base URL)</label>
+  <input class="fld" id="baseUrl" type="url" autocomplete="off" spellcheck="false" placeholder="https://api.openai.com/v1">
+  <div class="warn"><b>تنبيه أمني:</b> يُحفظ المفتاح محلياً في متصفحك (localStorage) ويُرسل مباشرة إلى واجهة OpenAI. استخدمه على جهازك الشخصي فقط، أو اربطه بخادم خلفي خاص بك لحماية المفتاح.</div>
+ </div>
+ <div class="sec">
+  <h3>النموذج والتعليمات</h3>
+  <label for="model">نموذج ChatGPT</label>
+  <div class="row">
+   <select class="fld" id="model"></select>
+   <button class="btn" id="refreshModels" type="button">تحديث القائمة</button>
+  </div>
+  <p id="modelStatus">القائمة الافتراضية معروضة. اضغط «تحديث القائمة» لجلب النماذج المتاحة لمفتاحك.</p>
+  <label for="system">تعليمات النظام (System Prompt)</label>
+  <textarea class="fld" id="system" maxlength="4000" placeholder="اتركه فارغاً لاستخدام التعليمات الافتراضية"></textarea>
+ </div>
+ <div class="sec">
+  <h3>المظهر</h3>
+  <label for="theme">الثيم</label>
+  <select class="fld" id="theme">
+   <option value="dark">داكن</option>
+   <option value="light">فاتح</option>
+   <option value="system">حسب النظام</option>
+  </select>
+  <label for="accent">لون التمييز</label>
+  <select class="fld" id="accent">
+   <option value="green">أخضر (ChatGPT)</option>
+   <option value="blue">أزرق</option>
+   <option value="violet">بنفسجي</option>
+   <option value="amber">كهرماني</option>
+  </select>
+ </div>
+ <div class="sec">
+  <h3>البيانات</h3>
+  <p>تُحفظ المحادثات في هذا المتصفح فقط (localStorage).</p>
+  <button class="btn danger" id="clearAll" type="button">حذف كل المحادثات</button>
+ </div>
+</dialog>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+(() => {
+'use strict';
+const $ = s => document.querySelector(s);
+const el = (tag, cls, txt) => { const e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; };
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+const LS = {
+  get(k, d) { try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch { return d; } },
+  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); return true; } catch { toast('تعذّر الحفظ في المتصفح'); return false; } }
+};
+let toastTimer;
+function toast(msg) { const t = $('#toast'); t.textContent = msg; t.classList.add('on'); clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove('on'), 2400); }
+async function copyText(text) {
+  try { await navigator.clipboard.writeText(text); return true; }
+  catch { const ta = el('textarea'); ta.value = text; ta.style.cssText = 'position:fixed;opacity:0'; document.body.append(ta); ta.select(); let ok = false; try { ok = document.execCommand('copy'); } catch {} ta.remove(); return ok; }
+}
+
+const DEFAULT_SYSTEM = 'أنت مساعد ذكي مفيد ودقيق وواضح بأسلوب ChatGPT. أجب بلغة المستخدم نفسها، واستخدم Markdown وضع الكود داخل كتل برمجية محددة اللغة.';
+const DEFAULT_BASE = 'https://api.openai.com/v1';
+const DEFAULT_MODELS = ['gpt-4o-mini', 'gpt-4o', 'gpt-4.1-mini', 'gpt-4.1', 'o3-mini'];
+const abortErr = () => Object.assign(new Error('Aborted'), { name: 'AbortError' });
+
+function cleanBase(u) {
+  return String(u || DEFAULT_BASE).trim().replace(/\/+$/, '') || DEFAULT_BASE;
+}
+async function errText(res) {
+  let msg = res.status + ' ' + res.statusText;
+  try { const j = await res.json(); if (j && j.error && j.error.message) msg = j.error.message; } catch {}
+  return msg;
+}
+
+const ChatGPTProvider = {
+  async listModels(key, baseUrl) {
+    const res = await fetch(cleanBase(baseUrl) + '/models', {
+      headers: { Authorization: 'Bearer ' + key }
+    });
+    if (!res.ok) throw new Error(await errText(res));
+    const j = await res.json();
+    return (j.data || [])
+      .map(m => m && m.id)
+      .filter(id => typeof id === 'string' && /^(gpt-|o1|o3|o4|chatgpt)/.test(id))
+      .sort();
+  },
+  async stream({ key, baseUrl, model, system, messages, ctrl, onToken }) {
+    const payloadMessages = [];
+    if (system) payloadMessages.push({ role: 'system', content: system });
+    messages.forEach(m => {
+      payloadMessages.push({ role: m.role === 'user' ? 'user' : 'assistant', content: m.text });
+    });
+
+    const res = await fetch(cleanBase(baseUrl) + '/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer ' + key
+      },
+      body: JSON.stringify({
+        model,
+        messages: payloadMessages,
+        stream: true
+      })
+    });
+
+    if (!res.ok) throw new Error(await errText(res));
+    if (ctrl && ctrl.aborted) { try { res.body.cancel(); } catch {} throw abortErr(); }
+
+    const reader = res.body.getReader();
+    const dec = new TextDecoder();
+    if (ctrl) ctrl.reader = reader;
+
+    let buf = '', full = '', finish = '';
+    const handleLine = line => {
+      const s = line.trim();
+      if (!s || !s.startsWith('data:')) return;
+      const data = s.slice(5).trim();
+      if (!data || data === '[DONE]') return;
+      let j;
+      try { j = JSON.parse(data); } catch { return; }
+      const ch = j.choices && j.choices[0];
+      if (!ch) return;
+      const delta = ch.delta && ch.delta.content;
+      if (typeof delta === 'string' && delta) {
+        full += delta;
+        onToken(full);
+      }
+      if (ch.finish_reason) finish = ch.finish_reason;
+    };
+
+    for (;;) {
+      const { done, value } = await reader.read();
+      if (ctrl && ctrl.aborted) throw abortErr();
+      if (done) break;
+      buf += dec.decode(value, { stream: true });
+      const lines = buf.split(/\r?\n/);
+      buf = lines.pop();
+      lines.forEach(handleLine);
+    }
+    if (buf) handleLine(buf);
+    if (!full) throw new Error('أعاد النموذج رداً فارغاً.');
+    return { text: full, finish };
+  }
+};
+
+function friendlyError(e) {
+  if (e instanceof TypeError || /failed to fetch|networkerror|load failed/i.test(e.message || '')) {
+    return 'تعذّر الوصول إلى واجهة OpenAI. تأكد من اتصالك بالإنترنت أو من رابط نقطة النهاية (Base URL) ومن عدم حظر الطلبات.';
+  }
+  return e.message || 'حدث خطأ غير متوقع';
+}
+
+let convs = LS.get('chatgpt.xi.convs', []);
+if (!Array.isArray(convs)) convs = [];
+let activeId = LS.get('chatgpt.xi.active', null);
+let settings = Object.assign({
+  model: 'gpt-4o-mini',
+  baseUrl: DEFAULT_BASE,
+  theme: 'dark',
+  accent: 'green',
+  system: ''
+}, LS.get('chatgpt.xi.settings', {}));
+let apiKey = LS.get('chatgpt.xi.key', '');
+let cachedModels = LS.get('chatgpt.xi.models', null);
+let busy = null;
+let streamEl = null;
+let paintQueued = false;
+
+const active = () => convs.find(c => c.id === activeId) || null;
+const saveConvs = () => LS.set('chatgpt.xi.convs', convs);
+const saveSettings = () => LS.set('chatgpt.xi.settings', settings);
+
+function inline(parent, s) {
+  const re = /(\`[^\`\n]+\`)|(\*\*[^*\n]+\*\*)|(\*[^*\n]+\*)|(\[[^\]\n]+\]\(https?:\/\/[^\s)]+\))/g;
+  let i = 0, m;
+  while ((m = re.exec(s))) {
+    if (m.index > i) parent.append(s.slice(i, m.index));
+    const t = m[0];
+    if (m[1]) parent.append(el('code', 'ic', t.slice(1, -1)));
+    else if (m[2]) parent.append(el('strong', null, t.slice(2, -2)));
+    else if (m[3]) parent.append(el('em', null, t.slice(1, -1)));
+    else {
+      const mm = /\[([^\]]+)\]\((https?:[^)]+)\)/.exec(t);
+      const a = el('a', null, mm[1]);
+      a.href = mm[2]; a.target = '_blank'; a.rel = 'noopener noreferrer';
+      parent.append(a);
+    }
+    i = re.lastIndex;
+  }
+  if (i < s.length) parent.append(s.slice(i));
+}
+
+const LIST_RE = /^\s*([-*+]|\d+\.)\s+/;
+function textBlocks(t, root) {
+  const L = t.split('\n');
+  let i = 0;
+  while (i < L.length) {
+    const l = L[i];
+    let m;
+    if (!l.trim()) { i++; continue; }
+    if ((m = /^(#{1,4})\s+(.*)$/.exec(l))) {
+      const h = el('h' + Math.min(4, m[1].length + 1));
+      h.dir = 'auto'; inline(h, m[2]); root.append(h); i++; continue;
+    }
+    if (LIST_RE.test(l)) {
+      const list = el(/^\s*\d+\./.test(l) ? 'ol' : 'ul');
+      list.dir = 'auto';
+      while (i < L.length && LIST_RE.test(L[i])) {
+        const li = el('li'); inline(li, L[i].replace(LIST_RE, '')); list.append(li); i++;
+      }
+      root.append(list); continue;
+    }
+    if (/^>\s?/.test(l)) {
+      const q = el('blockquote'); q.dir = 'auto'; const b = [];
+      while (i < L.length && /^>\s?/.test(L[i])) { b.push(L[i].replace(/^>\s?/, '')); i++; }
+      inline(q, b.join(' ')); root.append(q); continue;
+    }
+    if (/^-{3,}$/.test(l.trim())) { root.append(el('hr')); i++; continue; }
+    const p = el('p'); p.dir = 'auto'; const b = [];
+    while (i < L.length && L[i].trim() && (b.length === 0 || !/^(#{1,4}\s|\s*([-*+]|\d+\.)\s|>|-{3,}$)/.test(L[i]))) {
+      b.push(L[i]); i++;
+    }
+    b.forEach((x, k) => { if (k) p.append(el('br')); inline(p, x); });
+    root.append(p);
+  }
+}
+
+const KEYWORDS = new Set('abstract as async await break case catch class const continue def default del do elif else enum except export extends false final finally fn for from func function go if impl import in interface is lambda let match mod new nil none null package pass private protected public pub raise return self static struct super switch this throw throws true try type typeof undefined use var void while with yield True False None int float string bool char double long str list dict'.split(' '));
+const HASH_LANGS = /^(py|python|sh|bash|shell|zsh|ruby|rb|yaml|yml|toml|r|perl|makefile|dockerfile|ini|conf)$/i;
+
+function highlight(code, lang, pre) {
+  const com = HASH_LANGS.test(lang) ? '\\/\\/[^\\n]*|#[^\\n]*|\\/\\*[\\s\\S]*?\\*\\/' : '\\/\\/[^\\n]*|\\/\\*[\\s\\S]*?\\*\\/|<!--[\\s\\S]*?-->';
+  const re = new RegExp('(' + com + ')|("(?:\\\\.|[^"\\\\\\n])*"|\'(?:\\\\.|[^\'\\\\\\n])*\'|\`(?:\\\\.|[^\`\\\\])*\`)|(\\b\\d[\\d_.]*\\b)|([A-Za-z_$][\\w$]*)', 'g');
+  let i = 0, m;
+  const span = (cls, txt) => pre.append(el('span', cls, txt));
+  while ((m = re.exec(code))) {
+    if (m.index > i) pre.append(code.slice(i, m.index));
+    if (m[1]) span('tk-c', m[0]);
+    else if (m[2]) span('tk-s', m[0]);
+    else if (m[3]) span('tk-n', m[0]);
+    else if (KEYWORDS.has(m[4])) span('tk-k', m[0]);
+    else if (code[re.lastIndex] === '(') span('tk-f', m[0]);
+    else pre.append(m[0]);
+    i = re.lastIndex;
+  }
+  if (i < code.length) pre.append(code.slice(i));
+}
+
+function codeBlock(lang, code) {
+  const box = el('div', 'cb'), head = el('header'), btn = el('button', null, 'نسخ');
+  btn.type = 'button';
+  head.append(el('span', null, lang || 'code'), btn);
+  btn.addEventListener('click', async () => {
+    const ok = await copyText(code);
+    btn.textContent = ok ? 'تم النسخ ✓' : 'فشل';
+    setTimeout(() => { btn.textContent = 'نسخ'; }, 1500);
+  });
+  const pre = el('pre'), c = el('code');
+  if (code.length < 60000) highlight(code, lang, c); else c.textContent = code;
+  pre.append(c); box.append(head, pre); return box;
+}
+
+function renderMd(text, root) {
+  root.textContent = '';
+  text.split('\`\`\`').forEach((p, idx) => {
+    if (idx % 2 === 1) {
+      const nl = p.indexOf('\n');
+      let lang = '', code = p;
+      if (nl >= 0) { lang = p.slice(0, nl).trim().split(/\s/)[0]; code = p.slice(nl + 1); }
+      root.append(codeBlock(lang, code.replace(/\n$/, '')));
+    } else textBlocks(p, root);
+  });
+}
+
+const chatBox = $('#chat'), msgs = $('#msgs');
+const nearBottom = () => chatBox.scrollHeight - chatBox.scrollTop - chatBox.clientHeight < 140;
+const toBottom = smooth => chatBox.scrollTo({ top: chatBox.scrollHeight, behavior: smooth ? 'smooth' : 'auto' });
+
+const SUGGESTIONS = [
+  ['اشرح موضوعاً', 'اشرح لي كيف تعمل نماذج اللغة الكبيرة بأسلوب واضح'],
+  ['مساعدة برمجية', 'اكتب دالة JavaScript لتنفيذ طلبات fetch مع إعادة المحاولة'],
+  ['صياغة وتحرير', 'أعد صياغة هذه الجملة بأسلوب مهني: "أحتاج الملف بأسرع وقت"'],
+  ['ترجمة دقيقة', 'ترجم العبارة التالية إلى الإنجليزية والفرنسية: "البساطة أساس الإتقان"']
+];
+
+function renderWelcome() {
+  const w = el('div', 'welcome');
+  w.append(
+    el('div', 'logo', '◎'),
+    el('h2', null, 'كيف يمكنني مساعدتك اليوم؟'),
+    el('p', null, 'اسأل عن البرمجة، الشرح، الكتابة، التلخيص، أو الترجمة عبر واجهة ChatGPT.')
+  );
+  if (!apiKey) {
+    const n = el('div', 'notice');
+    n.append('لم يتم ضبط مفتاح OpenAI API بعد. ');
+    const b = el('button', null, 'افتح الإعدادات لإضافة المفتاح');
+    b.type = 'button';
+    b.addEventListener('click', openSettings);
+    n.append(b, '.');
+    w.append(n);
+  }
+  const chips = el('div', 'chips');
+  SUGGESTIONS.forEach(([t, prompt]) => {
+    const b = el('button', 'chip', t);
+    b.type = 'button';
+    b.append(el('span', null, prompt));
+    b.addEventListener('click', () => sendMessage(prompt));
+    chips.append(b);
+  });
+  w.append(chips);
+  msgs.append(w);
+}
+
+function buildMsg(conv, m, isLast) {
+  const w = el('article', 'msg ' + (m.role === 'user' ? 'user' : 'ai'));
+  const body = el('div', 'body'), content = el('div', 'content');
+  body.append(content);
+  if (m.role === 'user') {
+    content.textContent = m.text;
+    content.dir = 'auto';
+  } else {
+    w.append(el('div', 'avatar', '◎'));
+    const streaming = busy && busy.msg === m;
+    if (streaming) streamEl = content;
+    fillAi(m, content, streaming);
+    if (m.error) body.append(el('div', 'err', '⚠ ' + m.error));
+    if (m.stopped) body.append(el('div', 'note', 'تم إيقاف التوليد.'));
+    if (m.note) body.append(el('div', 'note', m.note));
+    if (!streaming && m.text) {
+      const acts = el('div', 'acts');
+      const cp = el('button', null, 'نسخ'); cp.type = 'button';
+      cp.addEventListener('click', async () => {
+        const ok = await copyText(m.text);
+        cp.textContent = ok ? 'تم النسخ ✓' : 'فشل';
+        setTimeout(() => { cp.textContent = 'نسخ'; }, 1500);
+      });
+      acts.append(cp);
+      if (isLast && !busy) {
+        const rg = el('button', null, '↻ إعادة التوليد'); rg.type = 'button';
+        rg.addEventListener('click', regenerate);
+        acts.append(rg);
+      }
+      body.append(acts);
+    } else if (!streaming && m.error && isLast && !busy) {
+      const acts = el('div', 'acts');
+      const rg = el('button', null, '↻ حاول مرة أخرى'); rg.type = 'button';
+      rg.addEventListener('click', regenerate);
+      acts.append(rg);
+      body.append(acts);
+    }
+  }
+  w.title = new Date(m.ts).toLocaleString();
+  w.append(body);
+  return w;
+}
+
+function fillAi(m, content, streaming) {
+  content.textContent = '';
+  if (!m.text) {
+    if (streaming) {
+      const d = el('span', 'dots');
+      d.append(el('i'), el('i'), el('i'));
+      content.append(d);
+    }
+    return;
+  }
+  renderMd(m.text, content);
+  content.classList.toggle('cursor', !!streaming);
+}
+
+function renderChat(keepScroll) {
+  const stick = keepScroll ? nearBottom() : true;
+  msgs.textContent = ''; streamEl = null;
+  const c = active();
+  if (!c || !c.messages.length) renderWelcome();
+  else c.messages.forEach((m, i) => msgs.append(buildMsg(c, m, i === c.messages.length - 1)));
+  $('#title').textContent = c ? c.title : 'Xi · ChatGPT';
+  if (stick) toBottom(false);
+}
+
+function schedulePaint() {
+  if (paintQueued) return;
+  paintQueued = true;
+  requestAnimationFrame(() => {
+    paintQueued = false;
+    if (!busy || !streamEl || active() !== busy.conv) return;
+    const stick = nearBottom();
+    fillAi(busy.msg, streamEl, true);
+    if (stick) toBottom(false);
+  });
+}
+
+function renderList() {
+  const list = $('#list'), q = $('#search').value.trim().toLowerCase();
+  list.textContent = '';
+  const items = convs
+    .filter(c => !q || c.title.toLowerCase().includes(q) || c.messages.some(m => (m.text || '').toLowerCase().includes(q)))
+    .sort((a, b) => (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0) || b.updated - a.updated);
+  if (!items.length) {
+    list.append(el('div', 'empty', q ? 'لا توجد نتائج مطابقة' : 'لا توجد محادثات بعد'));
+    return;
+  }
+  items.forEach(c => {
+    const row = el('div', 'item' + (c.id === activeId ? ' on' : ''));
+    const pick = el('button', 'pick'); pick.type = 'button';
+    const t = el('span', 't', c.title); t.dir = 'auto';
+    pick.append(t, el('span', 'd', new Date(c.updated).toLocaleDateString([], { month: 'short', day: 'numeric' }) + ' · ' + c.messages.length + ' رسالة'));
+    pick.addEventListener('click', () => { selectConv(c.id); closeNav(); });
+
+    const pin = el('button', 'mini' + (c.pinned ? ' pinned' : ''), c.pinned ? '★' : '☆');
+    pin.type = 'button'; pin.title = c.pinned ? 'إلغاء التثبيت' : 'تثبيت';
+    pin.addEventListener('click', () => { c.pinned = !c.pinned; c.updated = Date.now(); saveConvs(); renderList(); });
+
+    const ren = el('button', 'mini', '✎'); ren.type = 'button'; ren.title = 'إعادة تسمية';
+    ren.addEventListener('click', () => renameConv(c.id));
+
+    const del = el('button', 'mini', '✕'); del.type = 'button'; del.title = 'حذف';
+    del.addEventListener('click', () => deleteConv(c.id));
+
+    row.append(pick, pin, ren, del);
+    list.append(row);
+  });
+}
+
+function setBusyUI() {
+  const b = $('#send'), inp = $('#input');
+  b.classList.toggle('stop', !!busy);
+  b.textContent = busy ? '■' : '↑';
+  b.setAttribute('aria-label', busy ? 'إيقاف التوليد' : 'إرسال');
+  b.disabled = !busy && !inp.value.trim();
+}
+
+function refreshBadge() { $('#badge').textContent = settings.model; }
+
+function uiDialog(title, withInput, value, okLabel) {
+  return new Promise(res => {
+    const d = el('dialog'), h = el('div', 'dh'), body = el('div', 'sec');
+    let inp = null;
+    h.append(el('h2', null, title));
+    if (withInput) {
+      inp = el('input', 'fld'); inp.value = value || ''; inp.maxLength = 80; body.append(inp);
+    }
+    const row = el('div', 'row');
+    const cancel = el('button', 'btn', 'إلغاء');
+    const ok = el('button', 'btn primary', okLabel || 'موافق');
+    cancel.type = ok.type = 'button';
+    row.append(cancel, ok); body.append(row); d.append(h, body);
+    const done = v => { d.close(); d.remove(); res(v); };
+    cancel.addEventListener('click', () => done(null));
+    ok.addEventListener('click', () => done(withInput ? inp.value : true));
+    d.addEventListener('cancel', e => { e.preventDefault(); done(null); });
+    if (inp) inp.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); ok.click(); } });
+    document.body.append(d); d.showModal();
+    if (inp) { inp.focus(); inp.select(); } else ok.focus();
+  });
+}
+const uiConfirm = (title, okLabel) => uiDialog(title, false, '', okLabel).then(v => v === true);
+const uiPrompt = (title, value) => uiDialog(title, true, value, 'حفظ');
+
+function newChat() {
+  if (busy) return toast('انتظر انتهاء الرد الحالي أو اضغط إيقاف');
+  const cur = active();
+  if (cur && !cur.messages.length) { $('#input').focus(); return; }
+  const c = { id: uid(), title: 'محادثة جديدة', created: Date.now(), updated: Date.now(), messages: [] };
+  convs.unshift(c); activeId = c.id; LS.set('chatgpt.xi.active', activeId); saveConvs();
+  renderList(); renderChat(); $('#input').focus();
+}
+
+function selectConv(id) { activeId = id; LS.set('chatgpt.xi.active', id); renderList(); renderChat(); }
+
+async function renameConv(id) {
+  const c = convs.find(x => x.id === id); if (!c) return;
+  const v = await uiPrompt('إعادة تسمية المحادثة', c.title);
+  if (v == null) return;
+  const t = v.trim().slice(0, 80); if (!t) return toast('لا يمكن ترك العنوان فارغاً');
+  c.title = t; c.updated = Date.now(); saveConvs(); renderList(); renderChat(true);
+}
+
+async function deleteConv(id) {
+  if (busy && busy.conv.id === id) return toast('أوقف التوليد أولاً');
+  const c = convs.find(x => x.id === id);
+  if (!c || !(await uiConfirm('حذف «' + c.title + '»؟', 'حذف'))) return;
+  convs = convs.filter(x => x.id !== id);
+  if (activeId === id) activeId = convs.length ? convs.slice().sort((a, b) => b.updated - a.updated)[0].id : null;
+  LS.set('chatgpt.xi.active', activeId); saveConvs(); renderList(); renderChat();
+}
+
+async function clearConversation() {
+  const c = active(); if (!c || !c.messages.length) return toast('لا يوجد ما يُمسح');
+  if (busy) return toast('أوقف التوليد أولاً');
+  if (!(await uiConfirm('مسح كل رسائل هذه المحادثة؟', 'مسح'))) return;
+  c.messages = []; c.title = 'محادثة جديدة'; c.updated = Date.now(); saveConvs(); renderList(); renderChat();
+}
+
+function exportConversation() {
+  const c = active(); if (!c || !c.messages.length) return toast('لا يوجد ما يُصدّر');
+  const md = '# ' + c.title + '\n\n' + c.messages.filter(m => m.text).map(m =>
+    '**' + (m.role === 'user' ? 'أنت' : 'ChatGPT') + '** (' + new Date(m.ts).toLocaleString() + ')\n\n' + m.text
+  ).join('\n\n---\n\n') + '\n';
+  const url = URL.createObjectURL(new Blob([md], { type: 'text/markdown;charset=utf-8' }));
+  const a = el('a');
+  a.href = url;
+  a.download = (c.title.replace(/[^\p{L}\p{N}]+/gu, '-').slice(0, 40) || 'chatgpt-chat') + '.md';
+  document.body.append(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+async function sendMessage(raw) {
+  if (busy) return;
+  const text = String(raw || '').trim();
+  if (!text) return;
+  if (!apiKey) { toast('أضف مفتاح OpenAI API أولاً'); openSettings(); return; }
+  let c = active();
+  if (!c) {
+    c = { id: uid(), title: 'محادثة جديدة', created: Date.now(), updated: Date.now(), messages: [] };
+    convs.unshift(c); activeId = c.id; LS.set('chatgpt.xi.active', activeId);
+  }
+  if (!c.messages.length) c.title = text.replace(/\s+/g, ' ').slice(0, 42) + (text.length > 42 ? '…' : '');
+  c.messages.push({ id: uid(), role: 'user', text, ts: Date.now() });
+  c.updated = Date.now(); saveConvs();
+  const inp = $('#input'); inp.value = ''; autoGrow();
+  renderList(); await generate(c);
+}
+
+async function generate(conv) {
+  const msg = { id: uid(), role: 'assistant', text: '', ts: Date.now() };
+  conv.messages.push(msg);
+  const ctrl = {
+    aborted: false,
+    reader: null,
+    abort() {
+      this.aborted = true;
+      if (this.reader) this.reader.cancel().catch(() => {});
+    }
+  };
+  busy = { conv, msg, ctrl };
+  renderChat(); toBottom(true); setBusyUI();
+  const context = conv.messages.filter(m => m !== msg && !m.error && m.text).slice(-40);
+  try {
+    const r = await ChatGPTProvider.stream({
+      key: apiKey,
+      baseUrl: settings.baseUrl,
+      model: settings.model,
+      system: (settings.system || '').trim() || DEFAULT_SYSTEM,
+      messages: context,
+      ctrl,
+      onToken: t => { msg.text = t; schedulePaint(); }
+    });
+    msg.text = r.text;
+    if (r.finish === 'length') msg.note = 'وصل الرد إلى الحد الأقصى لعدد الرموز (Tokens).';
+  } catch (e) {
+    if (e.name === 'AbortError') {
+      msg.stopped = true;
+      if (!msg.text) conv.messages = conv.messages.filter(m => m !== msg);
+    } else {
+      msg.error = friendlyError(e);
+    }
+  } finally {
+    busy = null; conv.updated = Date.now(); saveConvs();
+    renderList(); if (active() === conv) renderChat(true); setBusyUI();
+  }
+}
+
+function regenerate() {
+  const c = active(); if (!c || busy) return;
+  while (c.messages.length && c.messages[c.messages.length - 1].role === 'assistant') c.messages.pop();
+  if (!c.messages.length) return;
+  generate(c);
+}
+
+const dlg = $('#settings');
+function openSettings() {
+  $('#apiKey').value = apiKey; $('#apiKey').type = 'password'; $('#toggleKey').textContent = 'إظهار';
+  $('#baseUrl').value = settings.baseUrl || DEFAULT_BASE;
+  $('#system').value = settings.system || '';
+  $('#theme').value = settings.theme;
+  $('#accent').value = settings.accent || 'green';
+  updateKeyStatus(); fillModels();
+  if (!dlg.open) dlg.showModal();
+}
+
+function updateKeyStatus() {
+  $('#keyStatus').textContent = apiKey ? 'المفتاح محفوظ في هذا المتصفح.' : 'لا يوجد مفتاح محفوظ حالياً.';
+}
+
+function fillModels() {
+  const sel = $('#model'); sel.textContent = '';
+  const list = Array.from(new Set([...(cachedModels || DEFAULT_MODELS), settings.model].filter(Boolean)));
+  list.forEach(m => { const o = el('option', null, m); o.value = m; sel.append(o); });
+  sel.value = settings.model;
+}
+
+function applyTheme() {
+  const t = settings.theme === 'system'
+    ? (matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark')
+    : settings.theme;
+  document.documentElement.dataset.theme = t;
+  document.documentElement.dataset.accent = settings.accent || 'green';
+  document.querySelector('meta[name=color-scheme]').content = t;
+}
+
+function bindSettings() {
+  $('#toggleKey').addEventListener('click', () => {
+    const i = $('#apiKey'), show = i.type === 'password';
+    i.type = show ? 'text' : 'password';
+    $('#toggleKey').textContent = show ? 'إخفاء' : 'إظهار';
+  });
+  $('#saveKey').addEventListener('click', () => {
+    const v = $('#apiKey').value.trim();
+    if (v.length < 10 || /\s/.test(v)) return toast('صيغة المفتاح غير صحيحة');
+    apiKey = v; LS.set('chatgpt.xi.key', v);
+    updateKeyStatus(); toast('تم حفظ المفتاح');
+    if (!active() || !active().messages.length) renderChat();
+  });
+  $('#removeKey').addEventListener('click', () => {
+    apiKey = ''; localStorage.removeItem('chatgpt.xi.key');
+    $('#apiKey').value = ''; updateKeyStatus(); toast('تم حذف المفتاح');
+    if (!active() || !active().messages.length) renderChat();
+  });
+  $('#baseUrl').addEventListener('change', e => {
+    settings.baseUrl = cleanBase(e.target.value);
+    e.target.value = settings.baseUrl;
+    saveSettings(); toast('تم حفظ رابط نقطة النهاية');
+  });
+  $('#model').addEventListener('change', e => { settings.model = e.target.value; saveSettings(); refreshBadge(); });
+  $('#system').addEventListener('change', e => { settings.system = e.target.value.slice(0, 4000); saveSettings(); toast('تم حفظ تعليمات النظام'); });
+  $('#theme').addEventListener('change', e => { settings.theme = e.target.value; saveSettings(); applyTheme(); });
+  $('#accent').addEventListener('change', e => { settings.accent = e.target.value; saveSettings(); applyTheme(); });
+  matchMedia('(prefers-color-scheme: light)').addEventListener('change', () => { if (settings.theme === 'system') applyTheme(); });
+
+  $('#refreshModels').addEventListener('click', async () => {
+    const st = $('#modelStatus');
+    if (!apiKey) { st.textContent = 'احفظ مفتاح OpenAI API أولاً.'; return; }
+    st.textContent = 'جارٍ جلب النماذج…';
+    try {
+      const list = await ChatGPTProvider.listModels(apiKey, settings.baseUrl);
+      if (!list.length) throw new Error('لم يتم العثور على نماذج متاحة لهذا المفتاح.');
+      cachedModels = list; LS.set('chatgpt.xi.models', list);
+      if (!list.includes(settings.model)) {
+        settings.model = list.includes('gpt-4o-mini') ? 'gpt-4o-mini' : list[0];
+        saveSettings(); refreshBadge();
+      }
+      fillModels();
+      st.textContent = 'تم جلب ' + list.length + ' نموذجاً.';
+    } catch (e) {
+      st.textContent = 'تعذّر جلب النماذج: ' + friendlyError(e);
+    }
+  });
+
+  $('#clearAll').addEventListener('click', async () => {
+    if (busy) return toast('أوقف التوليد أولاً');
+    if (!(await uiConfirm('حذف كل المحادثات من هذا المتصفح؟', 'حذف الكل'))) return;
+    convs = []; activeId = null;
+    localStorage.removeItem('chatgpt.xi.convs');
+    localStorage.removeItem('chatgpt.xi.active');
+    renderList(); renderChat(); toast('تم حذف كل المحادثات');
+  });
+
+  $('#closeSettings').addEventListener('click', () => dlg.close());
+  dlg.addEventListener('click', e => { if (e.target === dlg) dlg.close(); });
+}
+
+function openNav() { $('#app').classList.add('nav-open'); }
+function closeNav() { $('#app').classList.remove('nav-open'); }
+function autoGrow() {
+  const t = $('#input');
+  t.style.height = 'auto';
+  t.style.height = Math.min(t.scrollHeight, 200) + 'px';
+  setBusyUI();
+}
+
+function init() {
+  applyTheme(); bindSettings(); refreshBadge();
+  if (activeId && !active()) activeId = null;
+  if (!activeId && convs.length) activeId = convs.slice().sort((a, b) => b.updated - a.updated)[0].id;
+  renderList(); renderChat(); setBusyUI();
+
+  $('#newChat').addEventListener('click', () => { newChat(); closeNav(); });
+  $('#openSettings').addEventListener('click', () => { closeNav(); openSettings(); });
+  $('#settingsTop').addEventListener('click', openSettings);
+  $('#menu').addEventListener('click', openNav);
+  $('#scrim').addEventListener('click', closeNav);
+  $('#title').addEventListener('click', () => { const c = active(); if (c) renameConv(c.id); else toast('ابدأ محادثة أولاً'); });
+  $('#clearBtn').addEventListener('click', clearConversation);
+  $('#exportBtn').addEventListener('click', exportConversation);
+  $('#search').addEventListener('input', renderList);
+
+  const inp = $('#input');
+  inp.addEventListener('input', autoGrow);
+  inp.addEventListener('keydown', e => {
+    if (e.key === 'Enter' && !e.shiftKey && !e.isComposing) {
+      e.preventDefault();
+      sendMessage(inp.value);
+    }
+  });
+  $('#send').addEventListener('click', () => { if (busy) busy.ctrl.abort(); else sendMessage(inp.value); });
+
+  const pop = $('#pop'), more = $('#moreBtn');
+  const closePop = () => { pop.hidden = true; more.setAttribute('aria-expanded', 'false'); };
+  more.addEventListener('click', e => {
+    e.stopPropagation();
+    pop.hidden = !pop.hidden;
+    more.setAttribute('aria-expanded', String(!pop.hidden));
+  });
+  pop.addEventListener('click', closePop);
+  document.addEventListener('click', e => { if (!pop.hidden && !pop.contains(e.target)) closePop(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeNav(); closePop(); } });
+  window.addEventListener('storage', e => {
+    if (e.key === 'chatgpt.xi.convs' && !busy) { convs = LS.get('chatgpt.xi.convs', []); renderList(); renderChat(true); }
+  });
+}
+init();
+})();
+</script>
+</body>
+</html>
