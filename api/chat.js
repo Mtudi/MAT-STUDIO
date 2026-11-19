@@ -135,7 +135,8 @@ module.exports = async function handler(req, res) {
       while (true) {
         const part = await reader.read();
         if (part.done) break;
-        buffer += decoder.decode(part.value, { stream: true });\n        buffer = buffer.replace(/\r\n/g, "\n");
+        buffer += decoder.decode(part.value, { stream: true });
+        buffer = buffer.replace(/\r\n/g, "\n");
         let boundary;
         while ((boundary = buffer.indexOf("\n\n")) !== -1) {
           const frame = buffer.slice(0, boundary);
