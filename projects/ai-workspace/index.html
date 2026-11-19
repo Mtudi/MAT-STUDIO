@@ -225,6 +225,7 @@ html:not([data-mode=gemini]) label[for=visionModel],html:not([data-mode=gemini])
 .vbtn[hidden]{display:none}
   #settings label[for=apiKey],#settings .row:has(#apiKey),#settings .row:has(#saveKey),#settings #keyStatus,#settings #sampleNote,#settings #geminiWarn,#settings label[for=provider],#settings #provider,#visionBtn{display:none!important}
 </style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 <canvas id="bg" aria-hidden="true"></canvas>
@@ -304,8 +305,11 @@ html:not([data-mode=gemini]) label[for=visionModel],html:not([data-mode=gemini])
   <select class="fld" id="modoOn"><option value="on">On</option><option value="off">Off</option></select>
  </div>
  <div class="sec">
-  <h3>Data</h3>
-  <p>Conversations are stored only in this browser (localStorage). They are sent to the AI provider only to generate replies.</p>
+  <h3>Account & Cloud Sync</h3>
+  <p>Sign in with your email to sync conversations across devices. Your local history remains available without signing in.</p>
+  <label for="cloudEmail">Email</label>
+  <div class="row"><input class="fld" id="cloudEmail" type="email" autocomplete="email" placeholder="you@example.com"><button class="btn primary" id="cloudLoginBtn" type="button">Send login link</button></div>
+  <div class="row"><p id="cloudStatus">Cloud sync is loading…</p><button class="btn" id="cloudLogoutBtn" type="button" hidden>Sign out</button></div>
   <p id="syncStatus"></p>
   <button class="btn danger" id="clearAll" type="button">Delete all conversations</button>
  </div>
@@ -928,6 +932,8 @@ function bindSettings() {
     convs.forEach(c => { Vision.forget(c); Cloud.remove(c.id); }); convs = []; activeId = null; localStorage.removeItem('xi.convs'); localStorage.removeItem('xi.active');
     renderList(); renderChat(); toast('All conversations deleted');
   });
+  $('#cloudLoginBtn').addEventListener('click', () => Cloud.login($('#cloudEmail').value.trim()));
+  $('#cloudLogoutBtn').addEventListener('click', () => Cloud.logout());
   $('#closeSettings').addEventListener('click', () => dlg.close());
   dlg.addEventListener('click', e => { if (e.target === dlg) dlg.close(); });
 }
@@ -936,60 +942,65 @@ function bindSettings() {
 function openNav() { $('#app').classList.add('nav-open'); }
 function closeNav() { $('#app').classList.remove('nav-open'); }
 function autoGrow() { const t = $('#input'); t.style.height = 'auto'; t.style.height = Math.min(t.scrollHeight, 200) + 'px'; setBusyUI(); }
-/* ---------- Account history: each person's chats are stored privately under their own Claude account ---------- */
+/* MAT-STUDIO Supabase cloud sync */
 const Cloud = (() => {
-  let col = null, timer = 0;
-  const sent = {};
-  const L = (en, ar) => settings.lang === 'ar' ? ar : en;
-  const sig = c => c.updated + ':' + c.title + ':' + c.messages.length + ':' + (c.pinned ? 1 : 0);
-  function status(k) {
-    $('#syncStatus').textContent = k === 'on' ? L('History is saved to your Claude account and syncs across your devices ✓', 'السجل محفوظ بحساب Claude الخاص بك ويتزامن بين أجهزتك ✓')
-      : k === 'wait' ? L('Syncing…', 'جارٍ المزامنة…')
-      : L('History is saved only in this browser. Saving to your account needs a signed-in Claude account with write access to this page.', 'السجل محفوظ في هذا المتصفح فقط. حفظه بحسابك يحتاج حساب Claude مسجل الدخول وصلاحية كتابة على هذه الصفحة.');
-    $('#syncChip').textContent = k === 'on' ? L('☁ Synced with your Claude account', '☁ متزامن مع حسابك في Claude') : k === 'wait' ? '…' : L('Local only (this browser)', 'محلي فقط (هذا المتصفح)');
-  }
-  function clip(c) {
-    const o = JSON.parse(JSON.stringify(c));
-    while (o.messages.length > 1 && JSON.stringify(o).length > 230000) o.messages.shift();   // documents are capped at 256 KiB
-    return o;
-  }
-  async function flush() {
-    if (!col) return;
-    for (const c of convs.slice()) {
-      const g = sig(c); if (sent[c.id] === g) continue;
-      try { await col.doc(c.id).set(clip(c)); sent[c.id] = g; }
-      catch { col = null; status('off'); return; }   // no write access: stay local
-    }
-  }
-  function queue() { if (!col) return; clearTimeout(timer); timer = setTimeout(flush, 900); }
-  function remove(id) { if (!col) return; delete sent[id]; col.doc(id).set({ id, deleted: true, updated: Date.now() }).catch(() => {}); }
-  async function init() {
-    status('off');
-    try {
-      const [db, user] = await Promise.all([window.claude.use('db'), window.claude.use('user')]);
-      const uid = user ? await user.id() : null;
-      if (!db || !uid) return;
-      status('wait');
-      col = db.collection('data/users/' + uid + '/convs');
-      const snap = await col.get(); let changed = false;
-      snap.docs.forEach(d => {
-        const raw = d.data(); if (!raw || !raw.id) return;
-        const c = JSON.parse(JSON.stringify(raw)), i = convs.findIndex(x => x.id === c.id), mine = convs[i];
-        if (c.deleted) { if (mine && mine.updated <= c.updated) { convs.splice(i, 1); changed = true; } return; }
-        if (!Array.isArray(c.messages)) return;
-        if (!mine) { convs.push(c); sent[c.id] = sig(c); changed = true; }
-        else if ((c.updated || 0) > mine.updated) { Object.assign(mine, c); sent[c.id] = sig(mine); changed = true; }
-        else if ((c.updated || 0) === mine.updated) sent[c.id] = sig(mine);
-      });
-      if (changed) {
-        if (activeId && !active()) activeId = null;
-        if (!activeId && convs.length) activeId = convs.slice().sort((a, b) => b.updated - a.updated)[0].id;
-        LS.set('xi.convs', convs); LS.set('xi.active', activeId); renderList(); if (!busy) renderChat(true);
-      }
-      status('on'); flush();
-    } catch { col = null; status('off'); }
-  }
-  return { init, queue, remove };
+ let client=null,user=null,loading=false,timer=0;
+ const sent=new Map();
+ const makeCloudId=()=>crypto.randomUUID?crypto.randomUUID():'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,c=>{const r=Math.random()*16|0;return(c==='x'?r:(r&3|8)).toString(16);});
+ const status=msg=>{if($('#cloudStatus'))$('#cloudStatus').textContent=msg;$('#syncStatus').textContent=msg;$('#syncChip').textContent=user?'☁ Synced to MAT-STUDIO account':'Local history · cloud optional';$('#cloudLoginBtn').hidden=!!user;$('#cloudEmail').hidden=!!user;$('#cloudLogoutBtn').hidden=!user;};
+ const signature=c=>JSON.stringify((c.messages||[]).map(m=>[m.role,m.text||'']));
+ const stamp=v=>{const n=Date.parse(v||'');return Number.isFinite(n)?n:Date.now();};
+ async function syncOne(c){
+  if(!client||!user||!c)return;
+  if(!c.cloudId)c.cloudId=makeCloudId();
+  const id=c.cloudId,sig=signature(c),prior=sent.get(id);
+  const {error:head}=await client.from('ai_conversations').upsert({id,user_id:user.id,title:c.title||'New chat',updated_at:new Date(c.updated||Date.now()).toISOString()},{onConflict:'id'});
+  if(head)throw head;
+  let start=0;
+  if(prior&&sig.startsWith(prior.signature.slice(0,-1)))start=prior.count;
+  else if(prior){const {error}=await client.from('ai_messages').delete().eq('conversation_id',id);if(error)throw error;}
+  const add=(c.messages||[]).slice(start).filter(m=>String(m.text||'').trim());
+  if(add.length){const {error}=await client.from('ai_messages').insert(add.map(m=>({conversation_id:id,role:m.role,content:m.text||''})));if(error)throw error;}
+  sent.set(id,{count:(c.messages||[]).length,signature:sig});c.cloud=true;
+ }
+ async function flush(){if(!client||!user)return;for(const c of convs.slice()){try{await syncOne(c);}catch(e){status('Cloud save issue · '+(e.message||'check connection'));return;}}status('Cloud synced · '+convs.length+' conversations');}
+ function queue(){if(!client||!user)return;clearTimeout(timer);timer=setTimeout(flush,900);}
+ async function load(){
+  if(!client||!user||loading)return;loading=true;status('Loading your saved conversations…');
+  try{
+   const {data,error}=await client.from('ai_conversations').select('id,title,updated_at').order('updated_at',{ascending:false}).limit(30);if(error)throw error;
+   for(const row of data||[]){
+    const {data:msgs,error:me}=await client.from('ai_messages').select('role,content,created_at').eq('conversation_id',row.id).order('created_at',{ascending:true});if(me)throw me;
+    const t=stamp(row.updated_at),remote={id:String(row.id),cloudId:String(row.id),title:row.title||'New chat',created:t,updated:t,cloud:true,messages:(msgs||[]).map((m,i)=>({id:uid()+i,role:m.role,text:m.content||'',ts:stamp(m.created_at)}))};
+    const ix=convs.findIndex(c=>c.cloudId===remote.cloudId||c.id===remote.id);
+    if(ix<0)convs.push(remote);else if((convs[ix].updated||0)<=t)convs[ix]=remote;
+    sent.set(remote.cloudId,{count:remote.messages.length,signature:signature(remote)});
+   }
+   convs.sort((a,b)=>(b.updated||0)-(a.updated||0));convs=convs.slice(0,30);
+   if(activeId&&!active())activeId=null;if(!activeId&&convs.length)activeId=convs[0].id;
+   LS.set('xi.convs',convs);LS.set('xi.active',activeId);renderList();renderChat(true);
+   await flush();
+  }catch(e){status('Cloud load issue · '+(e.message||'try again'));}finally{loading=false;}
+ }
+ async function login(email){
+  if(!client){status('Cloud service is unavailable.');return;}
+  if(!email||!email.includes('@')||!email.includes('.')){status('Enter a valid email address.');return;}
+  $('#cloudLoginBtn').disabled=true;status('Sending secure sign-in link…');
+  try{const {error}=await client.auth.signInWithOtp({email,options:{emailRedirectTo:window.location.href.split('#')[0],shouldCreateUser:true}});if(error)throw error;status('Login link sent. Check your email.');}
+  catch(e){status(e.message||'Could not send sign-in link.');}finally{$('#cloudLoginBtn').disabled=false;}
+ }
+ async function logout(){if(!client)return;const {error}=await client.auth.signOut();if(error){status(error.message||'Could not sign out.');return;}user=null;status('Signed out · local history remains available.');}
+ async function remove(id){if(!client||!user)return;const c=convs.find(x=>x.id===id);const remoteId=c&&(c.cloudId||c.id);if(!remoteId)return;try{await client.from('ai_messages').delete().eq('conversation_id',remoteId);await client.from('ai_conversations').delete().eq('id',remoteId);sent.delete(remoteId);}catch{}}
+ async function init(){
+  status('Connecting cloud service…');
+  try{const r=await fetch('/api/supabase-config',{cache:'no-store'});if(!r.ok)throw Error('Cloud configuration unavailable.');const cfg=await r.json();if(!window.supabase||!window.supabase.createClient)throw Error('Supabase library unavailable.');
+   client=window.supabase.createClient(cfg.url,cfg.publishableKey,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
+   const {data,error}=await client.auth.getSession();if(error)throw error;user=data.session&&data.session.user||null;
+   status(user?'Signed in · loading your history…':'Local history ready · sign in to sync across devices.');if(user)await load();
+   client.auth.onAuthStateChange((_event,session)=>{user=session&&session.user||null;if(user)load();else status('Signed out · local history remains available.');});
+  }catch(e){status('Cloud unavailable · '+(e.message||'offline'));}
+ }
+ return{init,queue,remove,login,logout};
 })();
 
 /* ---- pure helpers (unit-tested in Node) ---- */
@@ -1470,8 +1481,7 @@ function init() {
   if (!activeId && convs.length) activeId = convs.slice().sort((a, b) => b.updated - a.updated)[0].id;
   Modo.apply(); applyMode(); updateAccessStatus(); renderList(); renderChat(); setBusyUI();
   setTimeout(Modo.hello, 900);
-  $('#syncChip').textContent = 'Local history · this device';
-  $('#syncStatus').textContent = 'Conversations are saved on this device.';
+  Cloud.init();
   $('#newChat').addEventListener('click', () => { newChat(); closeNav(); });
   $('#openSettings').addEventListener('click', () => { closeNav(); openSettings(); });
   $('#settingsTop').addEventListener('click', openSettings);
