@@ -1,5 +1,7 @@
 module.exports = async function handler(req, res) {
   res.setHeader("Cache-Control", "no-store");
+  res.setHeader("X-Content-Type-Options", "nosniff");
+  res.setHeader("Referrer-Policy", "no-referrer");
   if (req.method !== "POST") {
     res.setHeader("Allow", "POST");
     return res.status(405).json({ error: "Method not allowed." });
@@ -7,6 +9,9 @@ module.exports = async function handler(req, res) {
   const origin = req.headers.origin;
   const allowedOrigin = process.env.MAT_STUDIO_ORIGIN || "https://mat-studio.vercel.app";
   if (origin && origin !== allowedOrigin) return res.status(403).json({ error: "Origin not allowed." });
+  if (req.headers["content-type"] && !String(req.headers["content-type"]).toLowerCase().includes("application/json")) {
+    return res.status(415).json({ error: "Content-Type must be application/json." });
+  }
 
   const apiKey = process.env.OPENROUTER_API_KEY;
   const accessPassword = process.env.MAT_STUDIO_CHAT_PASSWORD;
