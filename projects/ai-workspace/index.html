@@ -223,7 +223,7 @@ html:not([data-mode=gemini]) label[for=visionModel],html:not([data-mode=gemini])
 .vcard .vmeta{padding:8px 12px;font-size:12.5px;color:var(--mute)}
 .vcard .btn{margin:0 12px 12px}
 .vbtn[hidden]{display:none}
-  #settings label[for=apiKey],#settings .row:has(#apiKey),#settings .row:has(#saveKey),#settings #keyStatus,#settings #sampleNote,#settings #geminiWarn,#settings label[for=provider],#settings #provider,#visionBtn{display:none!important}
+  #settings label[for=apiKey],#settings .row:has(#apiKey),#settings .row:has(#saveKey),#settings #keyStatus,#settings #sampleNote,#settings #geminiWarn,#settings label[for=provider],#settings #provider,#settings #refreshModels,#settings label[for=visionModel],#settings #visionModel,#visionBtn{display:none!important}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
@@ -543,7 +543,7 @@ async function errText(res) {
 }
 function friendlyError(e) {
   if (e instanceof TypeError || /failed to fetch|networkerror|load failed/i.test(e.message || ''))
-    return (provider().needsKey === false ? '' : '') + 'Could not reach the AI service. If you are viewing this inside a preview or sandboxed frame, outside requests are blocked: save the file as index.html and open it directly in your browser. Otherwise check your internet connection, VPN, or any blocker extension.';
+    return 'Could not reach Xi server. Check your internet connection and try again.';
   return e.message || 'Unknown error';
 }
 
