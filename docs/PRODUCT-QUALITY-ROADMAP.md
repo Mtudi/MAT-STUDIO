@@ -1,80 +1,99 @@
-# MAT-STUDIO Product Quality Roadmap
+# MAT-STUDIO Product Quality Roadmap & Audit
 Updated: 2026-11-19
 Repository: Mtudi/MAT-STUDIO
-Production site: https://mat-studio.vercel.app/
+Production: https://mat-studio.vercel.app/
 
-## Operating standard
+## Permanent product standard
 
-Every project is evaluated against the strongest products in its own category, not against one shared visual template. The goal is a reliable, coherent, useful product—not a larger line count. New code is justified by a user-facing capability, reliability, accessibility, maintainability, or measurable performance improvement.
+Each product is benchmarked against leading products and their strongest competitors in its own category. We borrow proven principles, never copy a competitor's interface. Every project keeps its own identity, color system, information architecture, and interaction model.
 
-Scores are not assigned until the relevant flows have been tested. Any later score must identify the rubric, test coverage, and evidence; it is not an official competitor score.
+Quality means user value, reliability, accessibility, speed, maintainability, and coherent design—not lines of code. Scores are estimates only and must be accompanied by a defined rubric and tested evidence. No score is presented as an official competitor rating.
 
-## Repository audit — verified from main
+## Repository and production baseline
 
-The repository currently contains 21 tracked files: 7 project pages, the MAT-STUDIO dashboard, the Xi chat workspace, 2 API files, and documentation/readmes. The apps are predominantly standalone HTML/CSS/JS pages with no shared frontend build/test pipeline.
+- Repository: 7 project pages, MAT-STUDIO dashboard, Xi Workspace, API endpoints and documentation.
+- Architecture: primarily standalone HTML/CSS/JS pages; no shared frontend build/test pipeline was found in the audited root.
+- Production Vercel project: mat-studio, project ID prj_kPnmhOd2czvGDbAIjjFIRZwUij7w.
+- Latest inspected production deployment at audit time: READY, commit 6296e59de4ce0b2dedc92d6d22953b6dcc877147. This verifies deployment state, not every user flow.
+- Current pages and backend source were read from the GitHub main branch on 2026-11-19. This is a source audit, not a full cross-device browser usability study.
 
-### Current verified gaps
+## Project-by-project source audit
 
-- Chess Lab: the previous board moved any selected piece to any destination. It did not validate chess legality, castling, en passant, promotion, check, checkmate, or draws; it had no engine.
-- Deutsch: 12 hard-coded vocabulary cards with reveal/next only. No CEFR curriculum, spaced repetition, audio, pronunciation, exercise variety, progress, or durable learner profile.
-- Christmas: recipient/message text composer and copy action only. No card editor, templates, preview export, shareable card URL, or saved designs.
-- Portfolio: generic profile copy and links to three projects; no detailed case studies, evidence, contact flow, CV, or project outcomes.
-- Xi landing page: a static project introduction. It is separate from the Xi chat workspace and does not itself provide assistant functionality.
-- Xi Workspace: a working chat UI/API with local conversation storage and optional Supabase sync. It still needs stronger rate limiting/abuse controls, robust provider fallback, streaming, message search, file workflows, citations/research tools, evaluation and accessibility testing. Never expose secrets in browser code.
-- MATSONG: local audio library/player with IndexedDB, queue/shuffle/repeat/favorites and a Spotify embed/auth experiment. The Spotify embed is not the same as a licensed, fully native streaming catalogue. Expand metadata/artwork, library management, queue behavior, search, keyboard/accessibility and resilient storage.
-- MAT-STUDIO dashboard: project launch/search/pins/recent/quick actions are present, but pin/recent data is local to one browser, some status/stat labels are static, and there is no verified live health aggregation across apps.
+### 1. Xi Workspace
+**Benchmarks:** ChatGPT, Claude, Gemini, Perplexity; Linear for interaction precision.
+**Verified in source:** conversation history, local persistence, searchable history, new chat, optional Supabase auth/cloud sync, access-code authentication, streaming response parser, code/link rendering, copy actions, provider/error handling.
+**Recent backend work:** Vercel Firewall rate limit for POST /api/chat (10 requests / 60 seconds per IP); backwards-compatible SSE streaming; provider routing relaxed from ZDR-only while retaining data_collection=deny; upstream errors surfaced. Latest production deployment includes provider-routing fix.
+**Gaps to verify/improve:** visual hierarchy and identity; mobile navigation; message action affordances; Markdown/table/list rendering; keyboard and screen-reader behavior; authenticated end-to-end reliability under provider/network failures; conversation search quality; upload/research/tool workflows are not currently evidenced as implemented.
+**Design direction:** premium conversation-first workspace, quiet neutral surfaces with a distinct Xi accent, strong readable typography, calm composer, purposeful motion, desktop sidebar and mobile drawer. Preserve API, auth, streaming, local history and Supabase behavior.
 
-## Competitor benchmark map
+### 2. MATSONG
+**Benchmarks:** Spotify, Apple Music, YouTube Music, Tidal.
+**Verified in source:** local audio import/player, IndexedDB-backed library, queue/player controls, search, favorites, shuffle/repeat/volume and Spotify embed/auth experiment.
+**Gaps:** do not imply the Spotify embed is a licensed native streaming catalogue; audit OAuth lifecycle, queue edge cases, object URL cleanup, metadata/artwork, playlists, keyboard access, storage resilience and mobile player ergonomics.
+**Design direction:** retain Crimson Edition identity; refine information architecture and playback hierarchy rather than applying Xi's palette.
 
-| MAT-STUDIO product | Primary benchmark set | Product capabilities to study |
-|---|---|---|
-| Chess Lab | Chess.com, Lichess, Chessable | Legal play, engine analysis, PGN/FEN, opening explorer, studies, puzzles, review, progress |
-| Xi Workspace | ChatGPT, Claude, Gemini | Conversation quality, streaming, files, research/citations, tools, memory/project context, connectors, safety |
-| MATSONG | Spotify, Apple Music, YouTube Music | Discovery, metadata/artwork, library, playlists, queue, player controls, accessibility, device behavior |
-| Deutsch | Duolingo, Babbel, Busuu | CEFR path, spaced repetition, listening, speaking, grammar, review, progress |
-| Portfolio | Framer, Webflow, leading personal portfolios | Case-study storytelling, proof of work, responsive design, SEO, performance, contact |
-| Christmas | Canva, Paperless Post, Greetings Island | Templates, visual editor, preview, personalization, share links, export |
-| MAT-STUDIO | Apple, Linear, Notion, Vercel | Hierarchy, speed, command palette, workspace search, status integrity, keyboard access, cross-device sync |
-| Xi project page | Leading AI product landing pages | Clear positioning, live demo, trust, product roadmap, integrations and onboarding |
+### 3. Chess Lab
+**Benchmarks:** Chess.com, Lichess, Chessable.
+**Verified in source:** chess board interface, chess.js-based legal move handling, undo/reset/flip, promotion flow, move list, FEN/PGN controls and study notes/presets in current app source.
+**Gaps:** verify special moves and terminal positions with tests; add engine analysis, evaluation, game review, opening repertoire, puzzles, progress and accessible board interaction. Do not claim engine capability until integrated and tested.
+**Design direction:** focused analysis-board aesthetic; excellent board contrast, clear move states, compact study tools and responsive board sizing.
 
-## Implementation progress — 2026-11-19\n\n- Chess Lab v1 committed: legal move validation via chess.js 1.4.0, legal move highlighting, move history, undo, reset, board flip, promotion, game-end state, PGN/FEN copy/load, and starter London/Caro-Kann lines. Stockfish analysis, tactical puzzles, opening explorer, cloud accounts and online play remain future work.\n- Deutsch v1 committed: 30 A1 starter words, flashcards, German browser speech synthesis, active-recall typing practice, local progress, and interval-based review scheduling. Full CEFR A1 curriculum, listening comprehension, grammar exercises, pronunciation assessment and cloud sync remain future work.\n- Christmas Studio v1 committed: three visual themes, live personalized preview, recipient/message/sender fields, shareable encoded card URL, native share/copy-link and print layout. A full template gallery, image export and saved-card library remain future work.\n- Roadmap document added to repository. Production deployment verification is tracked separately; a READY build alone does not prove every interactive flow has passed browser testing.\n\n## Delivery sequence
+### 4. Deutsch
+**Benchmarks:** Duolingo, Babbel, Busuu, Memrise.
+**Verified in source:** A1 starter vocabulary, flashcard/reveal flow, German browser speech, typed practice/quiz, local progress and interval-based review.
+**Gaps:** a complete CEFR path, listening comprehension, grammar progression, sentence construction, pronunciation assessment (only if genuinely measurable), richer review scheduling, accessibility and durable progress export/sync.
+**Design direction:** calm, friendly learning studio; high readability, clear lesson progression, focused practice states. Avoid gamification that distracts from learning.
 
-### Phase 1 — Chess Lab foundation
-- Replace free-form piece movement with a tested legal chess rules library.
-- Add move history, undo, reset, board flip, promotion, game-end states, PGN/FEN import/export.
-- Add London System and Caro-Kann study lines.
-- Next: Stockfish worker analysis, evaluation bar, best lines, game review, opening repertoire and tactics.
-- Tests: illegal moves rejected; castling/en-passant/promotion work; checkmate/stalemate/draw states; PGN/FEN round trips; mobile board and keyboard/screen-reader behavior.
+### 5. MATUDI Portfolio
+**Benchmarks:** Framer, Webflow, high-quality developer/designer portfolios.
+**Verified in source:** standalone profile/portfolio landing page with project links and a distinct dark/red/blue visual identity.
+**Gaps:** substantive case studies, role and decisions, screenshots, outcomes, skills evidence, contact flow, CV (only if supplied), SEO, performance and responsive proof.
+**Design direction:** editorial personal brand with strong project storytelling, typography and credible proof—not a generic template.
 
-### Phase 2 — Xi Workspace
-- Test API and Supabase sync end-to-end; add rate limiting, request budgets and abuse controls.
-- Add reliable streaming, conversation search, file workflows, citations and provider error/fallback UX.
-- Add repeatable quality/evaluation tests for factuality, tool use, prompt injection and error handling.
-- Keep API credentials server-side only.
+### 6. MATUDI Christmas
+**Benchmarks:** Canva, Paperless Post, Greetings Island.
+**Verified in source:** personalized recipient/message/sender fields, live preview, theme selection, encoded share URL, copy/share and print interactions.
+**Gaps:** more polished templates, image export, saved designs, accessibility, mobile editing ergonomics and print QA.
+**Design direction:** expressive seasonal editor with a warm, celebratory palette and clear preview-first workflow.
 
-### Phase 3 — MATSONG
-- Audit playback, IndexedDB, object URL cleanup, import edge cases, queue and Spotify OAuth lifecycle.
-- Improve search/filter/sort, editable metadata, artwork, playlists, keyboard controls and mobile player.
-- Clearly distinguish local files from Spotify's embedded player and API entitlements.
+### 7. Xi project landing page
+**Benchmarks:** leading AI product landing pages and onboarding experiences.
+**Verified in source:** static introduction page for Xi, distinct from the actual chat workspace.
+**Gaps:** clarify product positioning, show credible product capabilities, demo entry point, trust/privacy explanation and roadmap; keep this page separate from the workspace UI.
 
-### Phase 4 — Deutsch
-- Build A1 → A2 → B1 CEFR curriculum with units, goals and placement.
-- Add spaced repetition, listening/audio, typed answers, grammar, sentence construction and progress history.
-- Add accurate pronunciation audio and accessibility; do not fabricate pronunciation scoring.
+### 8. MAT-STUDIO Command Center
+**Benchmarks:** Apple, Linear, Notion, Vercel.
+**Verified in source:** project library, previews, search, local pins/recent items, theme toggle, quick actions and Xi handoff.
+**Gaps:** local-only pin/recent state, static project/status counts, no verified live health aggregation, keyboard command discoverability, icon consistency, accessibility and responsive validation.
+**Design direction:** command-center clarity with honest live status and clear project identities; keep it the parent product, not another app-specific interface.
 
-### Phase 5 — Portfolio and Christmas
-- Portfolio: real project case studies, role, problem, decisions, screenshots, outcomes, GitHub/live links, contact and downloadable CV if supplied.
-- Christmas: template gallery, visual editor, personalization, shareable card pages and export.
+## Audit observations across the system
 
-### Phase 6 — MAT-STUDIO command center and Xi project page
-- Add honest live project health/status, unified search and cloud-synced pins/recent state where appropriate.
-- Improve keyboard navigation, responsive layouts, focus visibility, contrast and performance.
-- Clarify the distinct purpose of Xi's project landing page versus the Xi Workspace app.
+- Some pages expose only minimal accessibility support; focus-visible and reduced-motion coverage is inconsistent.
+- Several pages use emoji or text glyphs as interface icons. Replace selectively with a consistent icon system where it improves clarity.
+- Current pages have separate CSS systems and some cross-project theme overrides. Review cascade conflicts before visual changes; do not blindly append more overrides.
+- Static status labels and placeholder metrics must never be presented as live telemetry.
+- The current audit did not include full automated accessibility, performance, screenshot-diff or real-device interaction testing. Do not claim those tests passed.
+
+## Delivery order
+
+1. **Xi Workspace redesign** — highest daily interaction and currently the clearest visual dissatisfaction. Rebuild the visual system and navigation while preserving all existing behavior.
+2. **MAT-STUDIO Command Center** — align parent dashboard with a stronger product hierarchy and honest system status.
+3. **Chess Lab** — validate chess rules and implement real analysis capability before cosmetic polish.
+4. **MATSONG** — improve library/player usability and verify Spotify integration boundaries.
+5. **Deutsch** — build a coherent CEFR learning path and evidence-based practice.
+6. **Portfolio** — turn project links into detailed, credible case studies.
+7. **Christmas** — expand the editor and export quality.
+8. **Xi landing page** — align positioning and onboarding with the redesigned workspace.
+
+Each project is released independently after its own regression checks. A deployment being READY is not proof that the UI and core interactions work.
 
 ## Release gates
 
-1. Inspect the exact current source before editing.
-2. Keep each app's own visual identity and preserve existing working features.
-3. Test core flows and mobile layout before release.
-4. Verify the exact Vercel deployment commit, READY state, production alias, HTTP response and rendered content.
-5. Report completed work separately from planned work. Never use line count as a quality score.
+1. Read the current source and identify all existing behavior before edits.
+2. Record a project-specific competitor benchmark and design direction.
+3. Keep each app's independent identity; do not impose a shared color palette.
+4. Preserve existing data, APIs, auth, integrations and saved user state.
+5. Test the core flows, error states, keyboard access and mobile layout.
+6. Verify exact commit, Vercel READY state, production alias, HTTP response and deployed content.
+7. Report what shipped, what was tested, what remains, and any limitations separately.
