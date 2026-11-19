@@ -269,7 +269,7 @@ html:not([data-mode=gemini]) label[for=visionModel],html:not([data-mode=gemini])
   <div class="row"><button class="btn primary" id="saveAccessCode" type="button">Save access code</button><button class="btn" id="forgetAccessCode" type="button">Forget on this device</button></div><p id="accessStatus"></p>
  </div>
  <div class="sec">
-  <h3>AI provider</h3>
+  <h3>AI connection</h3>
   <label for="provider">Provider</label>
   <select class="fld" id="provider"></select>
   <label for="apiKey">Gemini API key (Google AI Studio) — only needed for the Gemini provider</label>
@@ -877,9 +877,8 @@ function updateAccessStatus(){$('#accessStatus').textContent=accessCode?'Access 
 function updateKeyStatus() { $('#keyStatus').textContent = 'API key is managed privately by Vercel.'; }
 function fillModels() {
   const sel = $('#model'); sel.textContent = '';
-  const list = ['OpenRouter Free']; settings.model='openrouter/free';
-  list.forEach(m => { const o = el('option', null, m); o.value = m; sel.append(o); });
-  sel.value = settings.model;
+  const o = el('option', null, 'OpenRouter Free'); o.value = 'openrouter/free'; sel.append(o);
+  settings.model = 'openrouter/free'; sel.value = 'openrouter/free';
 }
 function applyTheme() {
   const t = settings.theme === 'system' ? (matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark') : settings.theme;
