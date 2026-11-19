@@ -155,9 +155,49 @@ async function sendChat(){
   const text=$('chatInput').value.trim(),code=$('accessCode').value.trim()||localStorage.getItem('maw-access-code-v1')||'';
   if(!code){$('chatStatus').textContent='Enter your workspace access code.';$('accessCode').focus();return}
   if(!text)return;isSending=true;$('chatInput').value='';chatHistory.push({role:'user',content:text});if(chatHistory.length>16)chatHistory=chatHistory.slice(-16);renderChat();saveConversation([],false);setThinking(true);
-  try{const response=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({accessCode:code,messages:chatHistory})});const data=await response.json();if(!response.ok){if(response.status===401){localStorage.removeItem('maw-access-code-v1');sessionStorage.removeItem('maw-session-code');$('accessCode').value=''}throw new Error(data.error||'Request failed')}
-    localStorage.setItem('maw-access-code-v1',code);sessionStorage.setItem('maw-session-code',code);chatHistory.push({role:'assistant',content:data.answer});if(chatHistory.length>16)chatHistory=chatHistory.slice(-16);renderChat();saveConversation([{role:'user',content:text},{role:'assistant',content:data.answer}]);$('chatStatus').textContent='Model: '+data.model+(currentUser?' · Cloud synced':' · Saved on this device');
-  }catch(error){chatHistory.pop();renderChat();saveConversation();$('chatStatus').textContent=error.message||'Could not send message.'}finally{isSending=false;setThinking(false);$('chatInput').focus()}
+  let assistantMessage=null;
+  try{
+    const response=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({accessCode:code,messages:chatHistory,stream:true})});
+    if(!response.ok){
+      const data=await response.json().catch(()=>({}));
+      if(response.status===401){localStorage.removeItem('maw-access-code-v1');sessionStorage.removeItem('maw-session-code');$('accessCode').value=''}
+      throw new Error(data.error||(response.status===429?'Too many requests · wait a minute and try again.':'Request failed'));
+    }
+    if(!response.body||typeof response.body.getReader!=='function')throw new Error('Streaming is not supported by this browser.');
+    localStorage.setItem('maw-access-code-v1',code);sessionStorage.setItem('maw-session-code',code);
+    assistantMessage={role:'assistant',content:''};chatHistory.push(assistantMessage);addMessage('assistant','');
+    const bubble=$('chatlog').lastElementChild?.querySelector('.bubble');
+    const reader=response.body.getReader(),decoder=new TextDecoder();let buffer='',model='openrouter/free';
+    const processFrame=frame=>{
+      const dataLines=frame.split(/\r?\n/).filter(line=>line.startsWith('data:'));
+      for(const line of dataLines){
+        const raw=line.slice(5).trim();if(!raw)continue;
+        let packet;try{packet=JSON.parse(raw)}catch{continue}
+        if(packet.error)throw new Error(packet.error);
+        if(typeof packet.token==='string'&&packet.token){assistantMessage.content+=packet.token;if(bubble)bubble.textContent=assistantMessage.content;$('chatlog').scrollTop=$('chatlog').scrollHeight}
+        if(packet.done&&packet.model)model=packet.model;
+      }
+    };
+    while(true){
+      const part=await reader.read();if(part.done)break;
+      buffer+=decoder.decode(part.value,{stream:true}).replace(/\r\n/g,'\n');
+      let boundary;while((boundary=buffer.indexOf('\n\n'))!==-1){const frame=buffer.slice(0,boundary);buffer=buffer.slice(boundary+2);processFrame(frame)}
+    }
+    buffer+=decoder.decode().replace(/\r\n/g,'\n');if(buffer.trim())processFrame(buffer);
+    if(!assistantMessage.content.trim())throw new Error('Xi returned an empty response. Please try again.');
+    if(chatHistory.length>16)chatHistory=chatHistory.slice(-16);
+    renderChat();saveConversation([{role:'user',content:text},{role:'assistant',content:assistantMessage.content}]);
+    $('chatStatus').textContent='Model: '+model+(currentUser?' · Cloud synced':' · Saved on this device');
+  }catch(error){
+    if(assistantMessage&&assistantMessage.content.trim()){
+      renderChat();saveConversation([{role:'user',content:text},{role:'assistant',content:assistantMessage.content}]);
+      $('chatStatus').textContent='Stream interrupted · partial answer saved.';
+    }else{
+      if(assistantMessage&&chatHistory[chatHistory.length-1]===assistantMessage)chatHistory.pop();
+      if(chatHistory[chatHistory.length-1]?.role==='user')chatHistory.pop();
+      renderChat();saveConversation();$('chatStatus').textContent=error.message||'Could not send message.';
+    }
+  }finally{isSending=false;setThinking(false);$('chatInput').focus()}
 }
 $('sendBtn').addEventListener('click',sendChat);$('chatInput').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendChat()}});
 $('forgetAccessCodeBtn').addEventListener('click',()=>{localStorage.removeItem('maw-access-code-v1');sessionStorage.removeItem('maw-session-code');$('accessCode').value='';$('chatStatus').textContent='Saved access code forgotten on this device.'});
