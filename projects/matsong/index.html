@@ -51,7 +51,7 @@
 <script>
 (()=>{'use strict';
 const $=id=>document.getElementById(id),dbName='matsong-crimson-db',store='tracks';
-let db,library=[],view='all',currentId=null,queue=[],shuffle=false,repeat=false,spotifyAccessToken=null,spotifyRefreshTimer=null;
+let db,library=[],view='all',currentId=null,queue=[],shuffle=false,repeat=false,spotifyAccessToken=null,spotifyRefreshTimer=null,activeAudioUrl=null;
 const audio=$('audio');audio.volume=.8;
 const openDB=()=>new Promise((resolve,reject)=>{const req=indexedDB.open(dbName,1);req.onupgradeneeded=()=>req.result.createObjectStore(store,{keyPath:'id'});req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error)});
 const tx=(mode)=>db.transaction(store,mode).objectStore(store);
@@ -67,7 +67,7 @@ function render(){const list=visible();$('count').textContent='· '+list.length;
 list.forEach((t,i)=>{const row=document.createElement('div');row.className='track'+(t.id===currentId?' playing':'');row.innerHTML='<div class="cover">♫</div><div style="min-width:0"><div class="tracktitle"></div><div class="artist"></div></div><span class="duration">'+fmt(t.duration)+'</span><button class="iconbtn '+(t.favorite?'liked':'')+'" title="Favorite">'+(t.favorite?'♥':'♡')+'</button>';row.querySelector('.tracktitle').textContent=t.title;row.querySelector('.artist').textContent=t.artist||'Local audio';row.addEventListener('click',e=>{if(e.target.closest('button'))return;playTrack(t.id)});row.querySelector('button').addEventListener('click',async e=>{e.stopPropagation();t.favorite=!t.favorite;await save(t);render();syncLike()});$('tracks').append(row)})}
 async function addFiles(files){for(const file of files){if(!file.type.startsWith('audio/')&&!/\.(mp3|m4a|wav|ogg|flac|aac|opus)$/i.test(file.name))continue;const url=URL.createObjectURL(file);const meta=await new Promise(resolve=>{const a=new Audio();a.preload='metadata';a.onloadedmetadata=()=>resolve({duration:a.duration||0});a.onerror=()=>resolve({duration:0});a.src=url});const id=crypto.randomUUID();const t={id,title:safeName(file),artist:'Local audio',duration:meta.duration,added:Date.now(),favorite:false,blob:file};await save(t);URL.revokeObjectURL(url)}await load();toast('Music added to your library')}
 async function load(){library=await getAll();render()}
-async function playTrack(id){const t=library.find(x=>x.id===id);if(!t)return;currentId=id;audio.src=URL.createObjectURL(t.blob);audio.play().catch(()=>toast('Tap play to start audio'));syncPlayer();render()}
+async function playTrack(id){const t=library.find(x=>x.id===id);if(!t)return;if(activeAudioUrl){URL.revokeObjectURL(activeAudioUrl);activeAudioUrl=null}currentId=id;activeAudioUrl=URL.createObjectURL(t.blob);audio.src=activeAudioUrl;audio.play().catch(()=>toast('Tap play to start audio'));syncPlayer();render()}
 function syncLike(){const t=current();$('likeNow').textContent=t&&t.favorite?'♥':'♡';$('likeNow').classList.toggle('liked',!!(t&&t.favorite))}
 function syncPlayer(){const t=current();$('nowTitle').textContent=t?t.title:'Nothing playing';$('nowArtist').textContent=t?(t.artist||'Local audio'):'Choose a track to begin';$('play').textContent=audio.paused?'▶':'Ⅱ';syncLike()}
 function nextTrack(){if(!library.length)return;let idx=library.findIndex(t=>t.id===currentId);if(shuffle){const choices=library.filter(t=>t.id!==currentId);if(choices.length)playTrack(choices[Math.floor(Math.random()*choices.length)].id);return}playTrack(library[(idx+1)%library.length].id)}
@@ -153,7 +153,7 @@ $('likeNow').addEventListener('click',async()=>{const t=current();if(!t)return;t
 $('volume').addEventListener('input',e=>audio.volume=Number(e.target.value));
 $('progress').addEventListener('click',e=>{if(!audio.duration)return;const r=e.currentTarget.getBoundingClientRect();audio.currentTime=((e.clientX-r.left)/r.width)*audio.duration});
 audio.addEventListener('timeupdate',()=>{$('currentTime').textContent=fmt(audio.currentTime);$('duration').textContent=fmt(audio.duration);$('progressFill').style.width=(audio.duration?audio.currentTime/audio.duration*100:0)+'%'});
-audio.addEventListener('play',syncPlayer);audio.addEventListener('pause',syncPlayer);audio.addEventListener('ended',()=>{if(repeat){audio.currentTime=0;audio.play()}else nextTrack()});
+window.addEventListener('pagehide',()=>{if(activeAudioUrl){URL.revokeObjectURL(activeAudioUrl);activeAudioUrl=null}});\naudio.addEventListener('play',syncPlayer);audio.addEventListener('pause',syncPlayer);audio.addEventListener('ended',()=>{if(repeat){audio.currentTime=0;audio.play()}else nextTrack()});
 openDB().then(async x=>{db=x;await load()}).catch(()=>toast('This browser could not open local music storage'));
 })();
 </script>
