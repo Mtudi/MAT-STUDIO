@@ -77,17 +77,22 @@ module.exports = async function handler(req, res) {
         ],
         max_tokens: 1000,
         temperature: 0.35,
-        provider: { sort: "throughput", zdr: true, data_collection: "deny" }
+        provider: { sort: "throughput", data_collection: "deny", allow_fallbacks: true }
       })
     });
 
     if (!upstream.ok) {
       const errorData = await upstream.json().catch(() => ({}));
-      return res.status(upstream.status === 429 ? 429 : 502).json({
-        error: upstream.status === 429
-          ? "The free model limit was reached. Try again later."
-          : "The AI provider could not complete this request. Try again shortly."
-      });
+      const providerCode = errorData && errorData.error && errorData.error.code;
+      console.error("[xi-upstream]", JSON.stringify({ status: upstream.status, code: providerCode || null }));
+      const message = upstream.status === 429
+        ? "The free model limit was reached. Try again later."
+        : upstream.status === 401 || upstream.status === 403
+          ? "AI provider authentication or account access failed. Check the server API key and provider account."
+          : upstream.status === 404
+            ? "No eligible free AI provider is available right now. Try again shortly."
+            : "The AI provider could not complete this request. Try again shortly.";
+      return res.status(upstream.status === 429 ? 429 : 502).json({ error: message, providerStatus: upstream.status });
     }
 
     if (body.stream !== true) {
@@ -115,6 +120,7 @@ module.exports = async function handler(req, res) {
     let buffer = "";
     let model = "openrouter/free";
     let streamedText = "";
+    let streamError = "";
     const sendEvent = payload => res.write("data: " + JSON.stringify(payload) + "\n\n");
     const consumeFrame = frame => {
       const dataLines = frame.split("\n").filter(line => line.startsWith("data:"));
@@ -123,6 +129,7 @@ module.exports = async function handler(req, res) {
       if (!raw || raw === "[DONE]") return;
       let packet;
       try { packet = JSON.parse(raw); } catch { return; }
+      if (packet.error) { streamError = "The AI provider interrupted the response. Try again shortly."; return; }
       if (packet.model) model = packet.model;
       const token = packet.choices && packet.choices[0] && packet.choices[0].delta && packet.choices[0].delta.content;
       if (typeof token === "string" && token) {
