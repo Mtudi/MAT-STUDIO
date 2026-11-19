@@ -218,7 +218,46 @@ body{background:var(--studio-bg)!important;color:var(--studio-text)!important}
 .xi-account-foot{font-size:12px;color:var(--studio-muted);margin-top:16px}
 @media(max-width:600px){.xi-account-backdrop{align-items:end;padding:10px}.xi-account-dialog{border-radius:24px 24px 16px 16px;padding:20px;max-height:88dvh}}
 @media(prefers-reduced-motion:reduce){.xi-account-backdrop,.xi-account-dialog{transition:none}}
-</style></head>
+
+/* Xi response typography and rich-content system */
+.message.assistant{width:100%;max-width:min(820px,100%);align-self:center;gap:0}
+.message.assistant .avatar{display:none}
+.message.assistant .bubble{width:100%;max-width:820px;padding:0;border:0;background:transparent!important;box-shadow:none!important;border-radius:0;font-size:15.5px;line-height:1.82;white-space:normal;overflow-wrap:anywhere;color:var(--studio-text)}
+.message.assistant .bubble p{margin:0 0 1.05em;color:inherit!important}
+.message.assistant .bubble p:last-child{margin-bottom:.5em}
+.message.assistant .bubble h1,.message.assistant .bubble h2,.message.assistant .bubble h3,.message.assistant .bubble h4{color:var(--studio-text);letter-spacing:-.025em;line-height:1.3;margin:1.45em 0 .55em;font-weight:720}
+.message.assistant .bubble h1{font-size:1.65em}.message.assistant .bubble h2{font-size:1.35em}.message.assistant .bubble h3{font-size:1.12em}.message.assistant .bubble h4{font-size:1em}
+.message.assistant .bubble ul,.message.assistant .bubble ol{padding-left:1.55em;margin:.45em 0 1.15em}
+.message.assistant .bubble li{padding-left:.25em;margin:.32em 0}
+.message.assistant .bubble li::marker{color:var(--studio-accent)}
+.message.assistant .bubble strong{font-weight:720;color:var(--studio-text)}
+.message.assistant .bubble blockquote{margin:1em 0;padding:.25em 1em;border-left:3px solid var(--studio-accent);color:var(--studio-muted);background:var(--studio-raised);border-radius:0 10px 10px 0}
+.message.assistant .bubble hr{border:0;border-top:1px solid var(--studio-line);margin:1.4em 0}
+.message.assistant .bubble a{color:var(--studio-accent);text-decoration:underline;text-underline-offset:3px;overflow-wrap:anywhere}
+.message.assistant .bubble .inline-code{font-size:.88em;padding:.12em .42em;border-radius:6px;background:var(--studio-raised);border:1px solid var(--studio-line);color:var(--studio-text)}
+.message.assistant .bubble .inline-copy{opacity:0;transition:opacity .18s}
+.message.assistant .bubble .inline-code-group:hover .inline-copy,.message.assistant .bubble .inline-code-group:focus-within .inline-copy{opacity:1}
+.message.assistant .bubble .code-panel{margin:1.1em 0 1.35em;border:1px solid var(--studio-line);border-radius:15px;overflow:hidden;background:#11131b!important;box-shadow:0 8px 28px #00000012}
+.message.assistant .bubble .code-panel-head{min-height:40px;padding:9px 13px;background:#1b1d28!important;border-bottom:1px solid #ffffff14;color:#d0d3e2}
+.message.assistant .bubble .code-meta{display:flex;align-items:center;gap:10px}
+.message.assistant .bubble .code-language{font-size:10px;letter-spacing:.1em;font-weight:800}
+.message.assistant .bubble .code-panel pre{max-height:520px;overflow:auto;padding:17px 18px;margin:0;font:13px/1.75 ui-monospace,SFMono-Regular,Consolas,monospace;tab-size:2}
+.message.assistant .bubble .code-panel code{font:inherit;white-space:pre}
+.message.assistant .bubble .code-copy{opacity:.85}
+.message.assistant .bubble .table-wrap{max-width:100%;overflow-x:auto;margin:1em 0 1.3em;border:1px solid var(--studio-line);border-radius:12px}
+.message.assistant .bubble table{border-collapse:collapse;width:100%;min-width:420px;font-size:.9em}
+.message.assistant .bubble th,.message.assistant .bubble td{padding:10px 13px;text-align:left;border-bottom:1px solid var(--studio-line)}
+.message.assistant .bubble th{background:var(--studio-raised);font-weight:700}
+.message.assistant .bubble tr:last-child td{border-bottom:0}
+.message.assistant .bubble .math-inline{font-family:Georgia,serif;font-style:italic;padding:0 .15em}
+.message.assistant .bubble .math-block{margin:1em 0;padding:15px 18px;overflow-x:auto;text-align:center;background:var(--studio-raised);border:1px solid var(--studio-line);border-radius:12px;font:italic 17px/1.8 Georgia,serif;white-space:pre-wrap}
+.message.assistant .bubble .task-mark{display:inline-grid;place-items:center;width:1.2em;height:1.2em;margin-right:.45em;border:1px solid var(--studio-line);border-radius:4px;font-size:.85em}
+.message.user{max-width:min(76%,720px)}
+.messages{gap:28px;padding:32px clamp(20px,6vw,72px);scroll-behavior:smooth}
+@media(max-width:700px){.message.assistant .bubble{font-size:15px;line-height:1.78}.message.user{max-width:94%}.messages{padding:22px 15px;gap:23px}.message.assistant .bubble .code-panel pre{font-size:12px;padding:14px}.message.assistant .bubble table{font-size:12px}}
+
+</style><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/github-dark.min.css">
+</head>
 <body>
 <div class="app">
 <aside class="sidebar">
@@ -240,6 +279,7 @@ body{background:var(--studio-bg)!important;color:var(--studio-text)!important}
 </div><footer class="footer">MAT-STUDIO · Xi · Built for ideas that matter</footer>
 </main></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
 <script>
 const $=id=>document.getElementById(id);
 const handoffParams=new URLSearchParams(window.location.search);const handoffPrompt=(handoffParams.get('prompt')||'').trim().slice(0,1800);if(handoffPrompt){$('chatInput').value=handoffPrompt;$('xiHandoff').classList.remove('hidden');$('chatStatus').textContent='Task received from MAT-STUDIO · review then send';history.replaceState({},'',window.location.pathname+window.location.hash);$('chatInput').focus()}$('dismissHandoff').addEventListener('click',()=>{$('xiHandoff').classList.add('hidden');$('chatStatus').textContent='Ready · Chats save on this device.'});
@@ -272,40 +312,110 @@ async function copyToClipboard(value,button){
 function makeCopyButton(value,compact=false){
   const button=document.createElement('button');button.type='button';button.className=compact?'inline-copy':'copy-snippet';button.textContent=compact?'⧉':'Copy';button.setAttribute('aria-label','Copy this item');button.title='Copy to clipboard';button.addEventListener('click',()=>copyToClipboard(value,button));return button;
 }
-function appendFormattedText(target,value){
-  const parts=value.split(/(`[^`\n]+`)/g);
-  parts.forEach(part=>{
-    if(part.startsWith('`')&&part.endsWith('`')&&part.length>2){const code=document.createElement('code');code.className='inline-code';code.textContent=part.slice(1,-1);const group=document.createElement('span');group.className='inline-code-group';group.append(code,makeCopyButton(part.slice(1,-1),true));target.append(group)}
-    else target.append(document.createTextNode(part));
-  });
-}
-function renderAssistantContent(bubble,value){
-  const blocks=value.split(/```([\s\S]*?)```/g);
-  blocks.forEach((part,index)=>{
-    if(index%2===1){
-      const match=part.match(/^([\w+#.-]+)?\s*\n/);
-      const language=match?.[1]||'Plain text';
-      const lines=match?part.slice(match[0].length):part;
-      const panel=document.createElement('section');panel.className='code-panel';
-      const head=document.createElement('div');head.className='code-panel-head';
-      const meta=document.createElement('div');meta.className='code-meta';
-      const dot=document.createElement('i');dot.className='code-dot';
-      const label=document.createElement('span');label.className='code-language';label.textContent=language.toUpperCase();
-      const hint=document.createElement('small');hint.textContent='CODE BLOCK';
-      meta.append(dot,label,hint);
-      const copy=makeCopyButton(lines);copy.textContent='Copy code';copy.classList.add('code-copy');
-      head.append(meta,copy);
-      const pre=document.createElement('pre');pre.setAttribute('tabindex','0');pre.setAttribute('aria-label',language+' code');
-      const code=document.createElement('code');code.textContent=lines;pre.append(code);
-      panel.append(head,pre);bubble.append(panel);
-    }else if(part){
-      const chunks=part.split(/(https?:\/\/[^\s<]+)/g);
-      chunks.forEach(chunk=>{
-        if(/^https?:\/\//.test(chunk)){const group=document.createElement('span');group.className='inline-code-group';const link=document.createElement('a');link.href=chunk.replace(/[),.!?]+$/,'');link.textContent=chunk;link.target='_blank';link.rel='noopener noreferrer';group.append(link,makeCopyButton(link.href,true));bubble.append(group)}
-        else appendFormattedText(bubble,chunk);
-      });
+function appendInline(target,source){
+  const token=/(\x60[^\x60\n]+\x60|\*\*[\s\S]+?\*\*|__[\s\S]+?__|~~[\s\S]+?~~|\*[^*\n]+\*|_[^_\n]+_|\[[^\]]+\]\(https?:\/\/[^)\s]+\)|https?:\/\/[^\s<]+|\$[^$\n]+\$)/g;
+  let cursor=0,match;
+  while((match=token.exec(source))){
+    if(match.index>cursor)target.append(document.createTextNode(source.slice(cursor,match.index)));
+    const value=match[0];
+    if(value.charCodeAt(0)===96){
+      const raw=value.slice(1,-1),code=document.createElement("code");code.className="inline-code";code.textContent=raw;
+      const group=document.createElement("span");group.className="inline-code-group";group.append(code,makeCopyButton(raw,true));target.append(group);
+    }else if(value.startsWith("**")||value.startsWith("__")){
+      const el=document.createElement("strong");el.textContent=value.slice(2,-2);target.append(el);
+    }else if(value.startsWith("~~")){
+      const el=document.createElement("del");el.textContent=value.slice(2,-2);target.append(el);
+    }else if(value.startsWith("*")||value.startsWith("_")){
+      const el=document.createElement("em");el.textContent=value.slice(1,-1);target.append(el);
+    }else if(value.startsWith("$")){
+      const el=document.createElement("span");el.className="math-inline";el.textContent=value.slice(1,-1);target.append(el);
+    }else{
+      let label=value,url=value;
+      if(value.startsWith("[")){const parsed=value.match(/^\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)$/);if(parsed){label=parsed[1];url=parsed[2]}}
+      url=url.replace(/[),.!?]+$/,"");
+      const link=document.createElement("a");link.href=url;link.textContent=label;link.target="_blank";link.rel="noopener noreferrer";target.append(link);
     }
-  });
+    cursor=token.lastIndex;
+  }
+  if(cursor<source.length)target.append(document.createTextNode(source.slice(cursor)));
+}
+function appendParagraph(parent,lines){
+  const p=document.createElement("p");
+  lines.forEach((line,index)=>{if(index)p.append(document.createElement("br"));appendInline(p,line)});
+  parent.append(p);
+}
+function splitTableRow(line){return line.trim().replace(/^\|/,"").replace(/\|$/,"").split("|").map(cell=>cell.trim())}
+function renderAssistantContent(bubble,value){
+  const lines=String(value||"").replace(/\r\n?/g,"\n").split("\n");
+  let i=0;
+  const isFence=line=>/^\x60{3}/.test(line);
+  const isHeading=line=>/^#{1,4}\s+/.test(line);
+  const isList=line=>/^\s*(?:[-*+]|\d+[.)])\s+/.test(line);
+  const isSpecial=line=>!line.trim()||isFence(line)||isHeading(line)||isList(line)||/^>\s?/.test(line)||/^(?:---+|\*\*\*+|___+)$/.test(line)||/^\s*\$\$\s*$/.test(line);
+  while(i<lines.length){
+    const line=lines[i];
+    if(!line.trim()){i++;continue}
+    if(isFence(line)){
+      const language=(line.slice(3).trim().split(/\s+/)[0]||"").replace(/[^\w+#.-]/g,"");
+      i++;const codeLines=[];
+      while(i<lines.length&&!isFence(lines[i]))codeLines.push(lines[i++]);
+      if(i<lines.length)i++;
+      const raw=codeLines.join("\n"),panel=document.createElement("section");panel.className="code-panel";
+      const head=document.createElement("div");head.className="code-panel-head";
+      const meta=document.createElement("div");meta.className="code-meta";
+      const label=document.createElement("span");label.className="code-language";label.textContent=(language||"TEXT").toUpperCase();
+      const hint=document.createElement("small");hint.textContent="CODE BLOCK";meta.append(label,hint);
+      const copy=makeCopyButton(raw);copy.textContent="Copy code";copy.classList.add("code-copy");head.append(meta,copy);
+      const pre=document.createElement("pre");pre.tabIndex=0;pre.setAttribute("aria-label",(language||"Plain text")+" code");
+      const code=document.createElement("code");if(language)code.className="language-"+language;code.textContent=raw;pre.append(code);
+      panel.append(head,pre);bubble.append(panel);
+      if(window.hljs&&typeof window.hljs.highlightElement==="function"){try{window.hljs.highlightElement(code)}catch{}}
+      continue;
+    }
+    if(line.trim()==="$$"){
+      i++;const math=[];
+      while(i<lines.length&&lines[i].trim()!=="$$")math.push(lines[i++]);
+      if(i<lines.length)i++;
+      const block=document.createElement("div");block.className="math-block";block.textContent=math.join("\n");bubble.append(block);continue;
+    }
+    if(isHeading(line)){
+      const level=line.match(/^#+/)[0].length,heading=document.createElement("h"+level);
+      appendInline(heading,line.replace(/^#{1,4}\s+/,""));bubble.append(heading);i++;continue;
+    }
+    if(/^(?:---+|\*\*\*+|___+)$/.test(line.trim())){
+      bubble.append(document.createElement("hr"));i++;continue;
+    }
+    if(/^>\s?/.test(line)){
+      const quote=document.createElement("blockquote"),quoteLines=[];
+      while(i<lines.length&&/^>\s?/.test(lines[i]))quoteLines.push(lines[i++].replace(/^>\s?/,""));
+      appendParagraph(quote,quoteLines);bubble.append(quote);continue;
+    }
+    if(isList(line)){
+      const ordered=/^\s*\d+[.)]\s+/.test(line),list=document.createElement(ordered?"ol":"ul");
+      while(i<lines.length&&isList(lines[i])){
+        const item=lines[i++].replace(/^\s*(?:[-*+]|\d+[.)])\s+/,""),li=document.createElement("li");
+        const task=item.match(/^\[([ xX])\]\s+(.*)$/);
+        if(task){const mark=document.createElement("span");mark.className="task-mark";mark.textContent=task[1].toLowerCase()==="x"?"✓":"○";li.append(mark);appendInline(li,task[2])}
+        else appendInline(li,item);
+        list.append(li);
+      }
+      bubble.append(list);continue;
+    }
+    if(i+1<lines.length&&line.includes("|")&&/^\s*\|?\s*:?-{3,}:?\s*(?:\|\s*:?-{3,}:?\s*)+\|?\s*$/.test(lines[i+1])){
+      const headers=splitTableRow(line),table=document.createElement("div");table.className="table-wrap";
+      const tableEl=document.createElement("table"),thead=document.createElement("thead"),tr=document.createElement("tr");
+      headers.forEach(value=>{const th=document.createElement("th");appendInline(th,value);tr.append(th)});thead.append(tr);tableEl.append(thead);
+      i+=2;const tbody=document.createElement("tbody");
+      while(i<lines.length&&lines[i].includes("|")&&lines[i].trim()){
+        const cells=splitTableRow(lines[i++]),row=document.createElement("tr");
+        headers.forEach((_,index)=>{const td=document.createElement("td");appendInline(td,cells[index]||"");row.append(td)});tbody.append(row);
+      }
+      tableEl.append(tbody);table.append(tableEl);bubble.append(table);continue;
+    }
+    const paragraph=[line];i++;
+    while(i<lines.length&&!isSpecial(lines[i])&&!(i+1<lines.length&&lines[i].includes("|")&&/^\s*\|?\s*:?-{3,}:?\s*(?:\|\s*:?-{3,}:?\s*)+\|?\s*$/.test(lines[i+1]))){paragraph.push(lines[i++])}
+    appendParagraph(bubble,paragraph);
+  }
 }
 function addMessage(role,text){
   const wrap=document.createElement('div');wrap.className='message '+role;
