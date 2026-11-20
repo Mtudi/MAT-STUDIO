@@ -389,6 +389,19 @@ async function copyText(text) {
    (no key in the browser) — the UI only talks to this interface. */
 const DEFAULT_SYSTEM = "You are Xi, a helpful, accurate and concise personal AI assistant. Always reply in the same language as the user's latest message. Use Markdown; put code in fenced code blocks with a language tag.";
 const Providers = {
+  engine: {
+    name:'MATUDI AI Engine (Secure)', models:['Gemini Flash · MATUDI Engine'],
+    async stream({messages,ctrl,onToken}){
+      if(!Array.isArray(messages)||!messages.length)throw new Error('Nothing to send.');
+      const ac=new AbortController();if(ctrl)ctrl.hook=()=>ac.abort();
+      let res;try{res=await fetch('/api/xi-chat',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:messages.slice(-13)}),signal:ac.signal});}
+      catch(e){if(ctrl&&ctrl.aborted)throw abortErr();throw new Error('Could not reach Xi secure server. Check your connection and try again.');}
+      if(ctrl&&ctrl.aborted)throw abortErr();let d={};try{d=await res.json();}catch{}
+      if(!res.ok)throw new Error(d.error||('Secure AI request failed ('+res.status+').'));
+      const full=typeof d.text==='string'?d.text:'';if(!full)throw new Error('The AI Engine returned an empty response.');
+      onToken(full);return{text:full,finish:''};
+    }
+  },
   gemini: {
     name: 'Google Gemini (Guest mode)',
     base: 'https://generativelanguage.googleapis.com/v1beta',
@@ -526,7 +539,7 @@ const SHARE_URL = 'https://claude.ai/artifact/3TH9r9QCg2ygyR4QyXv7Dw';
 // Professional mode = viewer's own Claude account (only exists on the claude.ai shared page).
 // Guest mode = no sign-in, own Gemini key (the claude.ai sandbox blocks outside requests, so it needs the standalone file).
 const hosted = () => !!(window.claude && typeof window.claude.use === 'function');
-const providerKey = () => hosted() ? 'sample' : (apiKey ? 'gemini' : 'preview');
+const providerKey = () => hosted() ? 'sample' : 'engine';
 const provider = () => Providers[providerKey()];
 function applyMode() { document.documentElement.dataset.mode = providerKey(); refreshBadge(); fillModels(); $('#visionBtn').hidden = providerKey() !== 'gemini'; }
 
@@ -785,6 +798,7 @@ async function exportConversation() {
 /* ============================== 7. CHAT FLOW ============================== */
 async function sendMessage(raw) {
   if (busy) return;
+  if (typeof XiOwner !== 'undefined' && !XiOwner.isAuthenticated()) { XiOwner.show(); return; }
   const text = String(raw || '').trim();
   if (!text) return;
   if (provider().needsKey !== false && !apiKey) { toast('Add your API key first'); openSettings(); return; }
@@ -838,7 +852,7 @@ function openSettings() {
 function updateKeyStatus() { $('#keyStatus').textContent = apiKey ? 'A key is saved in this browser.' : 'No key saved. Get one free at aistudio.google.com/apikey.'; }
 function fillModels() {
   const sel = $('#model'); sel.textContent = '';
-  const list = providerKey() === 'gemini' ? Array.from(new Set([...(cachedModels || Providers.gemini.models), settings.model])) : ['Claude'];
+  const list = providerKey() === 'gemini' ? Array.from(new Set([...(cachedModels || Providers.gemini.models), settings.model])) : providerKey() === 'engine' ? Providers.engine.models : ['Claude'];
   list.forEach(m => { const o = el('option', null, m); o.value = m; sel.append(o); });
   sel.value = settings.model;
 }
@@ -852,7 +866,7 @@ function applyTheme() {
 function bindSettings() {
   const prov = $('#provider');
   Object.entries(Providers).forEach(([k, p]) => { const o = el('option', null, p.name); o.value = k; prov.append(o); });
-  prov.value = settings.provider;
+  if (!hosted()) { settings.provider = 'engine'; prov.value = 'engine'; prov.disabled = true; } else prov.value = settings.provider;
   prov.addEventListener('change', () => { settings.provider = prov.value; settings.model = provider().models[0]; saveSettings(); refreshBadge(); fillModels(); });
   $('#toggleKey').addEventListener('click', () => { const i = $('#apiKey'), show = i.type === 'password'; i.type = show ? 'text' : 'password'; $('#toggleKey').textContent = show ? 'Hide' : 'Show'; });
   $('#saveKey').addEventListener('click', () => {
@@ -1423,8 +1437,33 @@ function startI18n() {
     else if (open && !toward) closeNav();
   }, { passive: true });
 }
+/* Owner authentication: same-origin HttpOnly session, no browser API secrets. */
+const XiOwner=(()=>{
+ let ok=false,root=null,form=null,pw=null,btn=null,msg=null;
+ const tr=()=>settings.lang==='ar'?{title:'مساحة خاصة',sub:'سجّل الدخول للوصول إلى مساعد Xi الشخصي.',ph:'كلمة مرور المالك',go:'فتح Xi',out:'تسجيل الخروج',net:'تعذّر الاتصال بخادم تسجيل الدخول.'}:{title:'Private workspace',sub:'Sign in to access your personal Xi assistant.',ph:'Owner password',go:'Unlock Xi',out:'Sign out',net:'Could not reach the sign-in service.'};
+ function build(){
+  if(root)return;
+  const css=document.createElement('style');css.textContent='#xi-owner-gate{position:fixed;inset:0;z-index:99999;display:grid;place-items:center;padding:24px;background:rgba(7,8,12,.95);backdrop-filter:blur(22px)}#xi-owner-card{width:min(420px,100%);padding:32px;border:1px solid #34343c;border-radius:22px;background:#15161c;color:#f5f5f7;box-shadow:0 24px 90px #0008;font-family:inherit}#xi-owner-card h2{margin:0 0 9px;font-size:23px}#xi-owner-card p{margin:0 0 22px;color:#aaa;font-size:14px;line-height:1.6}#xi-owner-card input{width:100%;height:50px;padding:0 14px;border:1px solid #444;border-radius:12px;background:#0d0e13;color:white;font:inherit}#xi-owner-card button{width:100%;height:48px;margin-top:14px;border:0;border-radius:12px;background:#f5f5f7;color:#111;font:inherit;font-weight:600}#xi-owner-msg{min-height:18px;margin:12px 0 0!important;color:#ff9aa7!important;font-size:13px!important}#xi-owner-lock{margin:10px;padding:9px 13px;border:1px solid #555;border-radius:10px;background:transparent;color:inherit}';document.head.append(css);
+  root=document.createElement('div');root.id='xi-owner-gate';form=document.createElement('form');form.id='xi-owner-card';
+  const h=document.createElement('h2'),p=document.createElement('p');pw=document.createElement('input');pw.type='password';pw.autocomplete='current-password';pw.required=true;pw.maxLength=256;
+  btn=document.createElement('button');btn.type='submit';msg=document.createElement('p');msg.id='xi-owner-msg';msg.setAttribute('role','status');
+  form.append(h,p,pw,btn,msg);root.append(form);document.body.append(root);
+  form.addEventListener('submit',async e=>{e.preventDefault();btn.disabled=true;msg.textContent='';try{
+   const r=await fetch('/api/xi-auth',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'login',password:pw.value})});const d=await r.json().catch(()=>({}));
+   if(!r.ok||!d.authenticated){msg.textContent=d.error||'Sign-in failed.';pw.select();return;}
+   ok=true;pw.value='';root.hidden=true;root.style.display='none';applyMode();refreshBadge();toast(settings.lang==='ar'?'تم فتح Xi بأمان':'Xi unlocked securely');
+  }catch{msg.textContent=tr().net;}finally{btn.disabled=false;btn.textContent=tr().go;}});
+ }
+ function show(){build();const t=tr();root.hidden=false;root.style.display='grid';root.querySelector('h2').textContent=t.title;root.querySelector('form > p').textContent=t.sub;pw.placeholder=t.ph;btn.textContent=t.go;pw.dir=settings.lang==='ar'?'rtl':'ltr';pw.focus();}
+ async function init(){build();msg.textContent='…';btn.disabled=true;try{const r=await fetch('/api/xi-auth',{credentials:'same-origin',cache:'no-store'});const d=await r.json();ok=!!(r.ok&&d.authenticated);}catch{ok=false;}
+  if(ok){root.hidden=true;root.style.display='none';}else show();btn.disabled=false;btn.textContent=tr().go;
+  const dlg=$('#settings'),close=$('#closeSettings');if(dlg&&close&&!$('#xi-owner-lock')){const b=document.createElement('button');b.id='xi-owner-lock';b.type='button';b.textContent=tr().out;close.parentNode.insertBefore(b,close);b.addEventListener('click',async()=>{await fetch('/api/xi-auth',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'logout'})}).catch(()=>{});ok=false;dlg.close();show();});}
+ }
+ return{init,show,isAuthenticated:()=>ok};
+})();
+
 function init() {
-  applyTheme(); Bg.start(); startI18n(); bindSettings(); Vision.init(); refreshBadge(); (function () { const b = $('#syncStatus'); if (b) b.textContent = ''; })();
+  applyTheme(); Bg.start(); startI18n(); bindSettings(); Vision.init(); XiOwner.init(); refreshBadge(); (function () { const b = $('#syncStatus'); if (b) b.textContent = ''; })();
   if (activeId && !active()) activeId = null;
   if (!activeId && convs.length) activeId = convs.slice().sort((a, b) => b.updated - a.updated)[0].id;
   Modo.apply(); applyMode(); renderList(); renderChat(); setBusyUI();
