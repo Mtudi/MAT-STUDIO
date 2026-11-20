@@ -406,14 +406,14 @@ const Providers = {
   server: {
     name: 'Xi Secure Server', models: ['openrouter/free'],
     async stream({ system, messages, ctrl, onToken }) {
-      const guestToken = !accessCode && Cloud.hasGuest() ? await Cloud.guestToken() : '';
+      const guestToken = Cloud.hasGuest() ? await Cloud.guestToken() : '';
       if (!accessCode && !guestToken) throw new Error('Continue as Guest in Settings, or use your workspace access code.');
       const history = messages.slice(-16).map(m => ({ role:m.role, content:String(m.text||'').slice(-5000) }));
       while (history.length > 1 && history.reduce((n,m)=>n+m.content.length,0) > 16000) history.shift();
       if (!history.length || history[history.length-1].role !== 'user') throw new Error('Conversation is not ready to send.');
       const ac = new AbortController(); if (ctrl) { ctrl.hook=()=>ac.abort(); if(ctrl.aborted)ac.abort(); }
       let res;
-      try { res=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},signal:ac.signal,body:JSON.stringify({accessCode:accessCode||undefined,guestToken:guestToken||undefined,messages:history,stream:true,system:String(system||'').slice(0,4000)})}); }
+      try { res=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},signal:ac.signal,body:JSON.stringify({accessCode:guestToken?undefined:(accessCode||undefined),guestToken:guestToken||undefined,messages:history,stream:true,system:String(system||'').slice(0,4000)})}); }
       catch(e) { if(e&&e.name==='AbortError')throw abortErr(); throw new Error('Could not reach Xi server. Check your connection.'); }
       if(!res.ok) {
         const data=await res.json().catch(()=>({}));
