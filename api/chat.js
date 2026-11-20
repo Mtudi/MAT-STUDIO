@@ -32,7 +32,7 @@ module.exports = async function handler(req, res) {
       return parsed.protocol === "https:" &&
         !parsed.username && !parsed.password && !parsed.port &&
         parsed.pathname === "/" && !parsed.search && !parsed.hash &&
-        /^mat-studio-[a-z0-9-]+-mat-only\\.vercel\\.app$/i.test(parsed.hostname);
+        /^mat-studio-[a-z0-9-]+-mat-only\.vercel\.app$/i.test(parsed.hostname);
     } catch {
       return false;
     }
