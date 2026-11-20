@@ -21,7 +21,10 @@ module.exports = async function handler(req, res) {
   }
   const origin = req.headers.origin;
   const allowedOrigin = process.env.MAT_STUDIO_ORIGIN || "https://mat-studio.vercel.app";
-  if (origin && origin !== allowedOrigin) return res.status(403).json({ error: "Origin not allowed." });
+  const allowedOrigins = new Set([allowedOrigin]);
+  if (process.env.VERCEL_URL) allowedOrigins.add("https://" + process.env.VERCEL_URL);
+  if (origin && !allowedOrigins.has(origin)) return res.status(403).json({ error: "Origin not allowed." });
+  const requestOrigin = origin && allowedOrigins.has(origin) ? origin : allowedOrigin;
   if (req.headers["content-type"] && !String(req.headers["content-type"]).toLowerCase().includes("application/json")) {
     return res.status(415).json({ error: "Content-Type must be application/json." });
   }
@@ -99,7 +102,7 @@ module.exports = async function handler(req, res) {
       headers: {
         "Authorization": "Bearer " + apiKey,
         "Content-Type": "application/json",
-        "HTTP-Referer": allowedOrigin,
+        "HTTP-Referer": requestOrigin,
         "X-Title": "MAT-STUDIO AI Workspace"
       },
       body: JSON.stringify({
