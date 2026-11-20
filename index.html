@@ -297,7 +297,7 @@ html:not([data-mode=gemini]) label[for=visionModel],html:not([data-mode=gemini])
  </div>
  <div class="sec">
   <h3>Data</h3>
-  <p>Conversations are saved to your private Xi account and cached in this browser for a responsive experience.</p>
+  <p>Conversations are saved securely to your current Xi guest session and cached in this browser. This guest session is tied to this browser; cross-device account sign-in comes later.</p>
   <p id="syncStatus"></p>
   <button class="btn danger" id="clearAll" type="button">Delete all conversations</button>
  </div>
@@ -595,7 +595,7 @@ function applyMode() {
   $('#apiKeyActions').hidden = !geminiMode; $('#geminiWarn').hidden = !geminiMode;
   $('#sampleNote').textContent = geminiMode
     ? 'Gemini sends requests directly from this browser using your personal API key. Use this mode only on a device you trust.'
-    : 'Xi Cloud uses a secure server connection. Your provider key stays on the server; conversations sync to your private Xi account.';
+    : 'Xi Cloud uses a secure server connection. Your provider key stays on the server; chat history is saved to your current Xi guest session.';
 }
 
 /* ============================== 4. MARKDOWN + CODE (safe DOM, no innerHTML) ============================== */
@@ -695,7 +695,7 @@ function renderWelcome() {
     const n = el('div', 'notice'); n.append('Add your Gemini API key in Settings to start chatting.'); const b = el('button', null, 'Open Settings'); b.type = 'button'; b.addEventListener('click', openSettings); n.append(b); w.append(n);
   }
   const modes = el('div', 'modes');
-  [['Xi Cloud', 'Secure server mode', 'Uses the MAT-STUDIO server and your private Xi account. No provider key is needed in the browser.', providerKey() === 'cloud'],
+  [['Xi Cloud', 'Secure server mode', 'Uses the MAT-STUDIO server and saves history to this browser’s Xi guest session. No provider key is needed in the browser.', providerKey() === 'cloud'],
    ['Google Gemini', 'Personal API key', 'Optional direct Gemini connection for personal testing and video analysis.', providerKey() === 'gemini']
   ].forEach(([title, sub, desc, on]) => {
     const c = el('div', 'mode ' + (on ? 'on' : 'off'));
@@ -972,7 +972,7 @@ const Cloud = (() => {
   const L = (en, ar) => settings.lang === 'ar' ? ar : en;
   const sig = c => JSON.stringify([c.updated, c.title, c.messages.map(m => [m.id, m.ts, (m.text || '').length])]);
   function status(k, detail) {
-    const message = k === 'on' ? L('Your chats are securely synced to your Xi account ✓', 'محادثاتك متزامنة بأمان مع حساب Xi ✓')
+    const message = k === 'on' ? L('Your chats are securely saved to this Xi guest session ✓', 'محادثاتك محفوظة بأمان ضمن جلسة ضيف Xi ✓')
       : k === 'wait' ? L('Connecting to Xi Cloud…', 'جارٍ الاتصال بسحابة Xi…')
       : L('Cloud sync unavailable: ' + (detail || lastError || 'using this browser only'), 'مزامنة السحابة غير متاحة: ' + (detail || lastError || 'الحفظ محلي فقط'));
     $('#syncStatus').textContent = message;
@@ -1500,8 +1500,8 @@ const AR = {
   'Custom instructions (sent as system instruction)': 'تعليمات مخصصة (تُرسل كتعليمات للنظام)', "Leave empty to use Xi's default behaviour": 'اتركه فارغاً لاستخدام السلوك الافتراضي',
   'Appearance': 'المظهر', 'Theme': 'الثيم', 'Dark': 'داكن', 'Light': 'فاتح', 'Match system': 'حسب النظام', 'Accent color': 'لون التمييز', 'Green': 'أخضر', 'Blue': 'أزرق',
   'Violet': 'بنفسجي', 'Amber': 'كهرماني', 'Interface language': 'لغة الواجهة', 'Animated background': 'الخلفية المتحركة', 'Aurora': 'شفق', 'Network': 'شبكة', 'Off': 'إيقاف', 'Instagram Vision': 'رؤية انستغرام', "Why can't I paste a Reel link?": 'ليش ما أكدر ألصق رابط الريل؟', 'Instagram does not give apps a video file from a public link. Its official API only returns media owned by an Instagram professional account that has authorized an app, and it needs a Meta app and a server to keep access tokens safe. Scraping breaks the platform rules, so Xi does not do it. Only analyze videos you own or have permission to use.': 'انستغرام لا يعطي التطبيقات ملف فيديو من رابط عام. واجهته الرسمية تعيد فقط وسائط حساب مهني منح تطبيقاً الإذن، وتحتاج تطبيق Meta وخادماً لحماية الرموز. سحب المحتوى يخالف قواعد المنصة فلا يفعله Xi. حلّل فقط فيديوهات تملكها أو لديك إذن باستخدامها.', 'Your video is uploaded to Google to be analyzed and Google deletes it after 48 hours. Your Gemini key is kept in this browser, so use this only on your own device.': 'يُرفع الفيديو إلى Google لتحليله وتحذفه بعد 48 ساعة. مفتاح Gemini محفوظ في هذا المتصفح، فاستخدم هذا على جهازك الشخصي فقط.', 'Focus (optional)': 'تركيز التحليل (اختياري)', 'Analyze video': 'حلّل الفيديو', 'Recent analyses': 'التحليلات الأخيرة', 'Vision model (video analysis)': 'نموذج الرؤية (تحليل الفيديو)', '⬆ Choose video (MP4, MOV, WEBM)': '⬆ اختر فيديو (MP4 أو MOV أو WEBM)', 'Invalid model name': 'اسم نموذج غير صالح', '⤓ Export conversation': '⤓ تصدير المحادثة', '⌫ Clear conversation': '⌫ مسح المحادثة', 'More': 'المزيد', 'Pin': 'تثبيت', 'Unpin': 'إلغاء التثبيت', 'On': 'تشغيل', 'Modo assistant': 'مساعد مودو', 'Add your Gemini key in Settings to use this mode': 'أضف مفتاح Gemini في الإعدادات لاستخدام هذا الوضع', 'Professional mode': 'الوضع الاحترافي', 'Sign in with Claude': 'تسجيل الدخول بحساب Claude', 'Guest mode': 'وضع الضيف', 'No sign-in': 'بدون تسجيل دخول', 'Uses your own Claude account. No API key needed. Works on the shared link.': 'يستخدم حسابك الخاص في Claude. لا يحتاج مفتاح API. يعمل على الرابط المشترك.', 'Use your own free Gemini key. Works when you open the downloaded file on your device or host it on your own site.': 'استخدم مفتاح Gemini المجاني الخاص بك. يعمل عند فتح الملف المحمّل على جهازك أو استضافته في موقعك.', 'Active here ✓': 'مفعّل هنا ✓', 'Open the Claude version': 'افتح نسخة Claude', 'Needs the standalone file (not available on this shared link)': 'يحتاج الملف المستقل (غير متاح على هذا الرابط المشترك)', 'Data': 'البيانات',
-  'Conversations are saved to your private Xi account and cached in this browser for a responsive experience.': 'تُحفظ المحادثات في حساب Xi الخاص بك وتُخزّن مؤقتاً في هذا المتصفح لسرعة الاستخدام.',
-  'Xi Cloud uses a secure server connection. Your provider key stays on the server; conversations sync to your private Xi account.': 'تستخدم سحابة Xi اتصالاً آمناً بالخادم. يبقى مفتاح المزوّد على الخادم وتتزامن محادثاتك مع حسابك الخاص.',
+  'Conversations are saved securely to your current Xi guest session and cached in this browser. This guest session is tied to this browser; cross-device account sign-in comes later.': 'تُحفظ المحادثات بأمان ضمن جلسة ضيف Xi الحالية وتُخزّن مؤقتاً في هذا المتصفح. هذه الجلسة مرتبطة بهذا المتصفح؛ تسجيل الدخول والمزامنة بين الأجهزة مرحلة لاحقة.',
+  'Xi Cloud uses a secure server connection. Your provider key stays on the server; chat history is saved to your current Xi guest session.': 'تستخدم سحابة Xi اتصالاً آمناً بالخادم. يبقى مفتاح المزوّد على الخادم وتتزامن محادثاتك مع حسابك الخاص.',
   'Delete all conversations': 'حذف كل المحادثات', 'About Xi': 'عن Xi',
   'Xi is a personal AI chat interface built with plain HTML, CSS and JavaScript in a single file. Replies come from the provider you configure; Xi never fabricates answers — if the API fails you will see the error.': 'Xi واجهة محادثة ذكاء اصطناعي شخصية مبنية بـ HTML وCSS وJavaScript في ملف واحد. الردود تأتي من المزوّد المضبوط، ولا يختلق Xi أي إجابة؛ إن فشل الاتصال سترى رسالة الخطأ.',
   'How can I help you today?': 'كيف أقدر أساعدك اليوم؟', 'Ask anything — explanations, code, writing, summaries or translations. Xi remembers the context of this conversation.': 'اسأل أي شيء: شرح، برمجة، كتابة، تلخيص أو ترجمة. يتذكر Xi سياق هذه المحادثة.',
