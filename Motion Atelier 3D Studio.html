@@ -34,7 +34,7 @@ footer{grid-area:t;background:var(--pn);border-top:1px solid var(--ln);display:f
 <header><b>Motion Atelier</b><span id="msg">Ready</span><span id="fps"></span></header>
 <aside>
 <section><h3>Character</h3>
-<label class="btn">Load model (.vrm .glb .gltf)<input id="file" type="file" accept=".vrm,.glb,.gltf" hidden></label>
+<label class="btn">Load character / motion (.vrm .glb .gltf .vrma)<input id="file" type="file" accept=".vrm,.glb,.gltf,.vrma" hidden></label>
 <p id="info"></p>
 <label class="s" style="grid-template-columns:auto 1fr"><span><input type="checkbox" id="refon" checked> Reference</span><input type="range" id="refop" min="0" max="1" step=".05" value=".8" aria-label="Reference opacity"></label></section>
 <section><h3>Animations</h3><div id="cl"></div>
@@ -53,12 +53,13 @@ footer{grid-area:t;background:var(--pn);border-top:1px solid var(--ln);display:f
 <label>Length <input id="len" type="number" min=".5" max="30" step=".5" style="width:64px"></label>
 <label>Key easing <select id="ez"><option value="smooth">Smooth</option><option value="linear">Linear</option><option value="in">Ease in</option><option value="out">Ease out</option><option value="hold">Hold</option></select></label><output id="tm"></output></div>
 <canvas id="tl"></canvas></footer>
-<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/","@pixiv/three-vrm":"https://cdn.jsdelivr.net/npm/@pixiv/three-vrm@3.0.0/lib/three-vrm.module.js"}}</script>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/","@pixiv/three-vrm":"https://cdn.jsdelivr.net/npm/@pixiv/three-vrm@3.0.0/lib/three-vrm.module.js","@pixiv/three-vrm-animation":"https://cdn.jsdelivr.net/npm/@pixiv/three-vrm-animation@3.0.0/lib/three-vrm-animation.module.js"}}</script>
 <script type="module">
 import*as T from'three';
 import{OrbitControls}from'three/addons/controls/OrbitControls.js';
 import{GLTFLoader}from'three/addons/loaders/GLTFLoader.js';
 import{VRMLoaderPlugin,VRMUtils}from'@pixiv/three-vrm';
+import{createVRMAnimationClip,VRMAnimationLoaderPlugin,VRMLookAtQuaternionProxy}from'@pixiv/three-vrm-animation';
 const $=s=>document.querySelector(s),css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
 //#core
 const S=Math.sin,C=Math.cos,P=Math.PI*2,ALL=['root','hips','spine','chest','neck','head','leftUpperArm','leftLowerArm','rightUpperArm','rightLowerArm','leftUpperLeg','leftLowerLeg','rightUpperLeg','rightLowerLeg'],Z=[0,0,0];
@@ -109,12 +110,13 @@ function setRig(r,name){if(rig){SC.remove(rig.root);dispose(rig.root)}rig=r;vrm=
  $('#badge').style.display=r.placeholder?'block':'none';$('#badge').textContent='Placeholder rig, not your character. Load her .vrm or .glb.';
  $('#info').textContent=r.placeholder?'Placeholder rig for testing animation. Load her VRM/GLB to replace it.':`${name}: ${r.vrm?'VRM humanoid, presets and face controls active':r.anims.length?r.anims.length+' embedded clip(s), playback only':'no embedded animation; use a VRM for presets'}`;
  $('#pose').disabled=!!r.generic;$('#phy').disabled=!vrm;buildFace();buildClips();frame();$('#msg').textContent=name+' loaded'}
-const avail=n=>rig&&(rig.generic?clips[n].native||clips[n].static:!clips[n].native&&!clips[n].static);
+const avail=n=>rig&&(rig.generic?clips[n].native||clips[n].static:!clips[n].static);
 // ---- loading
-const GL=new GLTFLoader();GL.register(p=>new VRMLoaderPlugin(p));
-async function load(f){if(!/\.(vrm|glb|gltf)$/i.test(f.name))return $('#msg').textContent='Unsupported file. Use .vrm, .glb or .gltf';$('#msg').textContent='Loading '+f.name+'…';const url=URL.createObjectURL(f);
- try{const g=await GL.loadAsync(url),v=g.userData.vrm;
-  if(v){VRMUtils.rotateVRM0(v);const b={};for(const n of ALL.slice(1)){const o=v.humanoid.getNormalizedBoneNode(n);if(o)b[n]=o}setRig({root:v.scene,bones:b,vrm:v},f.name)}
+const GL=new GLTFLoader();GL.register(p=>new VRMLoaderPlugin(p));GL.register(p=>new VRMAnimationLoaderPlugin(p));
+async function load(f){if(!/\.(vrm|glb|gltf|vrma)$/i.test(f.name))return $('#msg').textContent='Unsupported file. Use .vrm, .glb, .gltf or .vrma';const isMotion=/\.vrma$/i.test(f.name);if(isMotion&&!vrm)return $('#msg').textContent='Load a VRM character first, then add its .vrma motion.';$('#msg').textContent='Loading '+f.name+'…';const url=URL.createObjectURL(f);
+ try{const g=await GL.loadAsync(url);
+  if(isMotion){const list=g.userData.vrmAnimations||[];if(!list.length)throw new Error('No VRM animation found in this file');const base=f.name.replace(/\.vrma$/i,'');let first=null;list.forEach((a,i)=>{const clip=createVRMAnimationClip(a,vrm),label=nm(list.length>1?base+' '+(i+1):base),entry={dur:clip.duration,loop:true,native:clip,external:true};clips[label]=entry;if(!first)first=label});buildClips();play(first,true);$('#msg').textContent='Imported '+list.length+' VRMA animation'+(list.length===1?'':'s')+' for '+(vrm.meta?.name||'current character');return}
+  const v=g.userData.vrm;if(v){VRMUtils.rotateVRM0(v);const b={};for(const n of ALL.slice(1)){const o=v.humanoid.getNormalizedBoneNode(n);if(o)b[n]=o}if(v.lookAt){const proxy=new VRMLookAtQuaternionProxy(v.lookAt);proxy.name='lookAtQuaternionProxy';v.scene.add(proxy)}setRig({root:v.scene,bones:b,vrm:v,mixer:new T.AnimationMixer(v.scene)},f.name)}
   else setRig({root:g.scene,bones:{},generic:true,anims:g.animations,mixer:new T.AnimationMixer(g.scene)},f.name)}
  catch(e){$('#msg').textContent='Could not load '+f.name+': '+(e.message||e)+(/\.gltf$/i.test(f.name)?' (.gltf with external files must be packed as .glb)':'')}finally{URL.revokeObjectURL(url)}}
 $('#file').onchange=e=>e.target.files[0]&&load(e.target.files[0]);
