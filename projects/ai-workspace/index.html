@@ -996,7 +996,7 @@ const Cloud = (() => {
  }
  async function guest(){
   if(!client){status('Guest access is unavailable because the cloud auth service did not load.');return;}
-  if(hasGuest()){status('Guest session active · chat is ready.');dlg.close?.();return;}
+  if(hasGuest()){status('Guest session active · chat is ready.');$('#settings').close();return;}
   $('#guestLoginBtn').disabled=true;status('Creating your secure guest session…');
   try{
    const {data,error}=await client.auth.signInAnonymously();
