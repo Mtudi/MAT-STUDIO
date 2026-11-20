@@ -1,3 +1,16 @@
+const guestRate = new Map();
+function allowGuest(key, limit, windowMs) {
+  const now = Date.now();
+  const entry = guestRate.get(key);
+  if (!entry || now >= entry.resetAt) {
+    guestRate.set(key, { count: 1, resetAt: now + windowMs });
+    return true;
+  }
+  if (entry.count >= limit) return false;
+  entry.count++;
+  return true;
+}
+
 module.exports = async function handler(req, res) {
   res.setHeader("Cache-Control", "no-store");
   res.setHeader("X-Content-Type-Options", "nosniff");
@@ -15,12 +28,48 @@ module.exports = async function handler(req, res) {
 
   const apiKey = process.env.OPENROUTER_API_KEY;
   const accessPassword = process.env.MAT_STUDIO_CHAT_PASSWORD;
-  if (!apiKey || !accessPassword) {
-    return res.status(503).json({ error: "Chat is not configured yet. Add the required Vercel environment variables." });
+  if (!apiKey) {
+    return res.status(503).json({ error: "Chat is not configured yet. Add OPENROUTER_API_KEY in Vercel." });
   }
   const body = req.body && typeof req.body === "object" ? req.body : {};
-  if (typeof body.accessCode !== "string" || body.accessCode !== accessPassword) {
-    return res.status(401).json({ error: "Incorrect access code." });
+  const ownerAuthorized = !!(accessPassword && typeof body.accessCode === "string" && body.accessCode === accessPassword);
+  let guestUser = null;
+  if (!ownerAuthorized && typeof body.guestToken === "string" && body.guestToken.length > 20 && body.guestToken.length < 5000) {
+    const supabaseUrl = process.env.SUPABASE_URL;
+    const publishableKey = process.env.SUPABASE_PUBLISHABLE_KEY;
+    if (supabaseUrl && publishableKey) {
+      try {
+        const verify = await fetch(supabaseUrl.replace(/\\/$/, "") + "/auth/v1/user", {
+          method: "GET",
+          headers: {
+            "apikey": publishableKey,
+            "Authorization": "Bearer " + body.guestToken
+          }
+        });
+        if (verify.ok) {
+          const identity = await verify.json().catch(() => null);
+          if (identity && identity.id && identity.is_anonymous === true) guestUser = identity;
+        }
+      } catch (error) {
+        console.error("[xi-guest-auth] verification request failed");
+      }
+    }
+  }
+  if (!ownerAuthorized && !guestUser) {
+    return res.status(401).json({ error: "Continue as Guest or use your workspace access code." });
+  }
+  if (guestUser) {
+    const forwarded = String(req.headers["x-forwarded-for"] || "");
+    const ip = String(req.headers["x-real-ip"] || forwarded.split(",")[0] || "unknown").trim().slice(0, 80);
+    const userKey = "u:" + guestUser.id;
+    const ipKey = "ip:" + ip;
+    if (!allowGuest(userKey, 10, 15 * 60 * 1000) || !allowGuest(ipKey, 40, 24 * 60 * 60 * 1000)) {
+      return res.status(429).json({ error: "Guest usage limit reached. Please try again later." });
+    }
+    if (guestRate.size > 5000) {
+      const now = Date.now();
+      for (const [key, value] of guestRate) if (now >= value.resetAt) guestRate.delete(key);
+    }
   }
   if (!Array.isArray(body.messages) || body.messages.length < 1 || body.messages.length > 16) {
     return res.status(400).json({ error: "Send between 1 and 16 messages." });
