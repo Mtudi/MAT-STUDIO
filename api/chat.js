@@ -29,9 +29,15 @@ module.exports = async function handler(req, res) {
     return res.status(415).json({ error: "Content-Type must be application/json." });
   }
 
+  // Preview deployments use Vercel's short-lived OIDC token with a strictly free
+  // AI Gateway model. Production keeps the existing OpenRouter configuration.
+  const isPreview = process.env.VERCEL_ENV === "preview";
+  const gatewayToken = isPreview ? req.headers["x-vercel-oidc-token"] : "";
+  const useGateway = isPreview && typeof gatewayToken === "string" && gatewayToken.length > 20;
   const apiKey = process.env.OPENROUTER_API_KEY;
   const accessPassword = process.env.MAT_STUDIO_CHAT_PASSWORD;
-  if (!apiKey) {
+  const modelId = useGateway ? "poolside/laguna-s-2.1-free" : "openrouter/free";
+  if (!useGateway && !apiKey) {
     return res.status(503).json({ error: "Chat is not configured yet. Add OPENROUTER_API_KEY in Vercel." });
   }
   const body = req.body && typeof req.body === "object" ? req.body : {};
@@ -97,16 +103,17 @@ module.exports = async function handler(req, res) {
   }
 
   try {
-    const upstream = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+    const upstream = await fetch(
+      useGateway ? "https://ai-gateway.vercel.sh/v1/chat/completions" : "https://openrouter.ai/api/v1/chat/completions",
+      {
       method: "POST",
       headers: {
-        "Authorization": "Bearer " + apiKey,
+        "Authorization": "Bearer " + (useGateway ? gatewayToken : apiKey),
         "Content-Type": "application/json",
-        "HTTP-Referer": requestOrigin,
-        "X-Title": "MAT-STUDIO AI Workspace"
+        ...(useGateway ? {} : { "HTTP-Referer": requestOrigin, "X-Title": "MAT-STUDIO AI Workspace" })
       },
       body: JSON.stringify({
-        model: "openrouter/free",
+        model: modelId,
         stream: body.stream === true,
         messages: [
           {
@@ -132,7 +139,7 @@ module.exports = async function handler(req, res) {
         ],
         max_tokens: 1000,
         temperature: 0.35,
-        provider: { sort: "throughput", data_collection: "deny", allow_fallbacks: true }
+        ...(useGateway ? {} : { provider: { sort: "throughput", data_collection: "deny", allow_fallbacks: true } })
       })
     });
 
@@ -156,7 +163,7 @@ module.exports = async function handler(req, res) {
       if (typeof answer !== "string" || !answer.trim()) {
         return res.status(502).json({ error: "The model returned an empty response." });
       }
-      return res.status(200).json({ answer: answer.trim(), model: data.model || "openrouter/free" });
+      return res.status(200).json({ answer: answer.trim(), model: data.model || modelId });
     }
 
     if (!upstream.body || typeof upstream.body.getReader !== "function") {
@@ -173,7 +180,7 @@ module.exports = async function handler(req, res) {
     const reader = upstream.body.getReader();
     const decoder = new TextDecoder();
     let buffer = "";
-    let model = "openrouter/free";
+    let model = modelId;
     let streamedText = "";
     let streamError = "";
     const sendEvent = payload => res.write("data: " + JSON.stringify(payload) + "\n\n");
