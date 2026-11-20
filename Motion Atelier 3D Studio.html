@@ -30,6 +30,31 @@ footer{grid-area:t;background:var(--pn);border-top:1px solid var(--ln);display:f
 #tc{display:flex;flex-wrap:wrap;gap:6px;align-items:center;padding:6px 10px}#tc output{min-width:92px;text-align:left}
 #tl{flex:1;width:100%;min-height:0;display:block;touch-action:none}
 @media(max-width:820px){body{grid-template:"h" 38px "v" 44vh "t" 300px "p" auto/1fr;overflow:auto;height:auto}html{height:auto}#ref{width:46%}}
+@media(max-width:600px){
+ html,body{min-height:100%;height:auto}
+ body{grid-template:"h" 44px "v" minmax(260px,42svh) "t" minmax(230px,32svh) "p" auto/1fr;overflow-x:hidden;overflow-y:auto}
+ header{gap:8px;padding:0 10px}
+ header b{font-size:14px}
+ #msg{font-size:11px}
+ aside{padding:8px 10px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:12px;align-content:start}
+ aside>section,aside>fieldset{min-width:0}
+ aside>section:first-child,aside>section:nth-child(2),aside>fieldset,aside>section:nth-child(4),aside>section:nth-child(5){grid-column:1/-1}
+ #tc{gap:7px;padding:8px;align-content:flex-start}
+ #tc button,#tc select,#tc input{min-height:36px}
+ #tc output{min-width:72px;font-size:11px}
+ #tc label{font-size:11px}
+ #len{width:52px!important}
+ #ref{width:34%;max-width:150px;right:7px;top:7px;gap:4px}
+ #badge{left:7px;bottom:7px;font-size:11px}
+ #ma-ai-launch{right:10px;top:50px;padding:10px 12px;min-height:40px}
+ #ma-ai-panel{right:10px;top:98px;width:min(330px,calc(100vw - 20px))}
+}
+@media(max-width:380px){
+ aside{grid-template-columns:1fr}
+ aside>section,aside>fieldset{grid-column:1/-1}
+ #tc{gap:5px}
+ #tc button{padding:6px 8px}
+}
 </style></head><body>
 <header><b>Motion Atelier</b><span id="msg">Ready</span><span id="fps"></span></header>
 <aside>
