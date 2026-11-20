@@ -54,7 +54,7 @@ module.exports = async function handler(req, res) {
   const engineToken = process.env.MATUDI_ENGINE_TOKEN || "";
   if (!engineUrl || !engineToken) return send(res, 503, { error: "AI Engine bridge is not configured." });
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 28000);
+  const timeout = setTimeout(() => controller.abort(), 58000);
   try {
     const upstream = await fetch(engineUrl + "/api/chat", {
       method: "POST",
@@ -63,7 +63,7 @@ module.exports = async function handler(req, res) {
       signal: controller.signal
     });
     const data = await upstream.json().catch(() => ({}));
-    if (!upstream.ok) return send(res, upstream.status, { error: data.error || "AI Engine request failed.", providerStatus: data.providerStatus });
+    if (!upstream.ok) return send(res, upstream.status, { error: data.error || "AI Engine request failed.", providerStatus: data.providerStatus, providerMessage: data.providerMessage });
     return send(res, 200, { ok: true, text: data.text, model: data.model, provider: data.provider });
   } catch (error) {
     return send(res, error && error.name === "AbortError" ? 504 : 502, { error: error && error.name === "AbortError" ? "AI Engine timed out." : "Could not reach AI Engine." });
