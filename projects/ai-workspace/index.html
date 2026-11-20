@@ -947,7 +947,7 @@ function closeNav() { $('#app').classList.remove('nav-open'); }
 function autoGrow() { const t = $('#input'); t.style.height = 'auto'; t.style.height = Math.min(t.scrollHeight, 200) + 'px'; setBusyUI(); }
 /* MAT-STUDIO Supabase auth: guest sessions authorize chat only; email users sync history. */
 const Cloud = (() => {
- let client=null,user=null,loading=false,timer=0;
+ let client=null,user=null,loading=false,timer=0,initTask=null;
  const sent=new Map();
  const isCloudUser=()=>!!(user&&!user.is_anonymous);
  const hasGuest=()=>!!(user&&user.is_anonymous);
@@ -995,7 +995,9 @@ const Cloud = (() => {
   catch(e){status(e.message||'Could not send sign-in link.');}finally{$('#cloudLoginBtn').disabled=false;}
  }
  async function guest(){
-  if(!client){status('Guest access is unavailable because the cloud auth service did not load.');return;}
+  // Wait for the initial config fetch/client setup; users may tap before it finishes.
+  if(!client) await init();
+  if(!client){status('Guest access is unavailable because the cloud auth service did not load.');toast('Guest sign-in is not ready. Check Cloud Status in Settings.');return;}
   if(hasGuest()){status('Guest session active · chat is ready.');$('#settings').close();return;}
   $('#guestLoginBtn').disabled=true;status('Creating your secure guest session…');
   try{
@@ -1008,9 +1010,12 @@ const Cloud = (() => {
    toast('Guest access ready. You can start chatting.');
   }catch(e){
    const msg=String(e.message||'Could not create a guest session.');
+   const code=e.code||e.status||'';
+   const detail=msg+(code?' ('+code+')':'');
    status(msg.toLowerCase().includes('anonymous')||msg.toLowerCase().includes('disabled')
-    ? 'Guest sign-in is disabled in Supabase. Enable Anonymous Sign-Ins in Authentication → Sign In / Providers.'
-    : 'Guest sign-in failed · '+msg);
+    ? 'Guest sign-in is disabled in Supabase. Enable Anonymous Sign-Ins in Authentication → Sign In / Providers. · '+detail
+    : 'Guest sign-in failed · '+detail);
+   toast('Guest sign-in failed: '+detail);
   }finally{$('#guestLoginBtn').disabled=false;}
  }
  async function guestToken(){
@@ -1022,15 +1027,19 @@ const Cloud = (() => {
  async function logout(){if(!client)return;const {error}=await client.auth.signOut();if(error){status(error.message||'Could not sign out.');return;}user=null;status('Signed out · local history remains available.');}
  async function remove(id){if(!client||!isCloudUser())return;const c=convs.find(x=>x.id===id);const remoteId=c&&(c.cloudId||c.id);if(!remoteId)return;try{await client.from('ai_messages').delete().eq('conversation_id',remoteId);await client.from('ai_conversations').delete().eq('id',remoteId);sent.delete(remoteId);}catch{}}
  async function init(){
-  status('Connecting cloud service…');
-  try{const r=await fetch('/api/supabase-config',{cache:'no-store'});if(!r.ok)throw Error('Cloud configuration unavailable.');const cfg=await r.json();if(!window.supabase||!window.supabase.createClient)throw Error('Supabase library unavailable.');
-   client=window.supabase.createClient(cfg.url,cfg.publishableKey,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
-   const {data,error}=await client.auth.getSession();if(error)throw error;user=data.session&&data.session.user||null;
-   if(isCloudUser()){status('Signed in · loading your cloud history…');await load();}
-   else if(hasGuest())status('Guest session restored · chat is ready. Local history only.');
-   else status('Ready · continue as guest to chat. Cloud sync is optional.');
-   client.auth.onAuthStateChange((_event,session)=>{user=session&&session.user||null;if(isCloudUser())load();else if(hasGuest())status('Guest session active · local history only.');else status('Signed out · local history remains available.');});
-  }catch(e){status('Cloud unavailable · '+(e.message||'offline'));}
+  if(initTask)return initTask;
+  initTask=(async()=>{
+   status('Connecting cloud service…');
+   try{const r=await fetch('/api/supabase-config',{cache:'no-store'});if(!r.ok)throw Error('Cloud configuration unavailable. HTTP '+r.status);const cfg=await r.json();if(!cfg.url||!cfg.publishableKey)throw Error('Cloud configuration is missing required public settings.');if(!window.supabase||!window.supabase.createClient)throw Error('Supabase library unavailable. Check whether the CDN is blocked.');
+    client=window.supabase.createClient(cfg.url,cfg.publishableKey,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
+    const {data,error}=await client.auth.getSession();if(error)throw error;user=data.session&&data.session.user||null;
+    if(isCloudUser()){status('Signed in · loading your cloud history…');await load();}
+    else if(hasGuest())status('Guest session restored · chat is ready. Local history only.');
+    else status('Ready · continue as guest to chat. Cloud sync is optional.');
+    client.auth.onAuthStateChange((_event,session)=>{user=session&&session.user||null;if(isCloudUser())load();else if(hasGuest())status('Guest session active · local history only.');else status('Signed out · local history remains available.');});
+   }catch(e){status('Cloud unavailable · '+(e.message||'offline'));}
+  })();
+  return initTask;
  }
  return{init,queue,remove,login,logout,guest,guestToken,hasGuest};
 })();
