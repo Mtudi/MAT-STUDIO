@@ -224,6 +224,9 @@ html:not([data-mode=gemini]) label[for=visionModel],html:not([data-mode=gemini])
 .vcard .btn{margin:0 12px 12px}
 .vbtn[hidden]{display:none}
   #settings label[for=apiKey],#settings .row:has(#apiKey),#settings .row:has(#saveKey),#settings #keyStatus,#settings #sampleNote,#settings #geminiWarn,#settings label[for=provider],#settings #provider,#settings #refreshModels,#settings label[for=visionModel],#settings #visionModel,#visionBtn{display:none!important}
+#settings[open]{display:block;pointer-events:auto;position:fixed;z-index:9999;inset:0;max-height:calc(100dvh - 24px);overflow:auto;overscroll-behavior:contain;touch-action:pan-y}
+#settings .sec,#settings button,#settings input,#settings select,#settings textarea{pointer-events:auto}
+#settings button{touch-action:manipulation}
 </style>
 <script>
 window.__xiSupabaseReady = new Promise((resolve, reject) => {
@@ -888,11 +891,21 @@ function regenerate() {
 /* ============================== 8. SETTINGS ============================== */
 const dlg = $('#settings');
 function openSettings() {
-  $('#accessCode').value=accessCode;$('#accessCode').type='password';$('#toggleAccessCode').textContent='Show';updateAccessStatus();
-  $('#apiKey').value = apiKey; $('#apiKey').type = 'password'; $('#toggleKey').textContent = 'Show';
-  $('#system').value = settings.system || ''; $('#theme').value = settings.theme; $('#accent').value = settings.accent || 'green'; $('#lang').value = settings.lang; $('#bgmode').value = settings.bg; $('#modoOn').value = settings.modo; $('#visionModel').value = settings.visionModel;
-  updateKeyStatus(); fillModels();
-  if (!dlg.open) dlg.showModal();
+  try {
+    $('#accessCode').value=accessCode;$('#accessCode').type='password';$('#toggleAccessCode').textContent='Show';updateAccessStatus();
+    $('#apiKey').value = apiKey; $('#apiKey').type = 'password'; $('#toggleKey').textContent = 'Show';
+    $('#system').value = settings.system || ''; $('#theme').value = settings.theme; $('#accent').value = settings.accent || 'green'; $('#lang').value = settings.lang; $('#bgmode').value = settings.bg; $('#modoOn').value = settings.modo; $('#visionModel').value = settings.visionModel;
+    updateKeyStatus(); fillModels();
+    if (!dlg.open) {
+      if (typeof dlg.showModal === 'function') dlg.showModal();
+      else dlg.setAttribute('open', '');
+    }
+    requestAnimationFrame(() => { dlg.scrollTop = 0; $('#closeSettings').focus({preventScroll:true}); });
+  } catch (err) {
+    console.error('Xi settings open failed:', err);
+    toast('Settings could not open: ' + (err?.message || 'unknown error'));
+    dlg.setAttribute('open', '');
+  }
 }
 function updateAccessStatus(){$('#accessStatus').textContent=accessCode?'Workspace access code saved on this device.':'Optional for owner access · you can also continue as a guest below.';}
 function updateKeyStatus() { $('#keyStatus').textContent = 'API key is managed privately by Vercel.'; }
