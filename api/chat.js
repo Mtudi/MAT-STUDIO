@@ -39,7 +39,7 @@ module.exports = async function handler(req, res) {
     const publishableKey = process.env.SUPABASE_PUBLISHABLE_KEY;
     if (supabaseUrl && publishableKey) {
       try {
-        const verify = await fetch(supabaseUrl.replace(/\\/$/, "") + "/auth/v1/user", {
+        const verify = await fetch(supabaseUrl.replace(/\/$/, "") + "/auth/v1/user", {
           method: "GET",
           headers: {
             "apikey": publishableKey,
