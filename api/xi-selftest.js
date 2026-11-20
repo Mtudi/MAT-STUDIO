@@ -19,6 +19,6 @@ module.exports=async function(req,res){
     const chat=await fetch(origin+"/api/xi-chat",{method:"POST",headers:{Origin:origin,Cookie:cookie.split(";")[0],"Content-Type":"application/json"},body:JSON.stringify({messages:[{role:"user",text:"Reply with exactly MATUDI ENGINE ONLINE."}],system:"Reply with exactly MATUDI ENGINE ONLINE."})});
     const data=await chat.json().catch(()=>({}));
     res.statusCode=chat.ok?200:502;
-    return res.end(JSON.stringify({stage:"ai-engine",ok:chat.ok,status:chat.status,provider:data.provider||null,model:data.model||null,replyReceived:typeof data.text==="string"&&data.text.length>0,replyLength:typeof data.text==="string"?data.text.length:0,error:data.error||null}));
+    return res.end(JSON.stringify({stage:"ai-engine",ok:chat.ok,status:chat.status,provider:data.provider||null,model:data.model||null,providerStatus:data.providerStatus||null,replyReceived:typeof data.text==="string"&&data.text.length>0,replyLength:typeof data.text==="string"?data.text.length:0,error:data.error||null}));
   }catch(e){res.statusCode=502;return res.end(JSON.stringify({stage:"network",ok:false,error:"Internal test request failed."}));}
 };
