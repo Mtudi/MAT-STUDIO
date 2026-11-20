@@ -305,8 +305,8 @@ html:not([data-mode=gemini]) label[for=visionModel],html:not([data-mode=gemini])
   <select class="fld" id="modoOn"><option value="on">On</option><option value="off">Off</option></select>
  </div>
  <div class="sec">
-  <h3>Account & Cloud Sync</h3>
-  <p>Sign in with your email to sync conversations across devices. Your local history remains available without signing in.</p>
+  <h3>Optional Cloud Sync</h3>
+  <p><b>Not required to use Xi.</b> Chat works immediately without an account. Your conversations are saved on this device; sign in only if you want to sync them across devices.</p>
   <label for="cloudEmail">Email</label>
   <div class="row"><input class="fld" id="cloudEmail" type="email" autocomplete="email" placeholder="you@example.com"><button class="btn primary" id="cloudLoginBtn" type="button">Send login link</button></div>
   <div class="row"><p id="cloudStatus">Cloud sync is loading…</p><button class="btn" id="cloudLogoutBtn" type="button" hidden>Sign out</button></div>
@@ -397,8 +397,7 @@ async function copyText(text) {
 
 /* ============================== 2. PROVIDERS ==============================
    A provider exposes: name, models, listModels(key), stream({key,model,system,messages,ctrl,onToken}).
-   To use a secure backend later, add a provider here that calls your own server
-   (no key in the browser) — the UI only talks to this interface. */
+   To use a secure backend later, add a provider here that calls your own server   (no key in the browser) — the UI only talks to this interface. */
 const DEFAULT_SYSTEM = "You are Xi, a helpful, accurate and concise personal AI assistant. Always reply in the same language as the user's latest message. Use Markdown; put code in fenced code blocks with a language tag.";
 const Providers = {
   server: {
@@ -797,8 +796,7 @@ async function renameConv(id) {
   const v = await uiPrompt('Rename conversation', c.title);
   if (v == null) return;
   const t = v.trim().slice(0, 80); if (!t) return toast('Title cannot be empty');
-  c.title = t; c.updated = Date.now(); saveConvs(); renderList(); renderChat(true);
-}
+  c.title = t; c.updated = Date.now(); saveConvs(); renderList(); renderChat(true);}
 async function deleteConv(id) {
   if (busy && busy.conv.id === id) return toast('Stop generation first');
   const c = convs.find(x => x.id === id); if (!c || !(await uiConfirm(settings.lang === 'ar' ? 'حذف «' + c.title + '»؟ لا يمكن التراجع عن ذلك.' : 'Delete “' + c.title + '”? This cannot be undone.', 'Delete'))) return;
@@ -947,7 +945,7 @@ const Cloud = (() => {
  let client=null,user=null,loading=false,timer=0;
  const sent=new Map();
  const makeCloudId=()=>crypto.randomUUID?crypto.randomUUID():'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,c=>{const r=Math.random()*16|0;return(c==='x'?r:(r&3|8)).toString(16);});
- const status=msg=>{if($('#cloudStatus'))$('#cloudStatus').textContent=msg;$('#syncStatus').textContent=msg;$('#syncChip').textContent=user?'☁ Synced to MAT-STUDIO account':'Local history · cloud optional';$('#cloudLoginBtn').hidden=!!user;$('#cloudEmail').hidden=!!user;$('#cloudLogoutBtn').hidden=!user;};
+ const status=msg=>{if($('#cloudStatus'))$('#cloudStatus').textContent=msg;$('#syncStatus').textContent=msg;$('#syncChip').textContent=user?'☁ Synced to MAT-STUDIO account':'Local · no account needed';$('#cloudLoginBtn').hidden=!!user;$('#cloudEmail').hidden=!!user;$('#cloudLogoutBtn').hidden=!user;};
  const messageList=c=>(c.messages||[]).map(m=>[m.role,m.text||'']);
  const stamp=v=>{const n=Date.parse(v||'');return Number.isFinite(n)?n:Date.now();};
  async function syncOne(c){
@@ -989,14 +987,14 @@ const Cloud = (() => {
   try{const {error}=await client.auth.signInWithOtp({email,options:{emailRedirectTo:window.location.href.split('#')[0],shouldCreateUser:true}});if(error)throw error;status('Login link sent. Check your email.');}
   catch(e){status(e.message||'Could not send sign-in link.');}finally{$('#cloudLoginBtn').disabled=false;}
  }
- async function logout(){if(!client)return;const {error}=await client.auth.signOut();if(error){status(error.message||'Could not sign out.');return;}user=null;status('Signed out · local history remains available.');}
+ async function logout(){if(!client)return;const {error}=await client.auth.signOut();if(error){status(error.message||'Could not sign out.');return;}user=null;status('Signed out · Xi still works. Local history remains available.');}
  async function remove(id){if(!client||!user)return;const c=convs.find(x=>x.id===id);const remoteId=c&&(c.cloudId||c.id);if(!remoteId)return;try{await client.from('ai_messages').delete().eq('conversation_id',remoteId);await client.from('ai_conversations').delete().eq('id',remoteId);sent.delete(remoteId);}catch{}}
  async function init(){
   status('Connecting cloud service…');
   try{const r=await fetch('/api/supabase-config',{cache:'no-store'});if(!r.ok)throw Error('Cloud configuration unavailable.');const cfg=await r.json();if(!window.supabase||!window.supabase.createClient)throw Error('Supabase library unavailable.');
    client=window.supabase.createClient(cfg.url,cfg.publishableKey,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
    const {data,error}=await client.auth.getSession();if(error)throw error;user=data.session&&data.session.user||null;
-   status(user?'Signed in · loading your history…':'Local history ready · sign in to sync across devices.');if(user)await load();
+   status(user?'Signed in · loading your history…':'Ready · chat works without an account. Cloud sync is optional.');if(user)await load();
    client.auth.onAuthStateChange((_event,session)=>{user=session&&session.user||null;if(user)load();else status('Signed out · local history remains available.');});
   }catch(e){status('Cloud unavailable · '+(e.message||'offline'));}
  }
@@ -1197,8 +1195,7 @@ const Vision = (() => {
       if (ctrl.aborted || (e && e.name === 'AbortError')) { setMsg('#vFileMsg', L('Cancelled.', 'تم الإلغاء.')); Modo.stopped(); }
       else { const m = niceErr(e); setMsg('#vFileMsg', m, true); Modo.fail(m); }
     } finally {
-      clearInterval(timer); busy = null; setBusyUI(); lock(false);
-      if (remote) cleanup(remote);   // failed or cancelled after upload: remove the file from Google
+      clearInterval(timer); busy = null; setBusyUI(); lock(false);      if (remote) cleanup(remote);   // failed or cancelled after upload: remove the file from Google
       if (ok) {
         if (tgt && !pk.kept) URL.revokeObjectURL(pk.url);
         picked = null; $('#vPrev').hidden = true; $('#vPrev').removeAttribute('src'); $('#vGo').disabled = true; $('#vFocus').value = '';
