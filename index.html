@@ -439,7 +439,7 @@ const Providers = {
       return { text: full, model };
     }
   },  gemini: {
-    name: 'Google Gemini (Guest mode)',
+    name: 'Google Gemini (personal API key)',
     base: 'https://generativelanguage.googleapis.com/v1beta',
     models: ['gemini-2.5-flash', 'gemini-2.5-pro', 'gemini-2.5-flash-lite'],
     async listModels(key) {
@@ -950,8 +950,10 @@ function bindSettings() {
   $('#clearAll').addEventListener('click', async () => {
     if (busy) return toast('Stop generation first');
     if (!(await uiConfirm('Delete ALL conversations from this browser? This cannot be undone.', 'Delete all'))) return;
-    convs.forEach(c => { Vision.forget(c); Cloud.remove(c.id); }); convs = []; activeId = null; localStorage.removeItem('xi.convs'); localStorage.removeItem('xi.active');
-    renderList(); renderChat(); toast('All conversations deleted');
+    const cloudCleared = await Cloud.clearAll();
+    convs.forEach(c => Vision.forget(c)); convs = []; activeId = null; localStorage.removeItem('xi.convs'); localStorage.removeItem('xi.active');
+    renderList(); renderChat();
+    toast(cloudCleared ? 'All conversations deleted' : 'Local copies cleared; cloud deletion could not be confirmed.');
   });
   $('#closeSettings').addEventListener('click', () => dlg.close());
   dlg.addEventListener('click', e => { if (e.target === dlg) dlg.close(); });
@@ -1041,13 +1043,20 @@ const Cloud = (() => {
   }
   function queue() { if (!client || !currentUserId) return; clearTimeout(timer); timer = setTimeout(flush, 650); }
   async function remove(id) {
-    if (!client || !isUUID(id)) return;
+    if (!isUUID(id)) return;
+    if (!client || !currentUserId) { const ready = await init(); if (!ready) return; }
     try {
       const { error: messageError } = await client.from('ai_messages').delete().eq('conversation_id', id);
       if (messageError) throw messageError;
       const { error } = await client.from('ai_conversations').delete().eq('id', id);
       if (error) throw error; sent.delete(id);
     } catch (e) { lastError = e && e.message ? e.message : 'delete failed'; status('off', lastError); }
+  }
+  async function clearAll() {
+    const ready = await init();
+    if (!ready) return false;
+    for (const c of convs.slice()) await remove(c.id);
+    return true;
   }
   async function init() {
     if (initPromise) return initPromise;
@@ -1074,7 +1083,7 @@ const Cloud = (() => {
     if (!currentSession || !currentSession.access_token) throw new Error('Your Xi guest session expired. Reload the page to reconnect.');
     return currentSession.access_token;
   }
-  return { init, queue, remove, getToken, ready: () => !!client && !!currentUserId };
+  return { init, queue, remove, clearAll, getToken, ready: () => !!client && !!currentUserId };
 })();
 
 /* ---- pure helpers (unit-tested in Node) ---- */
