@@ -190,7 +190,7 @@ $('#r1').src='data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAkGBwgHBgk
 // ---- local AI animation bridge (MCP over loopback WebSocket)
 let bridgeSocket=null,bridgeCode='',bridgePaired=false;
 const bridgeStyle=document.createElement('style');
-bridgeStyle.textContent=\`
+bridgeStyle.textContent=`
 #ma-ai-launch{position:fixed;right:18px;top:18px;z-index:99999;border:1px solid #8d7cf0;background:#171522;color:#f4f1ff;border-radius:999px;padding:10px 15px;font:600 12px system-ui;letter-spacing:.02em;box-shadow:0 8px 28px #0005;cursor:pointer}
 #ma-ai-panel{position:fixed;right:18px;top:64px;z-index:99999;width:min(330px,calc(100vw - 36px));padding:16px;border:1px solid #62558f;border-radius:16px;background:#15131f;color:#f4f1ff;box-shadow:0 18px 55px #0009;font:13px/1.5 system-ui;display:none}
 #ma-ai-panel h3{font-size:14px;margin:0 0 6px;font-weight:700}
@@ -200,7 +200,7 @@ bridgeStyle.textContent=\`
 #ma-ai-panel button.secondary{background:#302b40;color:#eee}
 #ma-ai-panel .status{display:inline-block;margin:5px 0 8px;padding:3px 8px;border-radius:99px;background:#302b40;color:#d4cfff;font-size:11px}
 #ma-ai-panel .actions{display:flex;gap:8px;margin-top:12px}
-\`;
+`;
 document.head.append(bridgeStyle);
 const bridgeLaunch=document.createElement('button');
 bridgeLaunch.id='ma-ai-launch';bridgeLaunch.type='button';bridgeLaunch.textContent='✦ AI Bridge';
