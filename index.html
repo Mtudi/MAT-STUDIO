@@ -394,7 +394,7 @@ const Providers = {
     async stream({messages,ctrl,onToken}){
       if(!Array.isArray(messages)||!messages.length)throw new Error('Nothing to send.');
       const ac=new AbortController();if(ctrl)ctrl.hook=()=>ac.abort();
-      let res;try{res=await fetch('/api/xi-chat',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:messages.slice(-13)}),signal:ac.signal});}
+      let res;try{res=await fetch('/api/xi-chat',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:messages.slice(-13),system:settings.system||''}),signal:ac.signal});}
       catch(e){if(ctrl&&ctrl.aborted)throw abortErr();throw new Error('Could not reach Xi secure server. Check your connection and try again.');}
       if(ctrl&&ctrl.aborted)throw abortErr();let d={};try{d=await res.json();}catch{}
       if(!res.ok)throw new Error(d.error||('Secure AI request failed ('+res.status+').'));
@@ -866,7 +866,7 @@ function applyTheme() {
 function bindSettings() {
   const prov = $('#provider');
   Object.entries(Providers).forEach(([k, p]) => { const o = el('option', null, p.name); o.value = k; prov.append(o); });
-  if (!hosted()) { settings.provider = 'engine'; prov.value = 'engine'; prov.disabled = true; } else prov.value = settings.provider;
+  if (!hosted()) { settings.provider = 'engine'; settings.model = Providers.engine.models[0]; prov.value = 'engine'; prov.disabled = true; } else prov.value = settings.provider;
   prov.addEventListener('change', () => { settings.provider = prov.value; settings.model = provider().models[0]; saveSettings(); refreshBadge(); fillModels(); });
   $('#toggleKey').addEventListener('click', () => { const i = $('#apiKey'), show = i.type === 'password'; i.type = show ? 'text' : 'password'; $('#toggleKey').textContent = show ? 'Hide' : 'Show'; });
   $('#saveKey').addEventListener('click', () => {
