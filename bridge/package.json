@@ -1,0 +1,10 @@
+{
+  "name": "motion-atelier-ai-bridge",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Local MCP bridge for the Motion Atelier browser editor",
+  "engines": { "node": ">=22" },
+  "scripts": { "start": "node server.mjs", "check": "node --check server.mjs" },
+  "dependencies": { "ws": "8.22.0" }
+}
