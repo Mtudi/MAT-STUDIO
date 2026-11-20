@@ -250,7 +250,7 @@ html:not([data-mode=gemini]) label[for=visionModel],html:not([data-mode=gemini])
   <footer class="composer">
    <div class="box">
     <button class="vbtn" id="visionBtn" type="button" aria-label="Instagram Vision" title="Instagram Vision">🎞</button>
-    <textarea id="input" rows="1" placeholder="Message Xi…" aria-label="Message" maxlength="30000" dir="auto"></textarea>
+    <textarea id="input" rows="1" placeholder="Message Xi…" aria-label="Message" maxlength="5000" dir="auto"></textarea>
     <button class="send" id="send" aria-label="Send" disabled>↑</button>
    </div>
    <div class="hint">Enter to send · Shift+Enter for a new line · Xi can make mistakes, verify important info.</div>
@@ -264,19 +264,19 @@ html:not([data-mode=gemini]) label[for=visionModel],html:not([data-mode=gemini])
   <h3>AI provider</h3>
   <label for="provider">Provider</label>
   <select class="fld" id="provider"></select>
-  <label for="apiKey">Gemini API key (Google AI Studio) — only needed for the Gemini provider</label>
-  <div class="row"><input class="fld" id="apiKey" type="password" autocomplete="off" spellcheck="false" placeholder="Paste your Gemini API key">
+  <label for="apiKey" id="apiKeyLabel" hidden>Gemini API key (Google AI Studio) — only needed for the Gemini provider</label>
+  <div class="row" id="apiKeyRow" hidden><input class="fld" id="apiKey" type="password" autocomplete="off" spellcheck="false" placeholder="Paste your Gemini API key">
    <button class="btn" id="toggleKey" type="button">Show</button></div>
-  <div class="row"><button class="btn primary" id="saveKey" type="button">Save key</button><button class="btn" id="removeKey" type="button">Remove key</button></div>
+  <div class="row" id="apiKeyActions" hidden><button class="btn primary" id="saveKey" type="button">Save key</button><button class="btn" id="removeKey" type="button">Remove key</button></div>
   <p id="keyStatus"></p>
-  <p id="sampleNote">In this shared version Xi asks Claude through the page that hosts it, so no API key is needed. The first message asks you for permission once. Your conversations stay in this browser.</p>
-  <div class="warn" id="geminiWarn"><b>Security notice:</b> in a browser-only app your key is stored in this browser's localStorage and sent directly from the page to Google. Anyone with access to this browser or page can read it. Use it only for personal testing, with a restricted key, never on a shared computer or public site. The provider layer in the code (<code>Providers</code>) is isolated, so a secure backend proxy can replace it later without touching the interface.</div>
+  <p id="sampleNote">Xi Cloud connects securely through MAT-STUDIO.</p>
+  <div class="warn" id="geminiWarn" hidden><b>Security notice:</b> in a browser-only app your key is stored in this browser's localStorage and sent directly from the page to Google. Anyone with access to this browser or page can read it. Use it only for personal testing, with a restricted key, never on a shared computer or public site. The provider layer in the code (<code>Providers</code>) is isolated, so a secure backend proxy can replace it later without touching the interface.</div>
  </div>
  <div class="sec">
   <h3>Model</h3>
   <label for="model">Model</label>
   <div class="row"><select class="fld" id="model"></select><button class="btn" id="refreshModels" type="button">Refresh list</button></div>
-  <p id="modelStatus">Default list shown. “Refresh list” asks the API which models your key can use.</p>
+  <p id="modelStatus">Xi Cloud uses the configured server model. Gemini mode can load models from your personal key.</p>
   <label for="system">Custom instructions (sent as system instruction)</label>
   <textarea class="fld" id="system" maxlength="4000" placeholder="Leave empty to use Xi's default behaviour"></textarea>
   <label for="visionModel">Vision model (video analysis)</label>
@@ -297,7 +297,7 @@ html:not([data-mode=gemini]) label[for=visionModel],html:not([data-mode=gemini])
  </div>
  <div class="sec">
   <h3>Data</h3>
-  <p>Conversations are stored only in this browser (localStorage). They are sent to the AI provider only to generate replies.</p>
+  <p>Conversations are saved to your private Xi account and cached in this browser for a responsive experience.</p>
   <p id="syncStatus"></p>
   <button class="btn danger" id="clearAll" type="button">Delete all conversations</button>
  </div>
@@ -365,13 +365,21 @@ html:not([data-mode=gemini]) label[for=visionModel],html:not([data-mode=gemini])
 </div>
 <div class="toast" id="toast" role="status"></div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.1"></script>
 <script>
 (() => {
 'use strict';
 /* ============================== 1. HELPERS ============================== */
 const $ = s => document.querySelector(s);
 const el = (tag, cls, txt) => { const e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; };
-const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+const uid = () => {
+  if (window.crypto && typeof crypto.randomUUID === 'function') return crypto.randomUUID();
+  const b = new Uint8Array(16); crypto.getRandomValues(b);
+  b[6] = (b[6] & 15) | 64; b[8] = (b[8] & 63) | 128;
+  const h = Array.from(b, x => x.toString(16).padStart(2, '0')).join('');
+  return h.slice(0, 8) + '-' + h.slice(8, 12) + '-' + h.slice(12, 16) + '-' + h.slice(16, 20) + '-' + h.slice(20);
+};
+const isUUID = v => /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(String(v || ''));
 const LS = {
   get(k, d) { try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch { return d; } },
   set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); return true; } catch { toast('Could not save: browser storage is full or blocked'); return false; } }
@@ -389,7 +397,48 @@ async function copyText(text) {
    (no key in the browser) — the UI only talks to this interface. */
 const DEFAULT_SYSTEM = "You are Xi, a helpful, accurate and concise personal AI assistant. Always reply in the same language as the user's latest message. Use Markdown; put code in fenced code blocks with a language tag.";
 const Providers = {
-  gemini: {
+  cloud: {
+    name: 'Xi Cloud (recommended)', needsKey: false, models: ['openrouter/free'],
+    async stream({ system, messages, ctrl, onToken }) {
+      const guestToken = await Cloud.getToken();
+      const ac = new AbortController(); ctrl.hook = () => ac.abort();
+      if (ctrl.aborted) throw abortErr();
+      const selected = messages.slice(-16).map(m => ({ role: m.role, content: String(m.text || '') }));
+      if (!selected.length) throw new Error('Nothing to send.');
+      if (selected.some(m => !m.content.trim())) throw new Error('A message in this conversation is empty.');
+      if (selected[selected.length - 1].content.length > 5000) throw new Error('Your latest message is too long. Keep it under 5,000 characters.');
+      selected.forEach((m, i) => { if (i < selected.length - 1 && m.content.length > 5000) m.content = m.content.slice(-5000); });
+      let total = selected.reduce((n, m) => n + m.content.length, 0);
+      while (total > 16000 && selected.length > 1) total -= selected.shift().content.length;
+      const res = await fetch('/api/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ guestToken, system, messages: selected, stream: true }), signal: ac.signal });
+      if (!res.ok) { const data = await res.json().catch(() => ({})); throw new Error(data.error || 'Xi could not reach its AI service (' + res.status + ').'); }
+      if (!res.body || typeof res.body.getReader !== 'function') throw new Error('Streaming is not supported by this browser.');
+      const reader = res.body.getReader(), decoder = new TextDecoder(); ctrl.reader = reader;
+      let buffer = '', full = '', model = 'openrouter/free';
+      const consume = frame => {
+        const raw = frame.split('\n').filter(line => line.startsWith('data:')).map(line => line.slice(5).trim()).join('\n');
+        if (!raw || raw === '[DONE]') return;
+        let packet; try { packet = JSON.parse(raw); } catch { return; }
+        if (packet.error) throw new Error(packet.error);
+        if (typeof packet.token === 'string' && packet.token) { full += packet.token; onToken(full); }
+        if (packet.done) model = packet.model || model;
+      };
+      try {
+        while (true) {
+          const part = await reader.read(); if (ctrl.aborted) throw abortErr(); if (part.done) break;
+          buffer += decoder.decode(part.value, { stream: true });
+          let boundary;
+          while ((boundary = buffer.indexOf('\n\n')) !== -1) {
+            const frame = buffer.slice(0, boundary); buffer = buffer.slice(boundary + 2); consume(frame);
+          }
+        }
+        buffer += decoder.decode(); if (buffer.trim()) consume(buffer);
+      } finally { ctrl.reader = null; }
+      if (!full.trim()) throw new Error('The model returned an empty response.');
+      return { text: full, model };
+    }
+  },  gemini: {
     name: 'Google Gemini (Guest mode)',
     base: 'https://generativelanguage.googleapis.com/v1beta',
     models: ['gemini-2.5-flash', 'gemini-2.5-pro', 'gemini-2.5-flash-lite'],
@@ -512,8 +561,19 @@ function friendlyError(e) {
 let convs = LS.get('xi.convs', []);
 if (!Array.isArray(convs)) convs = [];
 let activeId = LS.get('xi.active', null);
-let settings = Object.assign({ provider: 'sample', model: 'gemini-2.5-flash', theme: 'dark', accent: 'green', bg: 'aurora', modo: 'on', visionModel: 'gemini-3.8-flash', lang: (navigator.language || '').toLowerCase().startsWith('ar') ? 'ar' : 'en', system: '' }, LS.get('xi.settings', {}));
-if (!/^gemini/.test(settings.model)) settings.model = 'gemini-2.5-flash';
+const legacyIdMap = new Map();
+convs.forEach(c => {
+  if (!c || typeof c !== 'object') return;
+  const old = c.id;
+  if (!isUUID(c.id)) { c.id = uid(); if (old) legacyIdMap.set(old, c.id); }
+  if (!Array.isArray(c.messages)) c.messages = [];
+  c.messages.forEach(m => { if (m && !isUUID(m.id)) m.id = uid(); });
+});
+if (legacyIdMap.has(activeId)) activeId = legacyIdMap.get(activeId);
+if (legacyIdMap.size) { LS.set('xi.convs', convs); LS.set('xi.active', activeId); }
+let settings = Object.assign({ provider: 'cloud', model: 'openrouter/free', theme: 'dark', accent: 'green', bg: 'aurora', modo: 'on', visionModel: 'gemini-3.8-flash', lang: (navigator.language || '').toLowerCase().startsWith('ar') ? 'ar' : 'en', system: '' }, LS.get('xi.settings', {}));
+if (settings.provider !== 'gemini') { settings.provider = 'cloud'; settings.model = 'openrouter/free'; }
+else if (!/^gemini/.test(settings.model)) settings.model = 'gemini-2.5-flash';
 let apiKey = LS.get('xi.key', '');
 let cachedModels = LS.get('xi.models', null);
 let busy = null;         // { conv, msg, ctrl } while generating
@@ -525,10 +585,18 @@ const saveSettings = () => LS.set('xi.settings', settings);
 const SHARE_URL = 'https://claude.ai/artifact/3TH9r9QCg2ygyR4QyXv7Dw';
 // Professional mode = viewer's own Claude account (only exists on the claude.ai shared page).
 // Guest mode = no sign-in, own Gemini key (the claude.ai sandbox blocks outside requests, so it needs the standalone file).
-const hosted = () => !!(window.claude && typeof window.claude.use === 'function');
-const providerKey = () => hosted() ? 'sample' : (apiKey ? 'gemini' : 'preview');
+const providerKey = () => settings.provider === 'gemini' ? 'gemini' : 'cloud';
 const provider = () => Providers[providerKey()];
-function applyMode() { document.documentElement.dataset.mode = providerKey(); refreshBadge(); fillModels(); $('#visionBtn').hidden = providerKey() !== 'gemini'; }
+function applyMode() {
+  const geminiMode = providerKey() === 'gemini';
+  document.documentElement.dataset.mode = providerKey(); refreshBadge(); fillModels();
+  $('#visionBtn').hidden = !geminiMode;
+  $('#apiKeyLabel').hidden = !geminiMode; $('#apiKeyRow').hidden = !geminiMode;
+  $('#apiKeyActions').hidden = !geminiMode; $('#geminiWarn').hidden = !geminiMode;
+  $('#sampleNote').textContent = geminiMode
+    ? 'Gemini sends requests directly from this browser using your personal API key. Use this mode only on a device you trust.'
+    : 'Xi Cloud uses a secure server connection. Your provider key stays on the server; conversations sync to your private Xi account.';
+}
 
 /* ============================== 4. MARKDOWN + CODE (safe DOM, no innerHTML) ============================== */
 function inline(parent, s) {
@@ -623,18 +691,16 @@ const SUGGESTIONS = [
 function renderWelcome() {
   const w = el('div', 'welcome');
   w.append(el('div', 'logo', 'Ξ'), el('h2', null, 'How can I help you today?'), el('p', null, 'Ask anything — explanations, code, writing, summaries or translations. Xi remembers the context of this conversation.'));
-  if (!apiKey && provider().needsKey !== false) {
-    const n = el('div', 'notice'); n.append('Xi is not connected yet. '); const b = el('button', null, 'Add your Gemini API key'); b.type = 'button'; b.addEventListener('click', openSettings); n.append(b, '.'); w.append(n);
+  if (providerKey() === 'gemini' && !apiKey) {
+    const n = el('div', 'notice'); n.append('Add your Gemini API key in Settings to start chatting.'); const b = el('button', null, 'Open Settings'); b.type = 'button'; b.addEventListener('click', openSettings); n.append(b); w.append(n);
   }
-  const host = providerKey() !== 'gemini', modes = el('div', 'modes');
-  [['Professional mode', 'Sign in with Claude', 'Uses your own Claude account. No API key needed. Works on the shared link.', host],
-   ['Guest mode', 'No sign-in', 'Use your own free Gemini key. Works when you open the downloaded file on your device or host it on your own site.', !host]
-  ].forEach(([title, sub, desc, on], i) => {
+  const modes = el('div', 'modes');
+  [['Xi Cloud', 'Secure server mode', 'Uses the MAT-STUDIO server and your private Xi account. No provider key is needed in the browser.', providerKey() === 'cloud'],
+   ['Google Gemini', 'Personal API key', 'Optional direct Gemini connection for personal testing and video analysis.', providerKey() === 'gemini']
+  ].forEach(([title, sub, desc, on]) => {
     const c = el('div', 'mode ' + (on ? 'on' : 'off'));
     c.append(el('b', null, title), el('span', 'sub', sub), el('p', null, desc));
     if (on) c.append(el('em', null, 'Active here ✓'));
-    else if (i === 0) { const a = el('a', null, 'Open the Claude version'); a.href = SHARE_URL; a.target = '_blank'; a.rel = 'noopener noreferrer'; c.append(a); }
-    else c.append(el('em', null, hosted() ? 'Needs the standalone file (not available on this shared link)' : 'Add your Gemini key in Settings to use this mode'));
     modes.append(c);
   });
   w.append(modes);
@@ -722,7 +788,7 @@ function setBusyUI() {
   b.setAttribute('aria-label', busy ? 'Stop generation' : 'Send');
   b.disabled = !busy && !inp.value.trim();
 }
-function refreshBadge() { $('#badge').textContent = providerKey() === 'gemini' ? settings.model : 'Claude'; }
+function refreshBadge() { $('#badge').textContent = providerKey() === 'gemini' ? settings.model : 'Xi Cloud'; }
 
 function uiDialog(title, withInput, value, okLabel) {
   return new Promise(res => {
@@ -838,7 +904,7 @@ function openSettings() {
 function updateKeyStatus() { $('#keyStatus').textContent = apiKey ? 'A key is saved in this browser.' : 'No key saved. Get one free at aistudio.google.com/apikey.'; }
 function fillModels() {
   const sel = $('#model'); sel.textContent = '';
-  const list = providerKey() === 'gemini' ? Array.from(new Set([...(cachedModels || Providers.gemini.models), settings.model])) : ['Claude'];
+  const list = providerKey() === 'gemini' ? Array.from(new Set([...(cachedModels || Providers.gemini.models), settings.model])) : ['openrouter/free'];
   list.forEach(m => { const o = el('option', null, m); o.value = m; sel.append(o); });
   sel.value = settings.model;
 }
@@ -851,9 +917,9 @@ function applyTheme() {
 }
 function bindSettings() {
   const prov = $('#provider');
-  Object.entries(Providers).forEach(([k, p]) => { const o = el('option', null, p.name); o.value = k; prov.append(o); });
+  Object.entries(Providers).filter(([k]) => k === 'cloud' || k === 'gemini').forEach(([k, p]) => { const o = el('option', null, p.name); o.value = k; prov.append(o); });
   prov.value = settings.provider;
-  prov.addEventListener('change', () => { settings.provider = prov.value; settings.model = provider().models[0]; saveSettings(); refreshBadge(); fillModels(); });
+  prov.addEventListener('change', () => { settings.provider = prov.value; settings.model = provider().models[0]; saveSettings(); applyMode(); });
   $('#toggleKey').addEventListener('click', () => { const i = $('#apiKey'), show = i.type === 'password'; i.type = show ? 'text' : 'password'; $('#toggleKey').textContent = show ? 'Hide' : 'Show'; });
   $('#saveKey').addEventListener('click', () => {
     const v = $('#apiKey').value.trim();
@@ -871,7 +937,7 @@ function bindSettings() {
   $('#modoOn').addEventListener('change', e => { settings.modo = e.target.value; saveSettings(); Modo.apply(); if (settings.modo !== 'off') Modo.hello(); });
   matchMedia('(prefers-color-scheme: light)').addEventListener('change', () => { if (settings.theme === 'system') applyTheme(); });
   $('#refreshModels').addEventListener('click', async () => {
-    const st = $('#modelStatus'); if (!provider().listModels) { st.textContent = 'This provider has a fixed model list.'; return; } if (!apiKey) { st.textContent = 'Save an API key first.'; return; }
+    const st = $('#modelStatus'); if (!provider().listModels) { st.textContent = 'Xi Cloud uses the model configured on the server.'; return; } if (!apiKey) { st.textContent = 'Save an API key first.'; return; }
     st.textContent = 'Loading models…';
     try {
       const list = await provider().listModels(apiKey);
@@ -897,58 +963,118 @@ function closeNav() { $('#app').classList.remove('nav-open'); }
 function autoGrow() { const t = $('#input'); t.style.height = 'auto'; t.style.height = Math.min(t.scrollHeight, 200) + 'px'; setBusyUI(); }
 /* ---------- Account history: each person's chats are stored privately under their own Claude account ---------- */
 const Cloud = (() => {
-  let col = null, timer = 0;
-  const sent = {};
+  let client = null, currentSession = null, currentUserId = null, timer = 0, syncing = false, pending = false, initPromise = null, lastError = '';
+  const sent = new Map();
   const L = (en, ar) => settings.lang === 'ar' ? ar : en;
-  const sig = c => c.updated + ':' + c.title + ':' + c.messages.length + ':' + (c.pinned ? 1 : 0);
-  function status(k) {
-    $('#syncStatus').textContent = k === 'on' ? L('History is saved to your Claude account and syncs across your devices ✓', 'السجل محفوظ بحساب Claude الخاص بك ويتزامن بين أجهزتك ✓')
-      : k === 'wait' ? L('Syncing…', 'جارٍ المزامنة…')
-      : L('History is saved only in this browser. Saving to your account needs a signed-in Claude account with write access to this page.', 'السجل محفوظ في هذا المتصفح فقط. حفظه بحسابك يحتاج حساب Claude مسجل الدخول وصلاحية كتابة على هذه الصفحة.');
-    $('#syncChip').textContent = k === 'on' ? L('☁ Synced with your Claude account', '☁ متزامن مع حسابك في Claude') : k === 'wait' ? '…' : L('Local only (this browser)', 'محلي فقط (هذا المتصفح)');
+  const sig = c => JSON.stringify([c.updated, c.title, c.messages.map(m => [m.id, m.ts, (m.text || '').length])]);
+  function status(k, detail) {
+    const message = k === 'on' ? L('Your chats are securely synced to your Xi account ✓', 'محادثاتك متزامنة بأمان مع حساب Xi ✓')
+      : k === 'wait' ? L('Connecting to Xi Cloud…', 'جارٍ الاتصال بسحابة Xi…')
+      : L('Cloud sync unavailable: ' + (detail || lastError || 'using this browser only'), 'مزامنة السحابة غير متاحة: ' + (detail || lastError || 'الحفظ محلي فقط'));
+    $('#syncStatus').textContent = message;
+    $('#syncChip').textContent = k === 'on' ? L('☁ Xi Cloud · Synced', '☁ سحابة Xi · متزامن') : k === 'wait' ? L('Connecting…', 'جارٍ الاتصال…') : L('Local cache only', 'نسخة محلية فقط');
   }
-  function clip(c) {
-    const o = JSON.parse(JSON.stringify(c));
-    while (o.messages.length > 1 && JSON.stringify(o).length > 230000) o.messages.shift();   // documents are capped at 256 KiB
-    return o;
+  function normalizeLocal() {
+    const map = new Map();
+    convs.forEach(c => {
+      if (!c || typeof c !== 'object') return;
+      const old = c.id;
+      if (!isUUID(c.id)) { c.id = uid(); if (old) map.set(old, c.id); }
+      if (!Array.isArray(c.messages)) c.messages = [];
+      c.messages.forEach(m => { if (m && !isUUID(m.id)) m.id = uid(); });
+    });
+    if (map.has(activeId)) activeId = map.get(activeId);
+    if (map.size) { LS.set('xi.convs', convs); LS.set('xi.active', activeId); }
+  }
+  async function loadRemote() {
+    const { data: rows, error } = await client.from('ai_conversations').select('id,title,created_at,updated_at').order('updated_at', { ascending: false });
+    if (error) throw error;
+    if (!rows || !rows.length) return;
+    const ids = rows.map(r => r.id);
+    const { data: messageRows, error: messageError } = await client.from('ai_messages')
+      .select('id,conversation_id,role,content,model,created_at').in('conversation_id', ids).order('created_at', { ascending: true });
+    if (messageError) throw messageError;
+    const grouped = new Map();
+    (messageRows || []).forEach(m => {
+      if (!grouped.has(m.conversation_id)) grouped.set(m.conversation_id, []);
+      grouped.get(m.conversation_id).push({ id: m.id, role: m.role, text: m.content, model: m.model || null, ts: Date.parse(m.created_at) || Date.now() });
+    });
+    rows.forEach(r => {
+      const remote = { id: r.id, title: r.title || 'New chat', created: Date.parse(r.created_at) || Date.now(), updated: Date.parse(r.updated_at) || Date.now(), messages: grouped.get(r.id) || [] };
+      const i = convs.findIndex(c => c.id === remote.id);
+      if (i < 0) { convs.push(remote); sent.set(remote.id, sig(remote)); }
+      else if ((remote.updated || 0) >= (convs[i].updated || 0)) { convs[i] = remote; sent.set(remote.id, sig(remote)); }
+    });
+    convs.sort((a, b) => (b.updated || 0) - (a.updated || 0));
+    if (activeId && !active()) activeId = null;
+    if (!activeId && convs.length) activeId = convs[0].id;
+    LS.set('xi.convs', convs); LS.set('xi.active', activeId);
+    renderList(); if (!busy) renderChat(true);
+  }
+  async function saveOne(c) {
+    const created = new Date(Number(c.created) || Date.now()).toISOString();
+    const updated = new Date(Number(c.updated) || Date.now()).toISOString();
+    const { error: conversationError } = await client.from('ai_conversations').upsert({
+      id: c.id, user_id: currentUserId, title: String(c.title || 'New chat').slice(0, 160), created_at: created, updated_at: updated
+    }, { onConflict: 'id' });
+    if (conversationError) throw conversationError;
+    const rows = c.messages.filter(m => m && (m.role === 'user' || m.role === 'assistant') && typeof m.text === 'string' && m.text.length).map(m => ({
+      id: m.id, conversation_id: c.id, role: m.role, content: m.text.slice(0, 20000), model: m.model || null,
+      created_at: new Date(Number(m.ts) || Date.now()).toISOString()
+    }));
+    if (rows.length) { const { error } = await client.from('ai_messages').upsert(rows, { onConflict: 'id' }); if (error) throw error; }
+    const keep = rows.map(m => m.id);
+    const { data: existing, error: listError } = await client.from('ai_messages').select('id').eq('conversation_id', c.id);
+    if (listError) throw listError;
+    const stale = (existing || []).map(m => m.id).filter(id => !keep.includes(id));
+    if (stale.length) { const { error } = await client.from('ai_messages').delete().in('id', stale); if (error) throw error; }
   }
   async function flush() {
-    if (!col) return;
-    for (const c of convs.slice()) {
-      const g = sig(c); if (sent[c.id] === g) continue;
-      try { await col.doc(c.id).set(clip(c)); sent[c.id] = g; }
-      catch { col = null; status('off'); return; }   // no write access: stay local
-    }
-  }
-  function queue() { if (!col) return; clearTimeout(timer); timer = setTimeout(flush, 900); }
-  function remove(id) { if (!col) return; delete sent[id]; col.doc(id).set({ id, deleted: true, updated: Date.now() }).catch(() => {}); }
-  async function init() {
-    status('off');
+    if (!client || !currentUserId) return;
+    if (syncing) { pending = true; return; }
+    syncing = true;
     try {
-      const [db, user] = await Promise.all([window.claude.use('db'), window.claude.use('user')]);
-      const uid = user ? await user.id() : null;
-      if (!db || !uid) return;
-      status('wait');
-      col = db.collection('data/users/' + uid + '/convs');
-      const snap = await col.get(); let changed = false;
-      snap.docs.forEach(d => {
-        const raw = d.data(); if (!raw || !raw.id) return;
-        const c = JSON.parse(JSON.stringify(raw)), i = convs.findIndex(x => x.id === c.id), mine = convs[i];
-        if (c.deleted) { if (mine && mine.updated <= c.updated) { convs.splice(i, 1); changed = true; } return; }
-        if (!Array.isArray(c.messages)) return;
-        if (!mine) { convs.push(c); sent[c.id] = sig(c); changed = true; }
-        else if ((c.updated || 0) > mine.updated) { Object.assign(mine, c); sent[c.id] = sig(mine); changed = true; }
-        else if ((c.updated || 0) === mine.updated) sent[c.id] = sig(mine);
-      });
-      if (changed) {
-        if (activeId && !active()) activeId = null;
-        if (!activeId && convs.length) activeId = convs.slice().sort((a, b) => b.updated - a.updated)[0].id;
-        LS.set('xi.convs', convs); LS.set('xi.active', activeId); renderList(); if (!busy) renderChat(true);
-      }
-      status('on'); flush();
-    } catch { col = null; status('off'); }
+      for (const c of convs.slice()) { const signature = sig(c); if (sent.get(c.id) === signature) continue; await saveOne(c); sent.set(c.id, signature); }
+      lastError = ''; status('on');
+    } catch (e) { lastError = e && e.message ? e.message : 'sync failed'; status('off', lastError); }
+    finally { syncing = false; if (pending) { pending = false; queue(); } }
   }
-  return { init, queue, remove };
+  function queue() { if (!client || !currentUserId) return; clearTimeout(timer); timer = setTimeout(flush, 650); }
+  async function remove(id) {
+    if (!client || !isUUID(id)) return;
+    try {
+      const { error: messageError } = await client.from('ai_messages').delete().eq('conversation_id', id);
+      if (messageError) throw messageError;
+      const { error } = await client.from('ai_conversations').delete().eq('id', id);
+      if (error) throw error; sent.delete(id);
+    } catch (e) { lastError = e && e.message ? e.message : 'delete failed'; status('off', lastError); }
+  }
+  async function init() {
+    if (initPromise) return initPromise;
+    initPromise = (async () => {
+      status('wait'); normalizeLocal();
+      const response = await fetch('/api/supabase-config', { cache: 'no-store' });
+      const config = await response.json().catch(() => ({}));
+      if (!response.ok || !config.url || !config.publishableKey) throw new Error(config.error || 'Supabase is not configured on Vercel.');
+      if (!window.supabase || typeof window.supabase.createClient !== 'function') throw new Error('Supabase client library did not load. Check the CDN connection.');
+      client = window.supabase.createClient(config.url, config.publishableKey, { auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: false } });
+      client.auth.onAuthStateChange((_event, nextSession) => { currentSession = nextSession; });
+      const { data, error } = await client.auth.getSession(); if (error) throw error; currentSession = data.session;
+      if (!currentSession) { const result = await client.auth.signInAnonymously(); if (result.error) throw result.error; currentSession = result.data.session; }
+      if (!currentSession || !currentSession.access_token || !currentSession.user || currentSession.user.is_anonymous !== true)
+        throw new Error('Xi needs an anonymous Supabase session. Sign out of any other Supabase account in this browser and reload.');
+      currentUserId = currentSession.user.id;
+      await loadRemote(); status('on'); await flush(); return true;
+    })().catch(e => { lastError = e && e.message ? e.message : 'Could not initialize Xi Cloud'; status('off', lastError); return false; });
+    return initPromise;
+  }
+  async function getToken() {
+    if (!client || !currentUserId) { const ok = await init(); if (!ok) throw new Error(lastError || 'Xi Cloud is not ready yet.'); }
+    const { data, error } = await client.auth.getSession(); if (error) throw error; currentSession = data.session;
+    if (!currentSession || !currentSession.access_token) throw new Error('Your Xi guest session expired. Reload the page to reconnect.');
+    return currentSession.access_token;
+  }
+  return { init, queue, remove, getToken, ready: () => !!client && !!currentUserId };
 })();
 
 /* ---- pure helpers (unit-tested in Node) ---- */
@@ -1357,12 +1483,12 @@ const AR = {
   'Personal AI': 'مساعدك الذكي', 'Open menu': 'فتح القائمة', 'Click to rename': 'اضغط لإعادة التسمية', 'Export conversation (.md)': 'تصدير المحادثة (.md)',
   'Export conversation': 'تصدير المحادثة', 'Clear conversation': 'مسح المحادثة', 'Message Xi…': 'اكتب رسالتك إلى Xi…', 'Message': 'رسالة', 'Send': 'إرسال',
   'Stop generation': 'إيقاف التوليد', 'Enter to send · Shift+Enter for a new line · Xi can make mistakes, verify important info.': 'Enter للإرسال · Shift+Enter لسطر جديد · قد يخطئ Xi، تحقق من المعلومات المهمة.',
-  'Close': 'إغلاق', 'AI provider': 'مزوّد الذكاء الاصطناعي', 'Provider': 'المزوّد', 'Claude (built in, no key needed)': 'Claude (مدمج، بدون مفتاح)',
+  'Close': 'إغلاق', 'AI provider': 'مزوّد الذكاء الاصطناعي', 'Provider': 'المزوّد', 'Xi Cloud (recommended)': 'سحابة Xi (موصى بها)', 'Google Gemini (personal API key)': 'Google Gemini (مفتاح API شخصي)',
   'Custom instructions (sent as system instruction)': 'تعليمات مخصصة (تُرسل كتعليمات للنظام)', "Leave empty to use Xi's default behaviour": 'اتركه فارغاً لاستخدام السلوك الافتراضي',
   'Appearance': 'المظهر', 'Theme': 'الثيم', 'Dark': 'داكن', 'Light': 'فاتح', 'Match system': 'حسب النظام', 'Accent color': 'لون التمييز', 'Green': 'أخضر', 'Blue': 'أزرق',
   'Violet': 'بنفسجي', 'Amber': 'كهرماني', 'Interface language': 'لغة الواجهة', 'Animated background': 'الخلفية المتحركة', 'Aurora': 'شفق', 'Network': 'شبكة', 'Off': 'إيقاف', 'Instagram Vision': 'رؤية انستغرام', "Why can't I paste a Reel link?": 'ليش ما أكدر ألصق رابط الريل؟', 'Instagram does not give apps a video file from a public link. Its official API only returns media owned by an Instagram professional account that has authorized an app, and it needs a Meta app and a server to keep access tokens safe. Scraping breaks the platform rules, so Xi does not do it. Only analyze videos you own or have permission to use.': 'انستغرام لا يعطي التطبيقات ملف فيديو من رابط عام. واجهته الرسمية تعيد فقط وسائط حساب مهني منح تطبيقاً الإذن، وتحتاج تطبيق Meta وخادماً لحماية الرموز. سحب المحتوى يخالف قواعد المنصة فلا يفعله Xi. حلّل فقط فيديوهات تملكها أو لديك إذن باستخدامها.', 'Your video is uploaded to Google to be analyzed and Google deletes it after 48 hours. Your Gemini key is kept in this browser, so use this only on your own device.': 'يُرفع الفيديو إلى Google لتحليله وتحذفه بعد 48 ساعة. مفتاح Gemini محفوظ في هذا المتصفح، فاستخدم هذا على جهازك الشخصي فقط.', 'Focus (optional)': 'تركيز التحليل (اختياري)', 'Analyze video': 'حلّل الفيديو', 'Recent analyses': 'التحليلات الأخيرة', 'Vision model (video analysis)': 'نموذج الرؤية (تحليل الفيديو)', '⬆ Choose video (MP4, MOV, WEBM)': '⬆ اختر فيديو (MP4 أو MOV أو WEBM)', 'Invalid model name': 'اسم نموذج غير صالح', '⤓ Export conversation': '⤓ تصدير المحادثة', '⌫ Clear conversation': '⌫ مسح المحادثة', 'More': 'المزيد', 'Pin': 'تثبيت', 'Unpin': 'إلغاء التثبيت', 'On': 'تشغيل', 'Modo assistant': 'مساعد مودو', 'Add your Gemini key in Settings to use this mode': 'أضف مفتاح Gemini في الإعدادات لاستخدام هذا الوضع', 'Professional mode': 'الوضع الاحترافي', 'Sign in with Claude': 'تسجيل الدخول بحساب Claude', 'Guest mode': 'وضع الضيف', 'No sign-in': 'بدون تسجيل دخول', 'Uses your own Claude account. No API key needed. Works on the shared link.': 'يستخدم حسابك الخاص في Claude. لا يحتاج مفتاح API. يعمل على الرابط المشترك.', 'Use your own free Gemini key. Works when you open the downloaded file on your device or host it on your own site.': 'استخدم مفتاح Gemini المجاني الخاص بك. يعمل عند فتح الملف المحمّل على جهازك أو استضافته في موقعك.', 'Active here ✓': 'مفعّل هنا ✓', 'Open the Claude version': 'افتح نسخة Claude', 'Needs the standalone file (not available on this shared link)': 'يحتاج الملف المستقل (غير متاح على هذا الرابط المشترك)', 'Data': 'البيانات',
-  'Conversations are stored only in this browser (localStorage). They are sent to the AI provider only to generate replies.': 'المحادثات تُحفظ في هذا المتصفح فقط (localStorage)، وتُرسل إلى مزوّد الذكاء فقط لتوليد الردود.',
-  'In this shared version Xi asks Claude through the page that hosts it, so no API key is needed. The first message asks you for permission once. Your conversations stay in this browser.': 'في هذه النسخة المشتركة يسأل Xi نموذج Claude عبر الصفحة المستضيفة، فلا حاجة لمفتاح API. أول رسالة تطلب إذنك مرة واحدة، ومحادثاتك تبقى في هذا المتصفح.',
+  'Conversations are saved to your private Xi account and cached in this browser for a responsive experience.': 'تُحفظ المحادثات في حساب Xi الخاص بك وتُخزّن مؤقتاً في هذا المتصفح لسرعة الاستخدام.',
+  'Xi Cloud uses a secure server connection. Your provider key stays on the server; conversations sync to your private Xi account.': 'تستخدم سحابة Xi اتصالاً آمناً بالخادم. يبقى مفتاح المزوّد على الخادم وتتزامن محادثاتك مع حسابك الخاص.',
   'Delete all conversations': 'حذف كل المحادثات', 'About Xi': 'عن Xi',
   'Xi is a personal AI chat interface built with plain HTML, CSS and JavaScript in a single file. Replies come from the provider you configure; Xi never fabricates answers — if the API fails you will see the error.': 'Xi واجهة محادثة ذكاء اصطناعي شخصية مبنية بـ HTML وCSS وJavaScript في ملف واحد. الردود تأتي من المزوّد المضبوط، ولا يختلق Xi أي إجابة؛ إن فشل الاتصال سترى رسالة الخطأ.',
   'How can I help you today?': 'كيف أقدر أساعدك اليوم؟', 'Ask anything — explanations, code, writing, summaries or translations. Xi remembers the context of this conversation.': 'اسأل أي شيء: شرح، برمجة، كتابة، تلخيص أو ترجمة. يتذكر Xi سياق هذه المحادثة.',
@@ -1429,8 +1555,7 @@ function init() {
   if (!activeId && convs.length) activeId = convs.slice().sort((a, b) => b.updated - a.updated)[0].id;
   Modo.apply(); applyMode(); renderList(); renderChat(); setBusyUI();
   setTimeout(Modo.hello, 900);
-  let tries = 0;   // the claude.ai host can attach a moment after load: re-check briefly
-  const iv = setInterval(() => { if (hosted() || ++tries > 20) { clearInterval(iv); applyMode(); if (hosted()) Cloud.init(); if (!busy && (!active() || !active().messages.length)) renderChat(); } }, 150);
+  Cloud.init().then(() => { applyMode(); if (!busy) renderChat(true); });
   $('#newChat').addEventListener('click', () => { newChat(); closeNav(); });
   $('#openSettings').addEventListener('click', () => { closeNav(); openSettings(); });
   $('#settingsTop').addEventListener('click', openSettings);
