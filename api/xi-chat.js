@@ -38,6 +38,8 @@ module.exports = async function handler(req, res) {
   if (!authenticated(req)) return send(res, 401, { error: "Owner sign-in required." });
   const body = req.body && typeof req.body === "object" ? req.body : {};
   const messages = Array.isArray(body.messages) ? body.messages : [];
+  const system = typeof body.system === "string" ? body.system.trim() : "";
+  if (system.length > 4000) return send(res, 400, { error: "System instructions are too long." });
   if (!messages.length || messages.length > 13) return send(res, 400, { error: "Invalid conversation history." });
   const clean = [];
   for (const item of messages) {
@@ -57,7 +59,7 @@ module.exports = async function handler(req, res) {
     const upstream = await fetch(engineUrl + "/api/chat", {
       method: "POST",
       headers: { "Content-Type": "application/json", "Authorization": "Bearer " + engineToken },
-      body: JSON.stringify({ projectId: "xi", message: last.text, history: clean.slice(-12) }),
+      body: JSON.stringify({ projectId: "xi", message: last.text, history: clean.slice(-12), system }),
       signal: controller.signal
     });
     const data = await upstream.json().catch(() => ({}));
