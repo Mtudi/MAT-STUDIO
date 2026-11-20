@@ -828,7 +828,9 @@ async function renameConv(id) {
 async function deleteConv(id) {
   if (busy && busy.conv.id === id) return toast('Stop generation first');
   const c = convs.find(x => x.id === id); if (!c || !(await uiConfirm(settings.lang === 'ar' ? 'حذف «' + c.title + '»؟ لا يمكن التراجع عن ذلك.' : 'Delete “' + c.title + '”? This cannot be undone.', 'Delete'))) return;
-  convs = convs.filter(x => x.id !== id); Vision.forget(c); Cloud.remove(id);
+  const cloudDeleted = await Cloud.remove(id);
+  convs = convs.filter(x => x.id !== id); Vision.forget(c);
+  if (!cloudDeleted) toast('Deleted locally, but Xi Cloud could not confirm the deletion.');
   if (activeId === id) activeId = convs.length ? convs.slice().sort((a, b) => b.updated - a.updated)[0].id : null;
   LS.set('xi.active', activeId); saveConvs(); renderList(); renderChat();
 }
@@ -1043,20 +1045,22 @@ const Cloud = (() => {
   }
   function queue() { if (!client || !currentUserId) return; clearTimeout(timer); timer = setTimeout(flush, 650); }
   async function remove(id) {
-    if (!isUUID(id)) return;
-    if (!client || !currentUserId) { const ready = await init(); if (!ready) return; }
+    if (!isUUID(id)) return true;
+    if (!client || !currentUserId) { const ready = await init(); if (!ready) return false; }
     try {
       const { error: messageError } = await client.from('ai_messages').delete().eq('conversation_id', id);
       if (messageError) throw messageError;
       const { error } = await client.from('ai_conversations').delete().eq('id', id);
-      if (error) throw error; sent.delete(id);
-    } catch (e) { lastError = e && e.message ? e.message : 'delete failed'; status('off', lastError); }
+      if (error) throw error;
+      sent.delete(id); return true;
+    } catch (e) { lastError = e && e.message ? e.message : 'delete failed'; status('off', lastError); return false; }
   }
   async function clearAll() {
     const ready = await init();
     if (!ready) return false;
-    for (const c of convs.slice()) await remove(c.id);
-    return true;
+    let success = true;
+    for (const c of convs.slice()) if (!await remove(c.id)) success = false;
+    return success;
   }
   async function init() {
     if (initPromise) return initPromise;
