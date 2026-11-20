@@ -32,7 +32,7 @@ module.exports = async function handler(req, res) {
   // Preview deployments use Vercel's short-lived OIDC token with a strictly free
   // AI Gateway model. Production keeps the existing OpenRouter configuration.
   const isPreview = process.env.VERCEL_ENV === "preview";
-  const gatewayToken = isPreview ? req.headers["x-vercel-oidc-token"] : "";
+  const gatewayToken = isPreview ? process.env.VERCEL_OIDC_TOKEN : "";
   const useGateway = isPreview && typeof gatewayToken === "string" && gatewayToken.length > 20;
   const apiKey = process.env.OPENROUTER_API_KEY;
   const accessPassword = process.env.MAT_STUDIO_CHAT_PASSWORD;
