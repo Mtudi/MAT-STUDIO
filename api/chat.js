@@ -23,8 +23,23 @@ module.exports = async function handler(req, res) {
   const allowedOrigin = process.env.MAT_STUDIO_ORIGIN || "https://mat-studio.vercel.app";
   const allowedOrigins = new Set([allowedOrigin]);
   if (process.env.VERCEL_URL) allowedOrigins.add("https://" + process.env.VERCEL_URL);
-  if (origin && !allowedOrigins.has(origin)) return res.status(403).json({ error: "Origin not allowed." });
-  const requestOrigin = origin && allowedOrigins.has(origin) ? origin : allowedOrigin;
+  // Vercel's stable branch alias and unique deployment URLs are different
+  // origins. Permit only HTTPS hosts generated for this exact Vercel project.
+  const isProjectPreviewOrigin = value => {
+    if (typeof value !== "string") return false;
+    try {
+      const parsed = new URL(value);
+      return parsed.protocol === "https:" &&
+        !parsed.username && !parsed.password && !parsed.port &&
+        parsed.pathname === "/" && !parsed.search && !parsed.hash &&
+        /^mat-studio-[a-z0-9-]+-mat-only\\.vercel\\.app$/i.test(parsed.hostname);
+    } catch {
+      return false;
+    }
+  };
+  const originAllowed = !origin || allowedOrigins.has(origin) || isProjectPreviewOrigin(origin);
+  if (!originAllowed) return res.status(403).json({ error: "Origin not allowed." });
+  const requestOrigin = origin && originAllowed ? origin : allowedOrigin;
   if (req.headers["content-type"] && !String(req.headers["content-type"]).toLowerCase().includes("application/json")) {
     return res.status(415).json({ error: "Content-Type must be application/json." });
   }
