@@ -238,7 +238,7 @@ async function bridgeCommand(method,args={}){
   const updated=[];
   for(const item of args.keys||[]){
    const bone=String(item.bone||'');
-   if(!ALL.includes(bone))throw Error('Unsupported control: '+bone);
+   if(!ALL.includes(bone))throw Error('Unsupported control: '+bone);const rigBone=bone==='root'?'hips':bone;if(!rig.bones?.[rigBone])throw Error('This character has no keyable '+bone+' control.');
    if(bone==='root'&&!Array.isArray(item.positionM))throw Error('The root control requires positionM [x,y,z].');
    if(bone!=='root'&&!Array.isArray(item.rotationDeg))throw Error(bone+' requires rotationDeg [x,y,z].');
    const value=bone==='root'?item.positionM.map(Number):item.rotationDeg.map(v=>Number(v)*Math.PI/180);
