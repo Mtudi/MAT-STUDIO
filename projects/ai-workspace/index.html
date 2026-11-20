@@ -225,7 +225,22 @@ html:not([data-mode=gemini]) label[for=visionModel],html:not([data-mode=gemini])
 .vbtn[hidden]{display:none}
   #settings label[for=apiKey],#settings .row:has(#apiKey),#settings .row:has(#saveKey),#settings #keyStatus,#settings #sampleNote,#settings #geminiWarn,#settings label[for=provider],#settings #provider,#settings #refreshModels,#settings label[for=visionModel],#settings #visionModel,#visionBtn{display:none!important}
 </style>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+window.__xiSupabaseReady = new Promise((resolve, reject) => {
+  const load = (src, fallback) => {
+    const s = document.createElement('script');
+    s.src = src;
+    s.onload = () => resolve(true);
+    s.onerror = () => {
+      s.remove();
+      if (fallback) load(fallback, null);
+      else reject(new Error('Could not load Supabase client from either CDN.'));
+    };
+    document.head.appendChild(s);
+  };
+  load('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2', 'https://unpkg.com/@supabase/supabase-js@2');
+});
+</script>
 </head>
 <body>
 <canvas id="bg" aria-hidden="true"></canvas>
@@ -1030,14 +1045,14 @@ const Cloud = (() => {
   if(initTask)return initTask;
   initTask=(async()=>{
    status('Connecting cloud service…');
-   try{const r=await fetch('/api/supabase-config',{cache:'no-store'});if(!r.ok)throw Error('Cloud configuration unavailable. HTTP '+r.status);const cfg=await r.json();if(!cfg.url||!cfg.publishableKey)throw Error('Cloud configuration is missing required public settings.');if(!window.supabase||!window.supabase.createClient)throw Error('Supabase library unavailable. Check whether the CDN is blocked.');
+   try{const r=await fetch('/api/supabase-config',{cache:'no-store'});if(!r.ok)throw Error('Cloud configuration unavailable. HTTP '+r.status);const cfg=await r.json();if(!cfg.url||!cfg.publishableKey)throw Error('Cloud configuration is missing required public settings.');if(window.__xiSupabaseReady)await window.__xiSupabaseReady;if(!window.supabase||!window.supabase.createClient)throw Error('Supabase library unavailable after CDN fallback.');
     client=window.supabase.createClient(cfg.url,cfg.publishableKey,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
     const {data,error}=await client.auth.getSession();if(error)throw error;user=data.session&&data.session.user||null;
     if(isCloudUser()){status('Signed in · loading your cloud history…');await load();}
     else if(hasGuest())status('Guest session restored · chat is ready. Local history only.');
     else status('Ready · continue as guest to chat. Cloud sync is optional.');
     client.auth.onAuthStateChange((_event,session)=>{user=session&&session.user||null;if(isCloudUser())load();else if(hasGuest())status('Guest session active · local history only.');else status('Signed out · local history remains available.');});
-   }catch(e){status('Cloud unavailable · '+(e.message||'offline'));}
+   }catch(e){status('Cloud unavailable · '+(e.message||'offline'));initTask=null;}
   })();
   return initTask;
  }
