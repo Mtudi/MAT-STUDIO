@@ -1,3 +1,3 @@
 # MATUDI Portfolio
 
-Project home reserved for the personal portfolio. Source files will be added after separate review and approval.
+Compact personal portfolio page with an introduction, focus areas, selected work and approach. It is a static presentation page; detailed case studies and measurable project outcomes are not yet included.

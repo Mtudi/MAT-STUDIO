@@ -1,3 +1,3 @@
 # MATUDI DEUTSCH
 
-Project home reserved for German-language learning tools and materials. Source files will be added after separate review and approval.
+German A1 starter-learning page with vocabulary flashcards, active-recall practice, browser speech and locally saved progress with interval-based review. The current source is a starter learning experience, not a complete CEFR course.

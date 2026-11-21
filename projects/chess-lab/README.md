@@ -1,3 +1,3 @@
 # MATUDI Chess Lab
 
-Project home reserved for the chess experience and bot. Source files will be added after separate review and approval.
+Browser-based chess practice powered by `chess.js`. Current source includes legal move handling, move history, undo/reset/flip, promotion, FEN/PGN tools, opening notes/presets and local session notes. It does not currently include a chess engine, evaluation or bot opponent.
