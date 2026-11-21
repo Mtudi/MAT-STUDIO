@@ -27,6 +27,12 @@ MAT-STUDIO is the public source hub for Matudi's independent digital products an
 - MAT-CORE is a separate private repository; its source and credentials are not published here.
 - MATUDI AI Engine is a server-side API; requests require a Bearer token.
 
+## Project quality
+
+- [Project inventory](docs/PROJECT-INVENTORY.md)
+- [Cross-project quality audit and release order](docs/quality/PROJECT-QUALITY-AUDIT.md)
+- [Xi Workspace design audit](docs/quality/XI-WORKSPACE-AUDIT.md) — draft branch until visual and end-to-end tests pass.
+
 ## Principles
 
 - Keep each project independent and preserve its identity.
