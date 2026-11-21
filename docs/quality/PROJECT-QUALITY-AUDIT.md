@@ -9,7 +9,7 @@ Scope: public `MAT-STUDIO` source, private `MAT-CORE` engine source, Vercel proj
 |---|---|---|---|
 | Xi Personal AI | root `index.html` | Owner-authenticated assistant; server-side engine bridge | Needs a focused design/keyboard/mobile regression pass |
 | Xi AI Workspace | `projects/ai-workspace/index.html` | Guest chat, streaming, local history, optional Supabase sync | Welcome screen had stale provider copy; redesign is in draft PR #3 |
-| MATUDI Chess Lab | `projects/chess-lab/index.html` | Legal move handling via chess.js, FEN/PGN copy, London and Caro-Kann starter lines | No engine analysis, PGN import, game review or accessibility pass |
+| MATUDI Chess Lab | `projects/chess-lab/index.html` | Main branch: legal moves, history, undo, promotion and FEN/PGN copy. PR #6 adds local Stockfish analysis, PGN import/download and move-by-move review. | Preview deployment and real-browser engine/WASM tests pending |
 | MATSONG | `projects/matsong/index.html` | Local audio library in IndexedDB, queue/favorites, Spotify embeds and PKCE profile connection | Fixed a real inline-script syntax bug; hosted preview disables Spotify account sign-in |
 | MATUDI DEUTSCH | `projects/deutsch/index.html` | Main branch has the 30-word starter deck. PR #7 adds an Arabic-supported 8-unit A1 path, 71 words, listening/reading checks, writing/speaking models and a 60-minute routine. Preview: https://sharable.link/t5cevsdg | Validate progress migration, answer keys, browser speech fallback and mobile layout before merging |
 | MATUDI Christmas | `projects/christmas/index.html` | Interactive greeting card, share URL and print | Needs saved drafts, image export and accessibility |
@@ -58,10 +58,10 @@ Scope: public `MAT-STUDIO` source, private `MAT-CORE` engine source, Vercel proj
 1. Published the public MATUDI Projects Hub: https://sharable.link/jfi5b0ql
 2. Published a MATSONG interactive preview: https://sharable.link/89k1u749
 3. Published the Arabic-supported Deutsch A1 course preview: https://sharable.link/t5cevsdg; PR #7 contains the source upgrade.
-3. Corrected the public Motion Atelier bridge origin and setup instructions.
-4. Corrected the project inventory, root README and archived Xi classifications.
-5. Added static HTML/JavaScript CI and fixed the MATSONG syntax issue.
-6. Prepared the Xi Workspace design pass in draft PR #3, preserving existing chat, auth, storage and Modo behavior.
+4. Corrected the public Motion Atelier bridge origin and setup instructions.
+5. Corrected the project inventory, root README and archived Xi classifications.
+6. Added static HTML/JavaScript CI and fixed the MATSONG syntax issue.
+7. Prepared the Xi Workspace design pass in draft PR #3, preserving existing chat, auth, storage and Modo behavior.
 
 ## Release order
 1. **Xi Workspace design** — finish responsive visual review and end-to-end guest/owner/cloud-sync checks before merging PR #3.
