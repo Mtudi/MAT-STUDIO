@@ -34,4 +34,4 @@ Source: `projects/ai-workspace/index.html` and root `api/chat.js`
 - Arabic RTL layout and keyboard navigation.
 - Long response, cancellation, network interruption and provider-rate-limit states.
 
-A visual change is not marked complete until these flows pass on the deployed build.
+The new GitHub static-quality workflow also parses the inline JavaScript and checks for duplicate IDs. A visual change is not marked complete until these flows pass on the deployed build.
