@@ -1,5 +1,5 @@
 # MAT-STUDIO Product Quality Roadmap & Audit
-Updated: 2026-11-19
+Updated: 2026-11-21
 Repository: Mtudi/MAT-STUDIO
 Production: https://mat-studio.vercel.app/
 
@@ -61,11 +61,9 @@ Quality means user value, reliability, accessibility, speed, maintainability, an
 **Verified in source:** static introduction page for Xi, distinct from the actual chat workspace.
 **Gaps:** clarify product positioning, show credible product capabilities, demo entry point, trust/privacy explanation and roadmap; keep this page separate from the workspace UI.
 
-### 8. MAT-STUDIO Command Center
-**Benchmarks:** Apple, Linear, Notion, Vercel.
-**Verified in source:** project library, previews, search, local pins/recent items, theme toggle, quick actions and Xi handoff.
-**Gaps:** local-only pin/recent state, static project/status counts, no verified live health aggregation, keyboard command discoverability, icon consistency, accessibility and responsive validation.
-**Design direction:** command-center clarity with honest live status and clear project identities; keep it the parent product, not another app-specific interface.
+### 8. MAT-STUDIO Command Center (not found in current main tree)
+**Audit correction (2026-11-21):** the current MAT-STUDIO main tree contains no standalone Command Center source. The root `index.html` is the current Xi secure-server app; `index (3).html` is an alternate legacy Xi/Gemini build. Do not treat either as a project dashboard. If a separate Command Center exists only in an older Vercel deployment or another repository, it needs a fresh source audit before being listed as a current GitHub project.
+**Future direction if restored:** command-center clarity with honest live status and clear project identities; keep it the parent product, not another app-specific interface.
 
 ## Audit observations across the system
 
