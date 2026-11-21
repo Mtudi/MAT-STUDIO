@@ -35,7 +35,7 @@
  <section class="panel"><h2>Session notes</h2><textarea class="field" id="notes" rows="4" placeholder="What did you learn? Which move deserves a second look?"></textarea><button class="btn" id="saveNotes" style="margin-top:8px">Save notes</button><p class="small" id="notesState">Saved privately on this device.</p></section>
 </aside>
 </main>
-<footer class="footer">MATUDI CHESS LAB · A personal training project inside MAT-STUDIO</footer>
+<footer class="footer">MATUDI CHESS LAB · STOCKFISH.JS 19.0.1 · <a href="https://github.com/nmrugg/stockfish.js/tree/v19.0.1" target="_blank" rel="noopener">Engine source ↗</a> · <a href="./engine/COPYING.txt" target="_blank">GPL-3.0</a></footer>
 </div>
 <div class="modal" id="promotionModal" role="dialog" aria-modal="true" aria-labelledby="promotionTitle"><div class="modal-card"><h2 id="promotionTitle">Choose promotion</h2><p class="small">Select the piece for your pawn.</p><div class="promo" id="promotionChoices"></div></div></div>
 <div class="toast" id="toast" role="status"></div>
@@ -49,7 +49,7 @@ let startFen=game.fen(),reviewPly=null;
 let engineWorker=null,engineReadyPromise=null,engineReady=false,engineBusy=false,engineFen=null,engineSide="w",enginePv="";
 const openings={
  londonClassical:{label:"London · Classical",moves:["d4","d5","Bf4","Nf6","e3","e6","Nd2","Bd6"],note:"Build the London triangle, develop calmly and prepare the central e4 break."},
- londonC5:{label:"London · ...c5 setup",moves:["d4","Nf6","Bf4","c5","e3","Qb6"],note:"Black pressures b2 early. Develop accurately and keep the queen-side structure flexible."},
+ londonC5:{label:"London · ...c5 setup",moves:["d4","Nf6","Bf4","c5","e3","d5","c3","Nc6"],note:"Black challenges the centre with ...c5. Support d4 with c3, then develop and keep the position flexible."},
  caroClassical:{label:"Caro-Kann · Classical",moves:["e4","c6","d4","d5","Nc3","dxe4","Nxe4","Bf5"],note:"Challenge the centre, then develop the light-squared bishop outside the pawn chain."},
  caroAdvance:{label:"Caro-Kann · Advance",moves:["e4","c6","d4","d5","e5","Bf5","Nf3","e6"],note:"Accept the space disadvantage, finish development and prepare the ...c5 break."}
 };
@@ -110,7 +110,7 @@ function restoreGame(){
   const saved=JSON.parse(localStorage.getItem("matudi-chess-last-game")||"null");if(!saved)return;
   if(saved.pgn&&saved.pgn.trim()&&saved.pgn.trim()!=="*"){const candidate=new Chess();candidate.loadPgn(saved.pgn);game.loadPgn(saved.pgn);startFen=candidate.history({verbose:true})[0]?.before||saved.startFen||new Chess().fen()}
   else if(saved.fen){game.load(saved.fen);startFen=saved.startFen||saved.fen}
- }catch{localStorage.removeItem("matudi-chess-last-game")}
+ }catch{try{localStorage.removeItem("matudi-chess-last-game")}catch{}}
 }
 function reset(fen){
  stopEngine();clearEngineResults();
@@ -178,11 +178,11 @@ function stopEngine(){
  engineBusy=false;$("analyze").disabled=false;$("stopAnalysis").disabled=true;
 }
 async function analyzePosition(){
- stopEngine();$("analyze").disabled=true;$("stopAnalysis").disabled=false;
+ stopEngine();$("analyze").disabled=true;$("stopAnalysis").disabled=true;
  const view=currentView();engineFen=view.fen();engineSide=view.turn();enginePv="";
  $("engineScore").textContent="…";$("engineBest").textContent="Calculating best move…";$("engineLine").textContent="Searching candidate lines…";
  try{
-  await initEngine();engineBusy=true;const depth=Number($("engineDepth").value)||14;
+  await initEngine();engineBusy=true;$("stopAnalysis").disabled=false;const depth=Number($("engineDepth").value)||14;
   engineWorker.postMessage("position fen "+engineFen);engineWorker.postMessage("go depth "+depth);
   setEngineState("Analyzing current view · depth "+depth);
  }catch(error){engineBusy=false;$("analyze").disabled=false;$("stopAnalysis").disabled=true;setEngineState(error.message);toast("Stockfish could not start.")}
