@@ -2,7 +2,7 @@
 Updated: 2026-11-21
 
 ## Goal
-Preserve every existing project URL and source while distributing hosting workloads across providers. Vercel remains the canonical production provider; Railway is a live secondary deployment for the MAT-STUDIO static application and Node compatibility layer. Future providers may be added only after their deployment and domain paths are verified.
+Preserve every existing project URL and source while distributing hosting workloads across providers. Vercel remains the canonical production provider; Railway is a live secondary deployment for the MAT-STUDIO static application and Node compatibility layer. Add another provider only after account connection, deployment, and route checks are verified.
 
 ## Current provider assignments
 
@@ -33,7 +33,8 @@ Preserve every existing project URL and source while distributing hosting worklo
 5. Do not create a new deployment for every small edit. Batch verified changes, run static/browser checks, then deploy once.
 6. A provider is not an active failover target until its public URL, project paths, API paths, auth flow, and mobile layout have been tested. Railway's internal healthcheck alone proves only that the Node process is healthy.
 7. Do not claim automatic traffic failover or load balancing: no shared custom-domain routing, health-based DNS, or cross-provider request router is configured yet. Current fallback is a separately available alternate URL and a deliberate operator switch.
-8. Add Cloudflare Pages or Netlify only when their account connection, build settings, and real deployment checks are complete. Do not assume they are connected or silently create duplicate deployments.
+8. Render is the next candidate provider, but its ChatGPT connection is not yet confirmed. Connect it before creating or changing any Render deployment. Cloudflare Pages and Netlify are not currently configured as deploy targets.
+9. Do not assume a provider is connected or silently create duplicate deployments.
 
 ## Railway environment prerequisites
 The Railway service `MAT-STUDIO / mat-studio` currently has:
@@ -59,7 +60,7 @@ Use the existing values from the trusted Vercel project environment. Never paste
 - [ ] Promote an alternate provider only after the above checks pass.
 
 ## Current limitations
-- Railway is deployed and its platform healthcheck passed, but public path-by-path browser checks have not yet been confirmed.
+- Railway deployment is successful and its platform healthcheck passed. Public URL path checks could not be completed from the current execution environment because external DNS resolution is unavailable.
 - Xi Railway secrets have not been transferred; owner login/chat are not verified there.
 - The alternate Railway URL is not wired as automatic failover for existing Vercel domains.
-- Cloudflare Pages and Netlify are not configured as deploy targets yet.
+- Render connection is pending. Cloudflare Pages and Netlify are not configured as deploy targets.
