@@ -6,7 +6,7 @@ import { WebSocketServer, WebSocket } from "ws";
 const HOST = "127.0.0.1";
 const PORT = Number(process.env.MOTION_ATELIER_BRIDGE_PORT || 47821);
 const PATH = "/motion-atelier-bridge";
-const APP_ORIGINS = new Set(["https://motion-atelier-lab-mat-only.vercel.app", "https://motion-atelier-lab.vercel.app"]);
+const APP_ORIGINS = new Set(["https://mat-studio.vercel.app", "https://motion-atelier-lab-mat-only.vercel.app", "https://motion-atelier-lab.vercel.app"]);
 const PAIR_CODE = randomBytes(4).toString("hex").toUpperCase().slice(0, 6);
 const PROTOCOL_VERSION = "2025-03-26";
 let editor = null;

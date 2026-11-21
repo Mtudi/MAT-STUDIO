@@ -23,9 +23,9 @@ Keep the terminal open. The bridge listens only on `127.0.0.1:47821`; it is not 
 
 ## Connect the editor
 
-1. Open https://motion-atelier-lab-mat-only.vercel.app in Chrome, Edge, or Firefox on the same computer.
+1. Open https://mat-studio.vercel.app/Motion%20Atelier%203D%20Studio.html in Chrome, Edge, or Firefox on the same computer.
 2. Click **AI Bridge** in the editor, then **Connect**.
-3. The editor shows a six-character pairing code.
+3. The public MAT-STUDIO editor shows a six-character pairing code.
 4. Add this MCP server to your AI client (examples below), then ask the agent to connect using the code.
 5. Approve the access request in the editor. You can disconnect at any time.
 
