@@ -11,7 +11,7 @@ Scope: public `MAT-STUDIO` source, private `MAT-CORE` engine source, Vercel proj
 | Xi AI Workspace | `projects/ai-workspace/index.html` | Guest chat, streaming, local history, optional Supabase sync | Welcome screen had stale provider copy; redesign is in draft PR #3 |
 | MATUDI Chess Lab | `projects/chess-lab/index.html` | Main branch: legal moves, history, undo, promotion and FEN/PGN copy. PR #6 adds local Stockfish analysis, PGN import/download and move-by-move review. | Preview deployment and real-browser engine/WASM tests pending |
 | MATSONG | `projects/matsong/index.html` | Local audio library in IndexedDB, queue/favorites, Spotify embeds and PKCE profile connection | Fixed a real inline-script syntax bug; hosted preview disables Spotify account sign-in |
-| MATUDI DEUTSCH | `projects/deutsch/index.html` | Main branch has the 30-word starter deck. PR #8 adds an Arabic-supported 8-unit A1 path, 71 words, listening/reading checks, writing/speaking models and a 60-minute routine. Preview: https://sharable.link/t5cevsdg | Validate progress migration, answer keys, browser speech fallback and mobile layout before merging |
+| MATUDI DEUTSCH | `projects/deutsch/index.html` | Main branch now has a 71-word Arabic-supported A1 path, 8 units, listening/reading checks, writing/speaking models, spaced review and a 60-minute routine. Static CI and Playwright desktop/mobile smoke tests passed. Preview: https://sharable.link/t5cevsdg | Validate progress migration, answer keys, browser speech fallback and mobile layout before merging |
 | MATUDI Christmas | `projects/christmas/index.html` | Interactive greeting card, share URL and print | Needs saved drafts, image export and accessibility |
 | MATUDI Portfolio | `projects/portfolio/index.html` | Static personal portfolio | Needs verified project case studies, screenshots and contact workflow |
 | Motion Atelier 3D Studio | `Motion Atelier 3D Studio.html` | Three.js 3D editor, clips/keyframes and local bridge integration | Needs export workflow, mobile/accessibility testing and bridge end-to-end test |
@@ -68,7 +68,7 @@ Scope: public `MAT-STUDIO` source, private `MAT-CORE` engine source, Vercel proj
 2. **Chess Lab** — PR #6 adds local Stockfish analysis, PGN import/export, move review and a four-line London/Caro-Kann repertoire; deploy and test the worker/WASM handshake before merging.
 3. **MATSONG** — deploy the fixed source to Vercel when the deployment quota allows; then re-enable and verify Spotify PKCE on the official redirect URI.
 4. **Motion Atelier** — verify the public page to local MCP bridge pairing and add a reliable export path.
-5. **Deutsch** — validate and merge PR #8 after browser/mobile tests, then deploy the 8-unit A1 preview.
+5. **Deutsch** — deploy the merged 8-unit course to Vercel when the quota resets; validate German TTS voices on real Android devices.
 6. **Christmas** — add draft persistence and shareable image export.
 7. **Portfolio** — build evidence-based case studies from actual project work; do not invent results or credentials.
 
