@@ -9,7 +9,7 @@ Scope: public `MAT-STUDIO` source, private `MAT-CORE` engine source, Vercel proj
 |---|---|---|---|
 | Xi Personal AI | root `index.html` | Owner-authenticated assistant; server-side engine bridge | Needs a focused design/keyboard/mobile regression pass |
 | Xi AI Workspace | `projects/ai-workspace/index.html` | Guest chat, streaming, local history, optional Supabase sync | Welcome screen had stale provider copy; redesign is in draft PR #3 |
-| MATUDI Chess Lab | `projects/chess-lab/index.html` | Main branch: legal moves, history, undo, promotion and FEN/PGN copy. PR #6 adds local Stockfish analysis, PGN import/download and move-by-move review. | Preview deployment and real-browser engine/WASM tests pending |
+| MATUDI Chess Lab | `projects/chess-lab/index.html` | Main branch: legal moves, history, undo, promotion and FEN/PGN copy. PR #9 adds local Stockfish analysis, PGN import/download and move-by-move review. | Playwright engine/WASM and mobile tests running; Vercel production rewrite test pending |
 | MATSONG | `projects/matsong/index.html` | Local audio library in IndexedDB, queue/favorites, Spotify embeds and PKCE profile connection | Fixed a real inline-script syntax bug; hosted preview disables Spotify account sign-in |
 | MATUDI DEUTSCH | `projects/deutsch/index.html` | Main branch now has a 71-word Arabic-supported A1 path, 8 units, listening/reading checks, writing/speaking models, spaced review and a 60-minute routine. Static CI and Playwright desktop/mobile smoke tests passed. Preview: https://sharable.link/t5cevsdg | Validate progress migration, answer keys, browser speech fallback and mobile layout before merging |
 | MATUDI Christmas | `projects/christmas/index.html` | Interactive greeting card, share URL and print | Needs saved drafts, image export and accessibility |
@@ -65,7 +65,7 @@ Scope: public `MAT-STUDIO` source, private `MAT-CORE` engine source, Vercel proj
 
 ## Release order
 1. **Xi Workspace design** — finish responsive visual review and end-to-end guest/owner/cloud-sync checks before merging PR #3.
-2. **Chess Lab** — PR #6 adds local Stockfish analysis, PGN import/export, move review and a four-line London/Caro-Kann repertoire; deploy and test the worker/WASM handshake before merging.
+2. **Chess Lab** — PR #9 adds local Stockfish analysis, PGN import/export, move review and a four-line London/Caro-Kann repertoire; merge only after browser smoke passes and Vercel rewrite paths are verified.
 3. **MATSONG** — deploy the fixed source to Vercel when the deployment quota allows; then re-enable and verify Spotify PKCE on the official redirect URI.
 4. **Motion Atelier** — verify the public page to local MCP bridge pairing and add a reliable export path.
 5. **Deutsch** — deploy the merged 8-unit course to Vercel when the quota resets; validate German TTS voices on real Android devices.
