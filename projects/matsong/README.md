@@ -1,3 +1,5 @@
 # MATSONG — Crimson Edition
 
-Standalone personal music player with local audio import, IndexedDB-backed library, queue, favorites, shuffle/repeat and playback controls. The Spotify flow currently connects an account and reads profile information; it is not a licensed Spotify streaming catalogue.
+Standalone personal music player with local audio import, an IndexedDB-backed library, queue, favorites, shuffle/repeat and playback controls.
+
+Spotify features include Spotify share-link embeds plus an Authorization Code with PKCE account/profile connection. This is not the same as a native Spotify Web Playback SDK catalogue player; the separate `matsong-next` branch contains that experiment and requires Spotify Premium and redirect-URI verification before release.
