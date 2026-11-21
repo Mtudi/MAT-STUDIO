@@ -7,3 +7,5 @@ Hosted at: https://mat-studio.vercel.app/showcase/
 Keep project descriptions and status claims aligned with `docs/PROJECT-INVENTORY.md`. A successful deployment is not proof that every feature has passed end-to-end testing.
 
 Preview branch: `matudi-showcase`.
+
+Build trigger check: 2026-11-21.
