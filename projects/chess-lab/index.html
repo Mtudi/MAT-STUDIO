@@ -4,11 +4,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#101a2c">
-<meta name="description" content="MATUDI Chess Lab — legal chess practice, opening study and game review.">
+<meta name="description" content="MATUDI Chess Lab — legal chess, opening repertoire, PGN review and local Stockfish analysis.">
 <title>Chess Lab — MAT-STUDIO</title>
 <style>
 :root{color-scheme:dark;--bg:#0b1220;--surface:#121e31;--surface2:#192840;--line:#293b56;--text:#f4f6fb;--muted:#a8b5c8;--accent:#82aaff;--gold:#e8c77a;--board-light:#e8dfca;--board-dark:#71869a;--danger:#ff7d88;--shadow:0 24px 70px #0005}
 *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(ellipse at 80% -10%,#203b5a 0,transparent 42%),var(--bg);color:var(--text);font:14px/1.5 Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;min-height:100vh}button,input,select{font:inherit}button{cursor:pointer;color:inherit}.shell{width:min(1240px,calc(100% - 36px));margin:auto}.topbar{height:72px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between}.brand{display:flex;align-items:center;gap:11px;text-decoration:none;color:var(--text);font-weight:850;letter-spacing:.12em;font-size:12px}.brandmark{width:35px;height:35px;border-radius:11px;background:linear-gradient(145deg,#d6bb7c,#80673a);color:#101827;display:grid;place-items:center;font-size:20px}.toplinks{display:flex;align-items:center;gap:18px}.toplinks a{color:var(--muted);text-decoration:none;font-size:12px}.hero{padding:42px 0 26px}.eyebrow{color:var(--gold);font-size:10px;font-weight:800;letter-spacing:.2em;text-transform:uppercase}.hero h1{font-size:clamp(32px,5vw,54px);letter-spacing:-.055em;line-height:1.03;margin:10px 0}.hero p{color:var(--muted);max-width:680px;margin:0}.layout{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(300px,.8fr);gap:18px;align-items:start}.panel{background:linear-gradient(145deg,#16243a,#101a2b);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow)}.board-panel{padding:16px}.board-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:13px}.turn{font-size:12px;color:var(--muted)}.turn strong{color:var(--text)}.board-wrap{width:min(100%,650px);margin:auto;position:relative}.board{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));overflow:hidden;border:5px solid #283a51;border-radius:9px;box-shadow:0 15px 45px #0005;touch-action:manipulation}.square{border:0;border-radius:0;padding:0;aspect-ratio:1;position:relative;display:grid;place-items:center;min-width:0}.square.light{background:var(--board-light)}.square.dark{background:var(--board-dark)}.square.selected{box-shadow:inset 0 0 0 4px #f4ce62}.square.last{background-image:linear-gradient(#f6dc6a66,#f6dc6a66)}.square:focus-visible{outline:3px solid #fff;outline-offset:-4px;z-index:2}.piece{font-family:"Segoe UI Symbol","DejaVu Sans",serif;font-size:clamp(25px,5.5vw,58px);line-height:1;user-select:none;filter:drop-shadow(0 2px 1px #0005)}.piece.white{color:#fffdf4;text-shadow:0 1px 2px #202b39,0 0 2px #202b39}.piece.black{color:#172233;text-shadow:0 1px 1px #fff8}.coord{position:absolute;font-size:9px;font-weight:800;left:4px;top:2px;opacity:.75;pointer-events:none}.light .coord{color:#536779}.dark .coord{color:#f5ead4}.dot{position:absolute;width:23%;aspect-ratio:1;border-radius:50%;background:#183e2c99;pointer-events:none}.capture-ring{position:absolute;inset:5%;border:4px solid #183e2c99;border-radius:50%;pointer-events:none}.board-tools{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}.btn{border:1px solid var(--line);background:#ffffff0a;border-radius:10px;padding:10px 13px;font-weight:700;font-size:12px}.btn:hover{border-color:#82aaff88;background:#82aaff14}.btn.primary{background:var(--accent);border-color:var(--accent);color:#101827}.btn.gold{background:var(--gold);border-color:var(--gold);color:#18202b}.btn:disabled{opacity:.4;cursor:not-allowed}.side{display:grid;gap:14px}.side .panel{padding:17px}.panel h2{font-size:15px;margin:0 0 12px;letter-spacing:-.02em}.status{padding:11px 12px;background:#ffffff08;border:1px solid var(--line);border-radius:11px;color:var(--muted);font-size:12px;min-height:43px}.status strong{color:var(--text)}.move-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:5px;max-height:240px;overflow:auto}.move{display:flex;gap:8px;align-items:center;padding:6px 8px;border-radius:7px;background:#ffffff06;font-size:12px}.move .num{color:var(--muted);min-width:22px}.move button{border:0;background:transparent;padding:2px 4px;border-radius:5px;font-size:12px}.move button:hover{background:#82aaff22}.empty{color:var(--muted);font-size:12px;padding:8px 0}.field{width:100%;border:1px solid var(--line);border-radius:9px;background:#0c1728;color:var(--text);padding:10px;font-size:12px}.field:focus{outline:2px solid #82aaff66;border-color:var(--accent)}.stack{display:grid;gap:9px}.small{color:var(--muted);font-size:11px;line-height:1.6}.opening{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px;border:1px solid var(--line);border-radius:10px;background:#ffffff05}.opening b{font-size:12px}.opening span{color:var(--muted);font-size:10px}.opening button{padding:7px 9px;font-size:10px}.modal{position:fixed;inset:0;background:#050a13c9;display:none;place-items:center;padding:20px;z-index:10}.modal.open{display:grid}.modal-card{width:min(360px,100%);padding:22px;background:#17263b;border:1px solid #405574;border-radius:18px;box-shadow:var(--shadow)}.modal-card h2{margin:0 0 8px}.promo{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:14px}.promo button{font-size:35px;background:#ffffff0b;border:1px solid var(--line);border-radius:10px;padding:8px}.toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:#1d2d44;border:1px solid #405574;border-radius:99px;padding:10px 16px;font-size:12px;opacity:0;pointer-events:none;transition:opacity .2s}.toast.show{opacity:1}.footer{padding:30px 0 45px;color:#718099;font-size:11px;text-align:center}.section-title{display:flex;justify-content:space-between;align-items:center;gap:10px}.section-title span{font-size:10px;color:var(--muted)}@media(max-width:850px){.layout{grid-template-columns:1fr}.side{grid-template-columns:repeat(2,minmax(0,1fr))}.side .panel:first-child{grid-column:1/-1}}@media(max-width:560px){.shell{width:min(100% - 20px,1240px)}.topbar{height:60px}.toplinks{gap:10px}.toplinks a{font-size:10px}.hero{padding:30px 0 20px}.board-panel{padding:9px}.board{border-width:3px}.piece{font-size:clamp(23px,9vw,42px)}.side{grid-template-columns:1fr}.side .panel:first-child{grid-column:auto}.board-tools .btn{flex:1}.coord{font-size:8px}}
+.engine-score{font-size:30px;font-weight:850;letter-spacing:-.06em;color:var(--gold);margin:2px 0 4px;font-variant-numeric:tabular-nums}.engine-best{font-size:13px;font-weight:750;margin:0 0 8px}.engine-line{min-height:42px;padding:10px 11px;border:1px solid var(--line);border-radius:10px;background:#ffffff08;color:#d7e0ef;font:11px/1.7 ui-monospace,SFMono-Regular,Consolas,monospace;overflow-wrap:anywhere}.engine-controls{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}.engine-controls .field{grid-column:1/-1}.engine-controls .btn{min-height:39px}.move button.active{background:#82aaff24;color:#fff;outline:1px solid #82aaff88}.opening-note{padding:10px 11px;border:1px solid #e8c77a44;background:#e8c77a0b;border-radius:10px;color:#d8c99f;font-size:11px;line-height:1.6}.pgn-input{resize:vertical;min-height:90px;font:11px/1.6 ui-monospace,SFMono-Regular,Consolas,monospace}.pgn-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}.analysis-warning{color:#d6b87a;font-size:10px;line-height:1.6;margin:10px 0 0}.square:disabled{cursor:default}.btn:focus-visible,.field:focus-visible,.toplinks a:focus-visible{outline:2px solid var(--accent);outline-offset:3px}@media(max-width:560px){.engine-controls{grid-template-columns:1fr 1fr}.engine-controls .field{grid-column:1/-1}.pgn-actions{grid-template-columns:1fr}.engine-score{font-size:27px}}@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
 </style>
 </head>
 <body>
@@ -19,16 +20,22 @@
 <section class="panel board-panel">
  <div class="board-head"><div class="turn" id="turn"><strong>White to move</strong> · Standard position</div><span class="small" id="gameState">Ready</span></div>
  <div class="board-wrap"><div class="board" id="board" role="group" aria-label="Chess board"></div></div>
- <div class="board-tools"><button class="btn" id="undo">↶ Undo</button><button class="btn" id="flip">⇅ Flip board</button><button class="btn" id="newGame">＋ New game</button><button class="btn primary" id="copyPgn">Copy PGN</button></div>
+ <div class="board-tools"><button class="btn" id="undo" aria-label="Undo last move">↶ Undo</button><button class="btn" id="flip" aria-label="Flip board">⇅ Flip board</button><button class="btn" id="newGame">＋ New game</button><button class="btn primary" id="copyPgn">Copy PGN</button><button class="btn" id="downloadPgn">Download PGN</button><button class="btn" id="livePosition" hidden>Return to live position</button></div>
 </section>
 <aside class="side">
  <section class="panel"><div class="section-title"><h2>Game status</h2><span id="moveCount">0 plies</span></div><div class="status" id="status" aria-live="polite">Select one of your pieces, then choose a highlighted legal square.</div><h2 style="margin-top:17px">Move history</h2><div class="move-list" id="moves"><div class="empty">Moves will appear here.</div></div></section>
- <section class="panel"><h2>Opening repertoire</h2><div class="stack"><div class="opening"><div><b>London System</b><br><span>White · 1.d4 / 2.Bf4</span></div><button class="btn" data-opening="london">Load</button></div><div class="opening"><div><b>Caro-Kann Defence</b><br><span>Black · 1.e4 c6</span></div><button class="btn" data-opening="caro">Load</button></div></div><p class="small" style="margin:11px 0 0">Starter positions for your core repertoire. Add structured lines, explanations and spaced review in the next training module.</p></section>
- <section class="panel"><h2>Position tools</h2><div class="stack"><input class="field" id="fenInput" placeholder="Paste a FEN position"><button class="btn" id="loadFen">Load FEN</button><button class="btn" id="copyFen">Copy current FEN</button></div><p class="small">FEN lets you save and reopen an exact position, including turn and castling rights.</p></section>
+ <section class="panel"><div class="section-title"><h2>Engine analysis</h2><span>Stockfish 19 · local</span></div><div class="engine-score" id="engineScore">—</div><div class="engine-best" id="engineBest">Analyze a position to find the strongest continuation.</div><div class="engine-line" id="engineLine" aria-live="polite">The engine loads only when you start analysis.</div><div class="engine-controls"><select class="field" id="engineDepth" aria-label="Analysis depth"><option value="10">Quick · depth 10</option><option value="14" selected>Standard · depth 14</option><option value="18">Deep · depth 18</option></select><button class="btn primary" id="analyze">Analyze position</button><button class="btn" id="stopAnalysis" disabled>Stop</button><button class="btn" id="copyEngineLine">Copy line</button></div><p class="small" id="engineState" aria-live="polite">On-device analysis · engine downloads on first use (~1.8 MB).</p><p class="analysis-warning">Study completed positions only. Do not use engine assistance during rated games.</p></section>
+ <section class="panel"><h2>Opening repertoire</h2><div class="stack">
+  <div class="opening"><div><b>London · Classical</b><br><span>White · 1.d4 d5 2.Bf4</span></div><button class="btn" data-opening="londonClassical">Load</button></div>
+  <div class="opening"><div><b>London · ...c5 setup</b><br><span>White · pressure on b2</span></div><button class="btn" data-opening="londonC5">Load</button></div>
+  <div class="opening"><div><b>Caro-Kann · Classical</b><br><span>Black · 3.Nc3 dxe4</span></div><button class="btn" data-opening="caroClassical">Load</button></div>
+  <div class="opening"><div><b>Caro-Kann · Advance</b><br><span>Black · 3.e5 Bf5</span></div><button class="btn" data-opening="caroAdvance">Load</button></div>
+ </div><p class="opening-note" id="openingNote" aria-live="polite">Choose a line to load the position and review its main strategic idea.</p></section>
+ <section class="panel"><h2>Position tools</h2><div class="stack"><label class="small" for="fenInput">Load a FEN position</label><input class="field" id="fenInput" placeholder="Paste a FEN position"><button class="btn" id="loadFen">Load FEN</button><button class="btn" id="copyFen">Copy current position FEN</button><div class="small" style="margin-top:8px">Import a complete game</div><textarea class="field pgn-input" id="pgnInput" rows="4" placeholder='Paste PGN here, including move text and optional headers'></textarea><div class="pgn-actions"><button class="btn" id="loadPgn">Load PGN</button><button class="btn" id="clearPgn">Clear PGN</button></div></div><p class="small">FEN saves an exact position. PGN restores the full move history and lets you review any move.</p></section>
  <section class="panel"><h2>Session notes</h2><textarea class="field" id="notes" rows="4" placeholder="What did you learn? Which move deserves a second look?"></textarea><button class="btn" id="saveNotes" style="margin-top:8px">Save notes</button><p class="small" id="notesState">Saved privately on this device.</p></section>
 </aside>
 </main>
-<footer class="footer">MATUDI CHESS LAB · A personal training project inside MAT-STUDIO</footer>
+<footer class="footer">MATUDI CHESS LAB · STOCKFISH.JS 19.0.1 · <a href="https://github.com/nmrugg/stockfish.js/tree/v19.0.1" target="_blank" rel="noopener">Engine source ↗</a> · <a href="./engine/COPYING.txt" target="_blank">GPL-3.0</a></footer>
 </div>
 <div class="modal" id="promotionModal" role="dialog" aria-modal="true" aria-labelledby="promotionTitle"><div class="modal-card"><h2 id="promotionTitle">Choose promotion</h2><p class="small">Select the piece for your pawn.</p><div class="promo" id="promotionChoices"></div></div></div>
 <div class="toast" id="toast" role="status"></div>
@@ -37,38 +44,171 @@ import { Chess } from "https://cdn.jsdelivr.net/npm/chess.js@1.4.0/dist/esm/ches
 const $=id=>document.getElementById(id);
 const game=new Chess();
 const glyph={wk:"♔",wq:"♕",wr:"♖",wb:"♗",wn:"♘",wp:"♙",bk:"♚",bq:"♛",br:"♜",bb:"♝",bn:"♞",bp:"♟"};
-let selected=null,legalTargets=[],flipped=false,lastMove=null,pendingPromotion=null;
-const openings={london:["d4","d5","Bf4","Nf6","e3","e6","Nd2","Bd6"],caro:["e4","c6","d4","d5","Nc3","dxe4","Nxe4","Bf5"]};
+let selected=null,legalTargets=[],flipped=false,pendingPromotion=null;
+let startFen=game.fen(),reviewPly=null;
+let engineWorker=null,engineReadyPromise=null,engineReady=false,engineBusy=false,engineFen=null,engineSide="w",enginePv="";
+const openings={
+ londonClassical:{label:"London · Classical",moves:["d4","d5","Bf4","Nf6","e3","e6","Nd2","Bd6"],note:"Build the London triangle, develop calmly and prepare the central e4 break."},
+ londonC5:{label:"London · ...c5 setup",moves:["d4","Nf6","Bf4","c5","e3","d5","c3","Nc6"],note:"Black challenges the centre with ...c5. Support d4 with c3, then develop and keep the position flexible."},
+ caroClassical:{label:"Caro-Kann · Classical",moves:["e4","c6","d4","d5","Nc3","dxe4","Nxe4","Bf5"],note:"Challenge the centre, then develop the light-squared bishop outside the pawn chain."},
+ caroAdvance:{label:"Caro-Kann · Advance",moves:["e4","c6","d4","d5","e5","Bf5","Nf3","e6"],note:"Accept the space disadvantage, finish development and prepare the ...c5 break."}
+};
 function toast(msg){$("toast").textContent=msg;$("toast").classList.add("show");clearTimeout(toast.timer);toast.timer=setTimeout(()=>$("toast").classList.remove("show"),1900)}
-function stateText(){if(game.isCheckmate())return (game.turn()==="w"?"Black":"White")+" wins by checkmate.";if(game.isStalemate())return "Draw by stalemate.";if(game.isThreefoldRepetition())return "Draw by threefold repetition.";if(game.isInsufficientMaterial())return "Draw — insufficient material.";if(game.isDraw())return "Draw.";return (game.turn()==="w"?"White":"Black")+" to move"+(game.isCheck()?" · Check":"")+(game.isGameOver()?" · Game over":"");}
+function stateText(position=game){if(position.isCheckmate())return (position.turn()==="w"?"Black":"White")+" wins by checkmate.";if(position.isStalemate())return "Draw by stalemate.";if(position.isThreefoldRepetition())return "Draw by threefold repetition.";if(position.isInsufficientMaterial())return "Draw — insufficient material.";if(position.isDraw())return "Draw.";return (position.turn()==="w"?"White":"Black")+" to move"+(position.isCheck()?" · Check":"")}
+function currentView(){if(reviewPly===null)return game;const view=new Chess(startFen);const history=game.history({verbose:true});for(let i=0;i<Math.min(reviewPly,history.length);i++)view.move(history[i].san);return view}
 function render(){
- const board=$("board");board.innerHTML="";
- const rows=game.board(),files=flipped?"hgfedcba":"abcdefgh",ranks=flipped?[1,2,3,4,5,6,7,8]:[8,7,6,5,4,3,2,1];
- const last=game.history({verbose:true}).at(-1);lastMove=last?{from:last.from,to:last.to}:null;
- ranks.forEach((rank,ri)=>{[...files].forEach((file,fi)=>{const square=file+rank,row=8-rank,col=file.charCodeAt(0)-97,piece=game.get(square),btn=document.createElement("button");btn.type="button";btn.className="square "+((row+col)%2===0?"light":"dark");btn.dataset.square=square;btn.setAttribute("aria-label",square+(piece?", "+(piece.color==="w"?"white ":"black ")+piece.type:" empty"));if(selected===square)btn.classList.add("selected");if(lastMove&&(lastMove.from===square||lastMove.to===square))btn.classList.add("last");const coord=document.createElement("span");coord.className="coord";if(fi===0)coord.textContent=rank;if(ri===7){const f=document.createElement("span");f.className="coord";f.style.cssText="left:auto;right:4px;top:auto;bottom:1px";f.textContent=file;btn.append(f)}btn.append(coord);if(piece){const p=document.createElement("span");p.className="piece "+(piece.color==="w"?"white":"black");p.textContent=glyph[piece.color+piece.type];btn.append(p)}if(legalTargets.includes(square)){const mark=document.createElement("span");mark.className=piece?"capture-ring":"dot";btn.append(mark)}btn.addEventListener("click",()=>onSquare(square));board.append(btn)})});
- $("turn").innerHTML="<strong>"+(game.turn()==="w"?"White":"Black")+" to move</strong>"+(game.isCheck()?" · In check":"");
- $("gameState").textContent=game.isGameOver()?"Finished":"Live position";
- $("status").textContent=stateText();
+ const view=currentView(),board=$("board");board.innerHTML="";
+ const files=flipped?"hgfedcba":"abcdefgh",ranks=flipped?[1,2,3,4,5,6,7,8]:[8,7,6,5,4,3,2,1];
+ const last=view.history({verbose:true}).at(-1);const lastMove=last?{from:last.from,to:last.to}:null;
+ ranks.forEach((rank,ri)=>{[...files].forEach((file,fi)=>{const square=file+rank,row=8-rank,col=file.charCodeAt(0)-97,piece=view.get(square),btn=document.createElement("button");btn.type="button";btn.className="square "+((row+col)%2===0?"light":"dark");btn.dataset.square=square;btn.setAttribute("aria-label",square+(piece?", "+(piece.color==="w"?"white ":"black ")+piece.type:" empty"));if(selected===square)btn.classList.add("selected");if(lastMove&&(lastMove.from===square||lastMove.to===square))btn.classList.add("last");const coord=document.createElement("span");coord.className="coord";if(fi===0)coord.textContent=rank;if(ri===7){const f=document.createElement("span");f.className="coord";f.style.cssText="left:auto;right:4px;top:auto;bottom:1px";f.textContent=file;btn.append(f)}btn.append(coord);if(piece){const p=document.createElement("span");p.className="piece "+(piece.color==="w"?"white":"black");p.textContent=glyph[piece.color+piece.type];btn.append(p)}if(legalTargets.includes(square)){const mark=document.createElement("span");mark.className=piece?"capture-ring":"dot";btn.append(mark)}btn.addEventListener("click",()=>onSquare(square));board.append(btn)})});
+ $("turn").innerHTML="<strong>"+(view.turn()==="w"?"White":"Black")+" to move</strong>"+(view.isCheck()?" · In check":"")+(reviewPly!==null?" · Reviewing":"");
+ $("gameState").textContent=reviewPly!==null?"Review position":view.isGameOver()?"Finished":"Live position";
+ $("status").textContent=stateText(view);
  $("moveCount").textContent=game.history().length+" plies";
+ $("undo").disabled=game.history().length===0||reviewPly!==null;
+ $("livePosition").hidden=reviewPly===null;
  renderMoves();
- $("undo").disabled=game.history().length===0;
 }
-function renderMoves(){const root=$("moves"),h=game.history();root.innerHTML="";if(!h.length){root.innerHTML='<div class="empty">Moves will appear here.</div>';return}for(let i=0;i<h.length;i+=2){const row=document.createElement("div");row.className="move";const num=document.createElement("span");num.className="num";num.textContent=(i/2+1)+".";row.append(num);for(const san of h.slice(i,i+2)){const b=document.createElement("button");b.textContent=san;b.title="Move "+san;row.append(b)}root.append(row)}root.scrollTop=root.scrollHeight}
-function onSquare(square){if(game.isGameOver())return;const piece=game.get(square);if(selected){const options=game.moves({square:selected,verbose:true}).filter(m=>m.to===square);if(options.length){if(options.some(m=>m.promotion)){openPromotion(selected,square);return}makeMove(selected,square);return}}if(piece&&piece.color===game.turn()){selected=square;legalTargets=game.moves({square,verbose:true}).map(m=>m.to);render()}else{selected=null;legalTargets=[];render()}}
-function makeMove(from,to,promotion){try{const move=game.move({from,to,...(promotion?{promotion}:{})});selected=null;legalTargets=[];render();if(move)saveGame();}catch(e){toast("That move is not legal.");selected=null;legalTargets=[];render()}}
-function openPromotion(from,to){pendingPromotion={from,to};const root=$("promotionChoices");root.innerHTML="";const color=game.turn();["q","r","b","n"].forEach(type=>{const b=document.createElement("button");b.textContent=glyph[color+type];b.setAttribute("aria-label","Promote to "+({q:"queen",r:"rook",b:"bishop",n:"knight"}[type]));b.addEventListener("click",()=>{$("promotionModal").classList.remove("open");makeMove(from,to,type);pendingPromotion=null});root.append(b)});$("promotionModal").classList.add("open")}
-function saveGame(){try{localStorage.setItem("matudi-chess-last-game",JSON.stringify({fen:game.fen(),pgn:game.pgn(),updatedAt:Date.now()}))}catch{}}
-function reset(fen){try{if(fen)game.load(fen);else game.reset();selected=null;legalTargets=[];render();saveGame()}catch{toast("Invalid FEN position.")}}
-$("undo").addEventListener("click",()=>{if(game.undo()){selected=null;legalTargets=[];render();saveGame()}});
+function renderMoves(){
+ const root=$("moves"),history=game.history({verbose:true});root.innerHTML="";
+ if(!history.length){root.innerHTML='<div class="empty">Moves will appear here.</div>';return}
+ for(let i=0;i<history.length;i+=2){
+  const row=document.createElement("div");row.className="move";
+  const num=document.createElement("span");num.className="num";num.textContent=(i/2+1)+".";row.append(num);
+  for(let j=i;j<Math.min(i+2,history.length);j++){
+   const item=history[j],b=document.createElement("button");b.type="button";b.textContent=item.san;b.title="Review ply "+(j+1)+": "+item.san;b.setAttribute("aria-label",(item.color==="w"?"White":"Black")+" move "+(Math.floor(j/2)+1)+", "+item.san);
+   if(reviewPly===j+1)b.classList.add("active");
+   b.addEventListener("click",()=>{stopEngine();clearEngineResults();reviewPly=j+1;selected=null;legalTargets=[];render()});row.append(b);
+  }
+  root.append(row);
+ }
+ root.scrollTop=root.scrollHeight;
+}
+function onSquare(square){
+ if(reviewPly!==null){toast("Return to the live position before making a move.");return}
+ if(game.isGameOver())return;
+ const piece=game.get(square);
+ if(selected){
+  const options=game.moves({square:selected,verbose:true}).filter(m=>m.to===square);
+  if(options.length){if(options.some(m=>m.promotion)){openPromotion(selected,square);return}makeMove(selected,square);return}
+ }
+ if(piece&&piece.color===game.turn()){selected=square;legalTargets=game.moves({square,verbose:true}).map(m=>m.to);render()}
+ else{selected=null;legalTargets=[];render()}
+}
+function makeMove(from,to,promotion){
+ try{stopEngine();clearEngineResults();const move=game.move({from,to,...(promotion?{promotion}:{})});selected=null;legalTargets=[];reviewPly=null;render();if(move)saveGame()}
+ catch{toast("That move is not legal.");selected=null;legalTargets=[];render()}
+}
+function openPromotion(from,to){
+ const root=$("promotionChoices");root.innerHTML="";const color=game.turn();
+ ["q","r","b","n"].forEach(type=>{const b=document.createElement("button");b.textContent=glyph[color+type];b.setAttribute("aria-label","Promote to "+({q:"queen",r:"rook",b:"bishop",n:"knight"}[type]));b.addEventListener("click",()=>{$("promotionModal").classList.remove("open");makeMove(from,to,type);pendingPromotion=null});root.append(b)});
+ $("promotionModal").classList.add("open");pendingPromotion={from,to};
+}
+function saveGame(){try{localStorage.setItem("matudi-chess-last-game",JSON.stringify({fen:game.fen(),pgn:game.pgn(),startFen,updatedAt:Date.now()}))}catch{}}
+function restoreGame(){
+ try{
+  const saved=JSON.parse(localStorage.getItem("matudi-chess-last-game")||"null");if(!saved)return;
+  if(saved.pgn&&saved.pgn.trim()&&saved.pgn.trim()!=="*"){const candidate=new Chess();candidate.loadPgn(saved.pgn);game.loadPgn(saved.pgn);startFen=candidate.history({verbose:true})[0]?.before||saved.startFen||new Chess().fen()}
+  else if(saved.fen){game.load(saved.fen);startFen=saved.startFen||saved.fen}
+ }catch{try{localStorage.removeItem("matudi-chess-last-game")}catch{}}
+}
+function reset(fen){
+ stopEngine();clearEngineResults();
+ try{if(fen){game.load(fen);startFen=fen}else{game.reset();startFen=game.fen()}selected=null;legalTargets=[];reviewPly=null;render();saveGame()}
+ catch{toast("Invalid FEN position.")}
+}
+function setEngineState(message){$("engineState").textContent=message}
+function clearEngineResults(){
+ $("engineScore").textContent="—";$("engineBest").textContent="Analyze a position to find the strongest continuation.";$("engineLine").textContent="No analysis yet.";enginePv="";
+ setEngineState(engineReady?"Engine ready · analysis runs locally":"On-device analysis · engine downloads on first use (~1.8 MB)");
+}
+function initEngine(){
+ if(engineReady)return Promise.resolve();
+ if(engineReadyPromise)return engineReadyPromise;
+ setEngineState("Loading Stockfish 19 lite engine…");
+ engineReadyPromise=new Promise((resolve,reject)=>{
+  let settled=false;const timeout=setTimeout(()=>{if(!settled){settled=true;reject(new Error("Engine load timed out. Check your connection and retry."))}},45000);
+  try{
+   engineWorker=new Worker("./engine/stockfish-19-lite-single.js");
+   engineWorker.onmessage=event=>{
+    const line=String(event.data||"").trim();
+    if(line==="uciok"){engineWorker.postMessage("isready");return}
+    if(line==="readyok"&&!settled){settled=true;clearTimeout(timeout);engineReady=true;setEngineState("Ready · running on this device");resolve();return}
+    if(line.startsWith("info "))handleEngineInfo(line);
+    else if(line.startsWith("bestmove "))handleEngineBestMove(line);
+   };
+   engineWorker.onerror=event=>{if(!settled){settled=true;clearTimeout(timeout);reject(new Error(event.message||"Stockfish worker failed to load."))}};
+   engineWorker.postMessage("uci");
+  }catch(error){clearTimeout(timeout);reject(error)}
+ }).catch(error=>{engineReadyPromise=null;engineReady=false;engineWorker?.terminate();engineWorker=null;throw error});
+ return engineReadyPromise;
+}
+function pvToSan(pv,fen){
+ const temp=new Chess(fen),sans=[];
+ for(const uci of pv.trim().split(/\s+/)){
+  const m=uci.match(/^([a-h][1-8])([a-h][1-8])([qrbn])?$/);if(!m)break;
+  try{const move=temp.move({from:m[1],to:m[2],...(m[3]?{promotion:m[3]}:{})});if(!move)break;sans.push(move.san)}catch{break}
+ }
+ return sans.join(" ");
+}
+function handleEngineInfo(line){
+ if(!engineBusy)return;
+ const depth=line.match(/\bdepth\s+(\d+)/),score=line.match(/\bscore\s+(cp|mate)\s+(-?\d+)/),pv=line.match(/\bpv\s+(.+)$/);
+ if(depth)setEngineState("Analyzing · depth "+depth[1]);
+ if(score){
+  const raw=Number(score[2]),sign=engineSide==="w"?1:-1;
+  if(score[1]==="cp"){const value=(raw*sign)/100;$("engineScore").textContent=(value>0?"+":"")+value.toFixed(2)}
+  else{const value=raw*sign;$("engineScore").textContent=value>0?"M"+value:"−M"+Math.abs(value)}
+ }
+ if(pv){enginePv=pvToSan(pv[1],engineFen);$("engineLine").textContent=enginePv||"Calculating principal variation…"}
+}
+function handleEngineBestMove(line){
+ if(!engineBusy)return;
+ engineBusy=false;const match=line.match(/^bestmove\s+(\S+)/),uci=match?.[1]||"";
+ let san="No legal move";
+ if(uci&&uci!=="0000"&&uci!=="(none)"){
+  try{const temp=new Chess(engineFen),m=temp.move({from:uci.slice(0,2),to:uci.slice(2,4),...(uci.length>4?{promotion:uci[4]}:{})});if(m)san=m.san}catch{}
+ }
+ $("engineBest").textContent="Best move: "+san;
+ $("analyze").disabled=false;$("stopAnalysis").disabled=true;
+ setEngineState("Analysis complete · Stockfish 19");
+}
+function stopEngine(){
+ if(engineWorker&&engineBusy){try{engineWorker.postMessage("stop")}catch{}}
+ engineBusy=false;$("analyze").disabled=false;$("stopAnalysis").disabled=true;
+}
+async function analyzePosition(){
+ stopEngine();$("analyze").disabled=true;$("stopAnalysis").disabled=true;
+ const view=currentView();engineFen=view.fen();engineSide=view.turn();enginePv="";
+ $("engineScore").textContent="…";$("engineBest").textContent="Calculating best move…";$("engineLine").textContent="Searching candidate lines…";
+ try{
+  await initEngine();engineBusy=true;$("stopAnalysis").disabled=false;const depth=Number($("engineDepth").value)||14;
+  engineWorker.postMessage("position fen "+engineFen);engineWorker.postMessage("go depth "+depth);
+  setEngineState("Analyzing current view · depth "+depth);
+ }catch(error){engineBusy=false;$("analyze").disabled=false;$("stopAnalysis").disabled=true;setEngineState(error.message);toast("Stockfish could not start.")}
+}
+$("undo").addEventListener("click",()=>{if(reviewPly!==null)return;stopEngine();clearEngineResults();if(game.undo()){selected=null;legalTargets=[];render();saveGame()}});
 $("newGame").addEventListener("click",()=>reset());
 $("flip").addEventListener("click",()=>{flipped=!flipped;render()});
-$("copyPgn").addEventListener("click",async()=>{try{await navigator.clipboard.writeText(game.pgn()||"[Event \"MATUDI Chess Lab\"]\n\n*");toast("PGN copied")}catch{toast("Clipboard permission unavailable")}});
-$("copyFen").addEventListener("click",async()=>{try{await navigator.clipboard.writeText(game.fen());toast("FEN copied")}catch{toast("Clipboard permission unavailable")}});
-$("loadFen").addEventListener("click",()=>{const fen=$("fenInput").value.trim();if(!fen)return toast("Paste a FEN first");try{game.load(fen);selected=null;legalTargets=[];render();saveGame();toast("Position loaded")}catch{toast("FEN is not valid")}});
-$("saveNotes").addEventListener("click",()=>{try{localStorage.setItem("matudi-chess-notes-v2",$("notes").value);$("notesState").textContent="Notes saved on this device."}catch{$("notesState").textContent="Could not save notes."}});
+$("livePosition").addEventListener("click",()=>{reviewPly=null;selected=null;legalTargets=[];render()});
+$("copyPgn").addEventListener("click",async()=>{try{await navigator.clipboard.writeText(game.pgn()||'[Event "MATUDI Chess Lab"]\n\n*');toast("PGN copied")}catch{toast("Clipboard permission unavailable")}});
+$("downloadPgn").addEventListener("click",()=>{const pgn=game.pgn()||'[Event "MATUDI Chess Lab"]\n\n*';const blob=new Blob([pgn],{type:"application/x-chess-pgn"});const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download="matudi-chess-game.pgn";a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)});
+$("copyFen").addEventListener("click",async()=>{try{await navigator.clipboard.writeText(currentView().fen());toast("FEN copied")}catch{toast("Clipboard permission unavailable")}});
+$("loadFen").addEventListener("click",()=>{const fen=$("fenInput").value.trim();if(!fen)return toast("Paste a FEN first");reset(fen);toast("Position loaded")});
+$("loadPgn").addEventListener("click",()=>{const pgn=$("pgnInput").value.trim();if(!pgn)return toast("Paste a PGN first");try{const candidate=new Chess();candidate.loadPgn(pgn);stopEngine();clearEngineResults();game.loadPgn(pgn);startFen=candidate.history({verbose:true})[0]?.before||candidate.fen();reviewPly=null;selected=null;legalTargets=[];render();saveGame();toast("PGN loaded")}catch{toast("PGN could not be loaded. Check its notation.")}});
+$("clearPgn").addEventListener("click",()=>$("pgnInput").value="");
+$("saveNotes").addEventListener("click",()=>{try{localStorage.setItem("matudi-chess-notes-v2",$("notes").value);$("notesState").textContent="Notes saved privately on this device."}catch{$("notesState").textContent="Could not save notes."}});
 $("notes").value=localStorage.getItem("matudi-chess-notes-v2")||localStorage.getItem("chess-notes")||"";
-document.querySelectorAll("[data-opening]").forEach(b=>b.addEventListener("click",()=>{game.reset();for(const san of openings[b.dataset.opening])game.move(san);selected=null;legalTargets=[];render();saveGame();toast(b.dataset.opening==="london"?"London System line loaded":"Caro-Kann line loaded")}));
+document.querySelectorAll("[data-opening]").forEach(b=>b.addEventListener("click",()=>{
+ const opening=openings[b.dataset.opening];if(!opening)return;
+ stopEngine();clearEngineResults();game.reset();startFen=game.fen();
+ try{for(const san of opening.moves)game.move(san);reviewPly=null;selected=null;legalTargets=[];render();saveGame();$("openingNote").textContent=opening.note;toast(opening.label+" loaded")}
+ catch{toast("Opening line could not be loaded.")}
+}));
+$("analyze").addEventListener("click",analyzePosition);
+$("stopAnalysis").addEventListener("click",()=>{stopEngine();setEngineState("Analysis stopped")});
+$("copyEngineLine").addEventListener("click",async()=>{if(!enginePv)return toast("No engine line to copy");try{await navigator.clipboard.writeText(enginePv);toast("Engine line copied")}catch{toast("Clipboard permission unavailable")}});
 document.addEventListener("keydown",e=>{if(e.key==="Escape"){$("promotionModal").classList.remove("open");pendingPromotion=null;selected=null;legalTargets=[];render()}});
-render();
+restoreGame();render();clearEngineResults();
 </script>
 </body></html>
