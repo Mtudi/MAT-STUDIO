@@ -90,7 +90,7 @@ header{height:74px;position:sticky;top:0;z-index:10;border-bottom:1px solid #fff
  search.addEventListener('input',apply);
  const copy=document.getElementById('copyLink');
  copy.addEventListener('click',async()=>{
-  const url='https://mat-studio.vercel.app/showcase/';
+  const url=location.href;
   try{await navigator.clipboard.writeText(url);copy.textContent='Link copied ✓'}
   catch{copy.textContent=url}
  });
