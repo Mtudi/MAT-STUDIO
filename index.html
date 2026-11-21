@@ -332,16 +332,9 @@ html:not([data-mode=gemini]) label[for=visionModel],html:not([data-mode=gemini])
 <dialog id="settings" aria-labelledby="sTitle">
  <div class="dh"><h2 id="sTitle">Settings</h2><button class="icon" id="closeSettings" aria-label="Close">✕</button></div>
  <div class="sec">
-  <h3>AI provider</h3>
-  <label for="provider">Provider</label>
-  <select class="fld" id="provider"></select>
-  <label for="apiKey">Gemini API key (Google AI Studio) — only needed for the Gemini provider</label>
-  <div class="row"><input class="fld" id="apiKey" type="password" autocomplete="off" spellcheck="false" placeholder="Paste your Gemini API key">
-   <button class="btn" id="toggleKey" type="button">Show</button></div>
-  <div class="row"><button class="btn primary" id="saveKey" type="button">Save key</button><button class="btn" id="removeKey" type="button">Remove key</button></div>
-  <p id="keyStatus"></p>
-  <p id="sampleNote">In this shared version Xi asks Claude through the page that hosts it, so no API key is needed. The first message asks you for permission once. Your conversations stay in this browser.</p>
-  <div class="warn" id="geminiWarn"><b>Security notice:</b> in a browser-only app your key is stored in this browser's localStorage and sent directly from the page to Google. Anyone with access to this browser or page can read it. Use it only for personal testing, with a restricted key, never on a shared computer or public site. The provider layer in the code (<code>Providers</code>) is isolated, so a secure backend proxy can replace it later without touching the interface.</div>
+  <h3>AI connection</h3>
+  <p>Xi connects through the MATUDI AI Engine. Provider credentials stay on the server and are never stored in this browser.</p>
+  <p class="note">Your private owner session is required to send messages. No browser API key is needed.</p>
  </div>
  <div class="sec">
   <h3>Model</h3>
@@ -461,7 +454,7 @@ async function copyText(text) {
 const DEFAULT_SYSTEM = "You are Xi, a helpful, accurate and concise personal AI assistant. Always reply in the same language as the user's latest message. Use Markdown; put code in fenced code blocks with a language tag.";
 const Providers = {
   engine: {
-    name:'MATUDI AI Engine (Secure)', models:['Gemini Flash · MATUDI Engine'],
+    name:'MATUDI AI Engine (Secure)', needsKey:false, models:['Gemini Flash · MATUDI Engine'],
     async stream({messages,ctrl,onToken}){
       if(!Array.isArray(messages)||!messages.length)throw new Error('Nothing to send.');
       const ac=new AbortController();if(ctrl)ctrl.hook=()=>ac.abort();
@@ -598,7 +591,8 @@ if (!Array.isArray(convs)) convs = [];
 let activeId = LS.get('xi.active', null);
 let settings = Object.assign({ provider: 'sample', model: 'gemini-2.5-flash', theme: 'dark', accent: 'green', bg: 'aurora', modo: 'on', visionModel: 'gemini-3.8-flash', lang: (navigator.language || '').toLowerCase().startsWith('ar') ? 'ar' : 'en', system: '' }, LS.get('xi.settings', {}));
 if (!/^gemini/.test(settings.model)) settings.model = 'gemini-2.5-flash';
-let apiKey = LS.get('xi.key', '');
+let apiKey = '';
+try { localStorage.removeItem('xi.key'); } catch {}
 let cachedModels = LS.get('xi.models', null);
 let busy = null;         // { conv, msg, ctrl } while generating
 let streamEl = null;     // content element of the streaming message
@@ -915,12 +909,10 @@ function regenerate() {
 /* ============================== 8. SETTINGS ============================== */
 const dlg = $('#settings');
 function openSettings() {
-  $('#apiKey').value = apiKey; $('#apiKey').type = 'password'; $('#toggleKey').textContent = 'Show';
   $('#system').value = settings.system || ''; $('#theme').value = settings.theme; $('#accent').value = settings.accent || 'green'; $('#lang').value = settings.lang; $('#bgmode').value = settings.bg; $('#modoOn').value = settings.modo; $('#visionModel').value = settings.visionModel;
-  updateKeyStatus(); fillModels();
+  fillModels();
   if (!dlg.open) dlg.showModal();
 }
-function updateKeyStatus() { $('#keyStatus').textContent = apiKey ? 'A key is saved in this browser.' : 'No key saved. Get one free at aistudio.google.com/apikey.'; }
 function fillModels() {
   const sel = $('#model'); sel.textContent = '';
   const list = providerKey() === 'gemini' ? Array.from(new Set([...(cachedModels || Providers.gemini.models), settings.model])) : providerKey() === 'engine' ? Providers.engine.models : ['Claude'];
@@ -939,14 +931,7 @@ function bindSettings() {
   Object.entries(Providers).forEach(([k, p]) => { const o = el('option', null, p.name); o.value = k; prov.append(o); });
   if (!hosted()) { settings.provider = 'engine'; settings.model = Providers.engine.models[0]; prov.value = 'engine'; prov.disabled = true; } else prov.value = settings.provider;
   prov.addEventListener('change', () => { settings.provider = prov.value; settings.model = provider().models[0]; saveSettings(); refreshBadge(); fillModels(); });
-  $('#toggleKey').addEventListener('click', () => { const i = $('#apiKey'), show = i.type === 'password'; i.type = show ? 'text' : 'password'; $('#toggleKey').textContent = show ? 'Hide' : 'Show'; });
-  $('#saveKey').addEventListener('click', () => {
-    const v = $('#apiKey').value.trim();
-    if (v.length < 20 || /\s/.test(v)) return toast('That does not look like a valid API key');
-    apiKey = v; LS.set('xi.key', v); updateKeyStatus(); toast('API key saved'); applyMode(); if (!active() || !active().messages.length) renderChat();
-  });
-  $('#removeKey').addEventListener('click', () => { apiKey = ''; localStorage.removeItem('xi.key'); $('#apiKey').value = ''; updateKeyStatus(); toast('API key removed'); applyMode(); if (!active() || !active().messages.length) renderChat(); });
-  $('#model').addEventListener('change', e => { settings.model = e.target.value; saveSettings(); refreshBadge(); });
+   $('#model').addEventListener('change', e => { settings.model = e.target.value; saveSettings(); refreshBadge(); });
   $('#system').addEventListener('change', e => { settings.system = e.target.value.slice(0, 4000); saveSettings(); toast('Instructions saved'); });
   $('#theme').addEventListener('change', e => { settings.theme = e.target.value; saveSettings(); applyTheme(); });
   $('#accent').addEventListener('change', e => { settings.accent = e.target.value; saveSettings(); applyTheme(); });
