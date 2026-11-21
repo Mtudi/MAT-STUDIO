@@ -32,6 +32,7 @@ The other linked GitHub identity returned no repositories.
 - **Xi ChatGPT Edition:** archived standalone experiment. Outside its Claude-hosted context, Gemini mode needs the viewer's own API key.
 - **MATSONG Next:** separate `matsong-next` branch; newer discovery UI and Spotify Web Playback SDK experiment. Spotify redirect registration and Premium playback require verification before promotion.
 - **Motion Atelier AI Bridge:** local MCP server in `bridge/`; runs on the user's computer and connects an MCP client to the open editor. Not a hosted web app.
+- **Motion Atelier Open-Source Toolchain:** `motion-toolchain.html`; catalog of ten specialist animation tools, official documentation, verified media/data hand-offs, and adapter priorities. A public browser preview is available at https://sharable.link/jf22dpsr.
 - Development branches: `xi-cloud-integration`, `xi-design-only`, `xi-supabase-chat`. These are development lines, not separate products.
 
 ## Internal infrastructure
