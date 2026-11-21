@@ -10,7 +10,7 @@ try {
   await page.goto("http://127.0.0.1:4174/", { waitUntil: "domcontentloaded" });
   await page.waitForSelector("#board .square");
 
-  assert.match(await page.title(), /MATUDI Chess Lab/);
+  assert.match(await page.title(), /Chess Lab/);
   assert.equal(await page.locator("#board .square").count(), 64);
   assert.match(await page.locator("#turn").innerText(), /White to move/);
 
