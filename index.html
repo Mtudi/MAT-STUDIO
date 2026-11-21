@@ -397,7 +397,7 @@ const Providers = {
       let res;try{res=await fetch('/api/xi-chat',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:messages.slice(-13),system:settings.system||''}),signal:ac.signal});}
       catch(e){if(ctrl&&ctrl.aborted)throw abortErr();throw new Error('Could not reach Xi secure server. Check your connection and try again.');}
       if(ctrl&&ctrl.aborted)throw abortErr();let d={};try{d=await res.json();}catch{}
-      if(!res.ok)throw new Error(d.error||('Secure AI request failed ('+res.status+').'));
+      if(!res.ok){const details=[d.providerStatus?'HTTP '+d.providerStatus:'',typeof d.providerMessage==='string'?d.providerMessage.slice(0,300):''].filter(Boolean).join(' · ');throw new Error((d.error||('Secure AI request failed ('+res.status+').'))+(details?'\nProvider details: '+details:''));}
       const full=typeof d.text==='string'?d.text:'';if(!full)throw new Error('The AI Engine returned an empty response.');
       onToken(full);return{text:full,finish:''};
     }
