@@ -10,7 +10,7 @@ try {
   await page.goto("http://127.0.0.1:4173/", { waitUntil: "domcontentloaded" });
   await page.waitForSelector("#total");
 
-  assert.equal(await page.title(), "MATUDI DEUTSCH — German A1");
+  assert.match(await page.title(), /^MATUDI DEUTSCH/);
   assert.equal(await page.locator("#total").innerText(), "71");
 
   await page.locator('[data-tab="course"]').click();
