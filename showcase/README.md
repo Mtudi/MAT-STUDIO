@@ -9,3 +9,5 @@ Keep project descriptions and status claims aligned with `docs/PROJECT-INVENTORY
 Preview branch: `matudi-showcase`.
 
 Build trigger check: 2026-11-21.
+
+Preview environment includes the server-side chat provider configuration.
