@@ -135,6 +135,7 @@ textarea.fld{resize:vertical;min-height:70px}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
 label[for=provider],#provider{display:none}
 [data-mode=sample] label[for=apiKey],[data-mode=sample] label[for=model],[data-mode=sample] .row:has(#apiKey),[data-mode=sample] .row:has(#saveKey),[data-mode=sample] .row:has(#model),[data-mode=sample] #keyStatus,[data-mode=sample] #modelStatus,[data-mode=sample] #geminiWarn{display:none}
+[data-mode=engine] label[for=apiKey],[data-mode=engine] .row:has(#apiKey),[data-mode=engine] .row:has(#saveKey),[data-mode=engine] #keyStatus,[data-mode=engine] #geminiWarn,[data-mode=engine] #sampleNote{display:none}
 [data-mode=gemini] #sampleNote,[data-mode=preview] #sampleNote,[data-mode=preview] label[for=model],[data-mode=preview] .row:has(#model),[data-mode=preview] #modelStatus{display:none}
 .modes{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;max-width:560px;margin:0 auto 14px;text-align:start}
 .mode{border:1px solid var(--line);background:var(--panel);border-radius:14px;padding:12px 14px;display:grid;gap:4px;font-size:13px;align-content:start}
@@ -636,20 +637,25 @@ const SUGGESTIONS = [
 function renderWelcome() {
   const w = el('div', 'welcome');
   w.append(el('div', 'logo', 'Ξ'), el('h2', null, 'How can I help you today?'), el('p', null, 'Ask anything — explanations, code, writing, summaries or translations. Xi remembers the context of this conversation.'));
-  if (!apiKey && provider().needsKey !== false) {
+  if (providerKey() === 'gemini' && !apiKey) {
     const n = el('div', 'notice'); n.append('Xi is not connected yet. '); const b = el('button', null, 'Add your Gemini API key'); b.type = 'button'; b.addEventListener('click', openSettings); n.append(b, '.'); w.append(n);
   }
-  const host = providerKey() !== 'gemini', modes = el('div', 'modes');
-  [['Professional mode', 'Sign in with Claude', 'Uses your own Claude account. No API key needed. Works on the shared link.', host],
-   ['Guest mode', 'No sign-in', 'Use your own free Gemini key. Works when you open the downloaded file on your device or host it on your own site.', !host]
-  ].forEach(([title, sub, desc, on], i) => {
-    const c = el('div', 'mode ' + (on ? 'on' : 'off'));
-    c.append(el('b', null, title), el('span', 'sub', sub), el('p', null, desc));
-    if (on) c.append(el('em', null, 'Active here ✓'));
-    else if (i === 0) { const a = el('a', null, 'Open the Claude version'); a.href = SHARE_URL; a.target = '_blank'; a.rel = 'noopener noreferrer'; c.append(a); }
-    else c.append(el('em', null, hosted() ? 'Needs the standalone file (not available on this shared link)' : 'Add your Gemini key in Settings to use this mode'));
-    modes.append(c);
-  });
+  const modes = el('div', 'modes');
+  const mode = providerKey();
+  const card = el('div', 'mode on');
+  if (mode === 'engine') {
+    card.append(el('b', null, 'MATUDI AI Engine'), el('span', 'sub', 'Private server · Ready to connect'));
+    card.append(el('p', null, 'Xi sends your messages through the secure MATUDI server. Provider routing and API credentials stay on the server.'));
+    card.append(el('em', null, 'Active mode ✓'));
+  } else if (mode === 'sample') {
+    card.append(el('b', null, 'Claude shared page'), el('span', 'sub', 'Claude account connection'));
+    card.append(el('p', null, 'This version uses the Claude account connection provided by the page hosting this artifact.'));
+    card.append(el('em', null, 'Active mode ✓'));
+  } else {
+    card.append(el('b', null, 'Google Gemini'), el('span', 'sub', 'Your API key'));
+    card.append(el('p', null, 'Connect your Gemini API key in Settings to use this provider.'));
+  }
+  modes.append(card);
   w.append(modes);
   const chips = el('div', 'chips');
   (settings.lang === 'ar' ? SUGGESTIONS_AR : SUGGESTIONS).slice(0, 2).forEach(([t, prompt]) => { const b = el('button', 'chip', t); b.type = 'button'; b.append(el('span', null, prompt.length > 52 ? prompt.slice(0, 50) + '…' : prompt)); b.addEventListener('click', () => sendMessage(prompt)); chips.append(b); });
@@ -735,7 +741,7 @@ function setBusyUI() {
   b.setAttribute('aria-label', busy ? 'Stop generation' : 'Send');
   b.disabled = !busy && !inp.value.trim();
 }
-function refreshBadge() { $('#badge').textContent = providerKey() === 'gemini' ? settings.model : 'Claude'; }
+function refreshBadge() { const mode = providerKey(); $('#badge').textContent = mode === 'gemini' ? settings.model : mode === 'engine' ? 'MATUDI Engine' : 'Claude'; }
 
 function uiDialog(title, withInput, value, okLabel) {
   return new Promise(res => {
@@ -801,7 +807,7 @@ async function sendMessage(raw) {
   if (typeof XiOwner !== 'undefined' && !XiOwner.isAuthenticated()) { XiOwner.show(); return; }
   const text = String(raw || '').trim();
   if (!text) return;
-  if (provider().needsKey !== false && !apiKey) { toast('Add your API key first'); openSettings(); return; }
+  if (providerKey() === 'gemini' && !apiKey) { toast('Add your Gemini API key first'); openSettings(); return; }
   let c = active();
   if (!c) { c = { id: uid(), title: 'New chat', created: Date.now(), updated: Date.now(), messages: [] }; convs.unshift(c); activeId = c.id; LS.set('xi.active', activeId); }
   if (!c.messages.length) c.title = text.replace(/\s+/g, ' ').slice(0, 40) + (text.length > 40 ? '…' : '');
