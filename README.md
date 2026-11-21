@@ -9,7 +9,7 @@ MAT-STUDIO is the public source hub for Matudi's independent digital products an
 - [Xi Personal AI](https://mat-studio.vercel.app/) — owner-authenticated personal AI workspace.
 - [MATUDI AI Workspace](https://mat-studio.vercel.app/projects/ai-workspace/index.html) — guest chat, streaming and optional cloud sync.
 - [MATUDI Chess Lab](https://mat-studio.vercel.app/projects/chess-lab/index.html) — legal chess practice, opening lines and FEN/PGN tools.
-- [MATSONG](https://mat-studio.vercel.app/projects/matsong/index.html) — local music library and Spotify embeds.
+- [MATSONG interactive preview](https://sharable.link/89k1u749) — local music library and Spotify embeds.
 - [MATUDI DEUTSCH](https://mat-studio.vercel.app/projects/deutsch/index.html) — German A1 starter learning.
 - [MATUDI Christmas](https://mat-studio.vercel.app/projects/christmas/index.html) — interactive greeting-card creator.
 - [MATUDI Portfolio](https://mat-studio.vercel.app/projects/portfolio/index.html) — personal portfolio.
