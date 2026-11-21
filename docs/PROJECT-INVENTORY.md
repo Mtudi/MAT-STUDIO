@@ -27,6 +27,8 @@ The other linked GitHub identity returned no repositories.
 
 ## Experiments and local tools
 
+- **Xi Legacy (index (3).html):** alternate earlier Xi build using a viewer-supplied Gemini API key and local video-file analysis. Keep it archived; do not present it as the current secure-server workspace.
+
 - **Xi ChatGPT Edition:** archived standalone experiment. Outside its Claude-hosted context, Gemini mode needs the viewer's own API key.
 - **MATSONG Next:** separate `matsong-next` branch; newer discovery UI and Spotify Web Playback SDK experiment. Spotify redirect registration and Premium playback require verification before promotion.
 - **Motion Atelier AI Bridge:** local MCP server in `bridge/`; runs on the user's computer and connects an MCP client to the open editor. Not a hosted web app.
