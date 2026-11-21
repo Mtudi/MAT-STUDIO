@@ -2,6 +2,8 @@
 
 An Arabic-supported German A1 starter path designed for independent daily study.
 
+**Interactive preview:** https://sharable.link/t5cevsdg
+
 ## Current branch upgrade
 - 8 original learning units: introductions, family, daily life, food, home/city, work/study, hobbies/travel, health/everyday communication.
 - 71 vocabulary entries with German examples, English meaning and Arabic meaning.
