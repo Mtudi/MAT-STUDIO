@@ -72,7 +72,7 @@ try {
   assert.ok(await page.locator("#cl").innerText().then(text => text.includes("Imported Wave")));
   const stored = await page.evaluate(() => JSON.parse(localStorage.getItem("ma.c") || "{}"));
   assert.ok(stored["Imported Wave"], "valid imported clip should be saved");
-  assert.equal(stored.constructor, undefined, "reserved object property names must be rejected");
+  assert.equal(Object.prototype.hasOwnProperty.call(stored, "constructor"), false, "reserved object property names must be rejected");
   assert.equal(stored["Bad Clip"], undefined, "out-of-range keyframes must be rejected");
   
   await page.reload({ waitUntil: "domcontentloaded", timeout: 90000 });
