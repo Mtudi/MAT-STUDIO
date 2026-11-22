@@ -3,13 +3,14 @@ import { createServer } from "node:http";
 import { readFile, stat } from "node:fs/promises";
 import { chromium } from "playwright";
 
-const [christmasHtml, portfolioHtml] = await Promise.all([
+const [christmasHtml, portfolioHtml, hubHtml] = await Promise.all([
   readFile("projects/christmas/index.html"),
-  readFile("projects/portfolio/index.html")
+  readFile("projects/portfolio/index.html"),
+  readFile("showcase/index.html")
 ]);
 const server = createServer((req, res) => {
   const path = new URL(req.url || "/", "http://127.0.0.1").pathname;
-  const html = path.startsWith("/christmas") ? christmasHtml : path.startsWith("/portfolio") ? portfolioHtml : null;
+  const html = path.startsWith("/christmas") ? christmasHtml : path.startsWith("/portfolio") ? portfolioHtml : path.startsWith("/hub") ? hubHtml : null;
   if (!html) { res.writeHead(404); res.end("Not found"); return; }
   res.writeHead(200, { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "no-store" });
   res.end(html);
@@ -93,6 +94,27 @@ try {
   assert.equal(await portfolio.locator("html").getAttribute("data-theme"), "dark");
   await portfolio.setViewportSize({ width: 390, height: 844 });
   assert.equal(await portfolio.evaluate(() => document.documentElement.scrollWidth > innerWidth), false);
+  const hub = await context.newPage();
+  hub.on("pageerror", e => pageErrors.push(e.message));
+  await hub.goto(base + "/hub", { waitUntil: "domcontentloaded" });
+  assert.equal(await hub.locator("#grid .card").count(), 8);
+  await hub.locator('[data-filter="music"]').click();
+  assert.equal(await hub.locator("#grid .card:visible").count(), 1);
+  assert.equal(await hub.locator('[data-filter="music"]').getAttribute("aria-pressed"), "true");
+  await hub.locator('[data-filter="all"]').click();
+  await hub.locator("#search").fill("Motion Atelier");
+  assert.equal(await hub.locator("#grid .card:visible").count(), 1);
+  await hub.locator("#search").fill("no-such-project-xyz");
+  assert.equal(await hub.locator("#grid .card:visible").count(), 0);
+  assert.equal(await hub.locator("#empty").isVisible(), true);
+  await hub.locator("#search").fill("");
+  assert.equal(await hub.locator("#grid .card:visible").count(), 8);
+  const hubLinks = await hub.locator("#grid a").evaluateAll(links => links.map(a => a.href));
+  for (const expected of ["https://sharable.link/89k1u749", "https://sharable.link/k2dhaohv", "https://sharable.link/b7sur4cx", "https://sharable.link/d3i3ewiy"]) assert.ok(hubLinks.includes(expected), "Hub should link to " + expected);
+  await hub.setViewportSize({ width: 390, height: 844 });
+  assert.equal(await hub.evaluate(() => document.documentElement.scrollWidth > innerWidth), false);
+  results.push("Projects Hub category/search filters, empty state, public preview links and mobile layout");
+
   assert.deepEqual(pageErrors, [], "studio pages should have no uncaught JavaScript errors");
   results.push("Portfolio category filters, theme persistence and 390px responsive layout");
 
