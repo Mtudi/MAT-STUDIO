@@ -1,5 +1,5 @@
 # MAT-STUDIO Project Inventory
-Updated: 2026-11-21
+Updated: 2026-11-22
 
 ## Linked GitHub repositories
 
@@ -17,8 +17,8 @@ The other linked GitHub identity returned no repositories.
 | Project | Source | Verified source functionality | Route |
 |---|---|---|---|
 | Xi Personal AI | Root `index.html`, `api/xi-auth.js`, `api/xi-chat.js` | Owner-authenticated AI engine bridge, local conversations, optional Gemini key mode. Secure engine use requires owner login. | `/` |
-| MATUDI AI Workspace | `projects/ai-workspace/index.html`, root API routes | Guest login, optional email login, streamed OpenRouter chat, local history, optional Supabase cloud sync and optional direct Gemini provider. | `/projects/ai-workspace/index.html` |
-| Chess Lab | `projects/chess-lab/index.html` | Main branch: chess.js legal move handling, history, undo/reset/flip, promotion and FEN/PGN copy. PR #9 proposes Stockfish analysis, PGN import/download and move-by-move review; browser tests are running, production preview pending. | `/projects/chess-lab/index.html` |
+| MATUDI AI Workspace | `projects/ai-workspace/index.html`, root API routes | Current main branch: guest login, optional email login, streamed OpenRouter chat, local history and optional Supabase cloud sync. PR #11 refreshes the welcome flow, hardens same-origin/owner-code checks and adds API plus Playwright coverage; CI passes. | `/projects/ai-workspace/index.html` |
+| Chess Lab | `projects/chess-lab/index.html` | Main branch: chess.js legal move handling, history, undo/reset/flip, promotion and FEN/PGN copy. PR #10 adds Stockfish 19 lite analysis, PGN import/download and move-by-move review. CI passes with actual UCI/WASM browser analysis and mobile checks; latest Vercel preview is blocked by the daily deployment quota. | `/projects/chess-lab/index.html` |
 | MATSONG Crimson Edition | `projects/matsong/index.html` | Local audio import, IndexedDB library, queue, favorites, shuffle/repeat/volume and Spotify share-link embeds and account/profile connection; hosted preview: https://sharable.link/89k1u749. Not a licensed Spotify streaming catalogue. | `/projects/matsong/index.html` |
 | MATUDI DEUTSCH | `projects/deutsch/index.html` | 71-word Arabic-supported A1 path with 8 original units, grammar explanations, listening/reading checks, writing/speaking models, spaced review and a 60-minute daily checklist. Public preview: https://sharable.link/t5cevsdg. GitHub Actions static and Playwright browser checks passed before merge. | `/projects/deutsch/index.html` |
 | MATUDI Christmas | `projects/christmas/index.html` | Greeting-card editor, themes, live preview, share URL, copy/share and print. | `/projects/christmas/index.html` |
@@ -46,6 +46,12 @@ The other linked GitHub identity returned no repositories.
 - **Motion Atelier Lab:** separate Vercel deployment with SSO protection; distinct from the GitHub-hosted 3D Studio HTML.
 - **Tuqa Focus Garden:** separate Vercel deployment with SSO protection; no matching source repository found.
 - Earlier showcase attempts created duplicate preview projects. Canonical project links should point to the MAT-STUDIO production routes, not to incomplete duplicates.
+
+## Active release candidates
+
+- **Chess Lab — PR #10:** https://github.com/Mtudi/MAT-STUDIO/pull/10. Static and Playwright checks pass, including engine JavaScript/WASM delivery, UCI analysis, PGN and 390px mobile layout.
+- **Xi Workspace — PR #11:** https://github.com/Mtudi/MAT-STUDIO/pull/11. Static validation, 11 API security/authentication tests and Playwright UI checks pass. Browser tests mock Supabase and OpenRouter; live credentials are not used in CI.
+- Both changes remain unmerged until a fresh Vercel preview can be deployed and real service flows can be verified. Vercel's free API deployment quota currently requires a 24-hour wait; do not attempt to bypass it.
 
 ## Security and quality notes
 
