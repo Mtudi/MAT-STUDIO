@@ -97,7 +97,8 @@ try {
   const hub = await context.newPage();
   hub.on("pageerror", e => pageErrors.push(e.message));
   await hub.goto(base + "/hub", { waitUntil: "domcontentloaded" });
-  assert.equal(await hub.locator("#grid .card").count(), 8);
+  assert.equal(await hub.locator("#grid .card").count(), 7);
+  assert.equal(await hub.locator("#grid .card").filter({ hasText: "MATUDI AI Workspace" }).count(), 0, "private MATUDI AI Workspace must not be misrepresented as Xi");
   await hub.locator('[data-filter="music"]').click();
   assert.equal(await hub.locator("#grid .card:visible").count(), 1);
   assert.equal(await hub.locator('[data-filter="music"]').getAttribute("aria-pressed"), "true");
@@ -108,7 +109,7 @@ try {
   assert.equal(await hub.locator("#grid .card:visible").count(), 0);
   assert.equal(await hub.locator("#empty").isVisible(), true);
   await hub.locator("#search").fill("");
-  assert.equal(await hub.locator("#grid .card:visible").count(), 8);
+  assert.equal(await hub.locator("#grid .card:visible").count(), 7);
   const hubLinks = await hub.locator("#grid a").evaluateAll(links => links.map(a => a.href));
   for (const expected of ["https://sharable.link/89k1u749", "https://sharable.link/k2dhaohv", "https://sharable.link/b7sur4cx", "https://sharable.link/d3i3ewiy"]) assert.ok(hubLinks.includes(expected), "Hub should link to " + expected);
   await hub.setViewportSize({ width: 390, height: 844 });
