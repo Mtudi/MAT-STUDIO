@@ -85,7 +85,14 @@ try {
   assert.match(await page.locator("#ma-ai-status").innerText(), /Disconnected/);
   await page.setViewportSize({ width: 390, height: 844 });
   await page.waitForTimeout(100);
-  assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false, "mobile viewport should not overflow horizontally");
+  const mobileLayout = await page.evaluate(() => {
+    const offenders = [...document.querySelectorAll("body *")].map(el => {
+      const r = el.getBoundingClientRect();
+      return { tag: el.tagName, id: el.id, className: typeof el.className === "string" ? el.className.slice(0, 60) : "", right: Math.round(r.right), width: Math.round(r.width), scrollWidth: el.scrollWidth, clientWidth: el.clientWidth };
+    }).filter(x => x.right > innerWidth + 1 || x.scrollWidth > x.clientWidth + 2).slice(0, 12);
+    return { innerWidth, documentWidth: document.documentElement.scrollWidth, bodyWidth: document.body.scrollWidth, bodyClientWidth: document.body.clientWidth, offenders };
+  });
+  assert.equal(mobileLayout.documentWidth > mobileLayout.innerWidth, false, "mobile viewport should not overflow horizontally: " + JSON.stringify(mobileLayout));
   assert.deepEqual(errors, [], "Motion Atelier should have no uncaught JavaScript errors");
 
   await context.close();
