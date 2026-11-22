@@ -64,14 +64,15 @@ Scope: public `MAT-STUDIO` source, private `MAT-CORE` engine source, Vercel proj
 7. Opened PR #10 for Chess Lab Stockfish/PGN upgrades; browser tests cover UCI/WASM and mobile.
 8. Opened PR #11 for Xi Workspace UX/API security; static/API/browser checks are in CI.
 9. Opened PR #12 for MATSONG migration-safe storage, Spotify integration and browser regression tests.
-10. Opened PR #13 for the Portfolio redesign and Christmas Studio draft/PNG upgrades.
+10. Opened PR #13 for the Portfolio redesign and Christmas Studio draft/PNG upgrades; browser checks pass.
+11. Opened PR #14 for Motion Atelier clip-pack export/import and accessibility; WebGL browser checks are running.
 
 ## Release order
 1. **Xi Workspace** — PR #11: verify guest/owner login, streaming and email/cloud sync on the deployed app after quota reset.
 2. **Chess Lab** — PR #10: static and Playwright checks cover engine/WASM and mobile; verify Vercel rewrite paths after quota reset.
 3. **MATSONG** — PR #12: browser tests cover DB migration, local playback, OAuth refresh and player requests; verify a real eligible Premium account after deployment.
-4. **Christmas + Portfolio** — PR #13: browser tests cover share/draft/PNG export, filtering, theme persistence and mobile; publish previews after CI passes.
-5. **Motion Atelier** — verify the public page to local MCP bridge pairing and complete export/accessibility checks.
+4. **Christmas + Portfolio** — PR #13: browser tests pass for share/draft/PNG export, filtering, theme persistence and mobile; publish previews after quota reset.
+5. **Motion Atelier** — PR #14 adds clip pack export/import; wait for WebGL browser tests, then verify real VRM/VRMA assets and local MCP pairing.
 6. **Deutsch** — PR #8 is merged; validate German TTS voices on real Android devices and publish the latest production preview after quota reset.
 
 ## Release rule
