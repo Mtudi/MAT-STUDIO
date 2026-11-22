@@ -1,0 +1,29 @@
+name: Xi landing browser smoke
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "projects/xi/**"
+      - "scripts/smoke-xi-landing.mjs"
+      - ".github/workflows/xi-landing-smoke.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  browser-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install Playwright
+        run: |
+          npm init -y
+          npm install --no-save playwright
+          npx playwright install --with-deps chromium
+      - name: Run Xi landing tests
+        run: node scripts/smoke-xi-landing.mjs

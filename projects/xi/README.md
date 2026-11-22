@@ -1,3 +1,11 @@
-# Xi — Personal AI
+# Xi — Personal AI landing page
 
-Static landing page introducing the Xi project direction. It is not the chat application itself. The owner-authenticated Xi app is at the MAT-STUDIO repository root; the guest-enabled workspace interface is in `projects/ai-workspace/`.
+This is the public product overview for Xi — Personal AI.
+
+- Xi is a separate project from MATUDI AI Workspace.
+- The working app is owner-controlled and is not an open public AI demo.
+- The overview is static; the Open Xi link leads to the live app.
+- The UI illustration is conceptual and does not represent a live session.
+- Provider credentials belong in server-side environment variables, not in the public page.
+
+The previous landing page is preserved at `archive/v1.html`.
