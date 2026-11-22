@@ -68,6 +68,7 @@ Scope: public `MAT-STUDIO` source, private `MAT-CORE` engine source, Vercel proj
 9. Opened PR #12 for MATSONG migration-safe storage, Spotify integration and browser regression tests.
 10. Opened PR #13 for the Portfolio redesign and Christmas Studio draft/PNG upgrades; browser checks pass.
 11. Opened PR #14 for Motion Atelier clip-pack export/import and accessibility; WebGL/SwiftShader Playwright checks pass for clip pack export/import, validation, reload persistence, keyboard playback and mobile layout.
+12. Opened PR #15 for the Xi public landing page; Playwright checks pass for owner-access clarity, navigation, no client-side scripts and mobile layout.
 
 ## Release order
 1. **Xi Workspace** — PR #11: verify guest/owner login, streaming and email/cloud sync on the deployed app after quota reset.
