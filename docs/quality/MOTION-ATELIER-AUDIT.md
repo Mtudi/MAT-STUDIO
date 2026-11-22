@@ -18,4 +18,4 @@ Updated: 2026-11-22
 
 ## Verification
 
-Playwright tests exercise WebGL initialization with SwiftShader, custom clip save/export/import, invalid clip rejection, persistence after reload, keyboard playback, bridge panel open state and mobile overflow. Real VRM/VRMA assets and an actual local MCP client remain manual compatibility checks.
+Playwright tests pass with WebGL/SwiftShader: scene and built-in clips initialize; keyboard playback works; custom clips save/export/import; reserved names and invalid keyframes are rejected; imported clips persist after reload; bridge panel opens without auto-connecting; and the 390px mobile viewport has no horizontal overflow. Public preview: https://sharable.link/d3i3ewiy. Real VRM/VRMA assets and an actual local MCP client remain manual compatibility checks. The sharable preview does not receive an added localhost bridge origin; keep the existing bridge allowlist and verify pairing only from an approved app origin.
