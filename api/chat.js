@@ -1,3 +1,4 @@
+const crypto = require("crypto");
 const guestRate = new Map();
 const ownerAttempts = new Map();
 
