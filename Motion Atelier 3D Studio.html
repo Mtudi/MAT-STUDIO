@@ -55,29 +55,51 @@ footer{grid-area:t;background:var(--pn);border-top:1px solid var(--ln);display:f
  #tc{gap:5px}
  #tc button{padding:6px 8px}
 }
+</style><style>
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,canvas:focus-visible{outline:2px solid var(--lav);outline-offset:3px}
+.clip-pack-actions{display:flex;flex-wrap:wrap;gap:7px;margin-top:7px}
+.clip-pack-actions button{flex:1 1 120px;min-width:0}
+.clip-pack-hint{font-size:10px;line-height:1.5;color:var(--mu);margin:7px 0 0}
+.row{flex-wrap:wrap}
+#msg[role=status]{min-width:0;overflow-wrap:anywhere}
+@media(max-width:600px){.clip-pack-actions button{flex:1 1 100%}}
+</style><style>
+@media(max-width:600px){
+ html,body{width:100%;max-width:100%;overflow-x:hidden}
+ body{min-width:0}
+ header{width:100%;max-width:100%;min-width:0;gap:7px;padding:0 8px}
+ header b{flex:0 0 auto;font-size:10px}
+ #msg{flex:1 1 auto;min-width:0;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+ #ma-toolchain-link,#fps{display:none!important}
+ #vp,aside,footer,#tc{width:100%;max-width:100%;min-width:0}
+ aside>section{width:100%;max-width:100%;min-width:0}
+ .s{width:100%;max-width:100%;min-width:0}
+ .s input,.s select,input,select,textarea{min-width:0;max-width:100%}
+ #refop{width:100%;max-width:100%;min-width:0}
+}
 </style></head><body>
-<header><b>Motion Atelier</b><span id="msg">Ready</span><a id="ma-toolchain-link" href="./motion-toolchain.html" style="color:var(--lav);text-decoration:none;border:1px solid var(--ln);border-radius:5px;padding:4px 8px;font-size:11px;white-space:nowrap">Open-source tools ↗</a><span id="fps"></span></header>
+<header><b>Motion Atelier</b><span id="msg" role="status" aria-live="polite">Ready</span><a id="ma-toolchain-link" href="./motion-toolchain.html" style="color:var(--lav);text-decoration:none;border:1px solid var(--ln);border-radius:5px;padding:4px 8px;font-size:11px;white-space:nowrap">Open-source tools ↗</a><span id="fps"></span></header>
 <aside>
 <section><h3>Character</h3>
-<label class="btn">Load character / motion (.vrm .glb .gltf .vrma)<input id="file" type="file" accept=".vrm,.glb,.gltf,.vrma" hidden></label>
+<label class="btn">Load character / motion (.vrm .glb .gltf .vrma)<input id="file" type="file" accept=".vrm,.glb,.gltf,.vrma" aria-label="Choose a VRM character, GLB model, glTF model or VRMA motion file" hidden></label>
 <p id="info"></p>
 <label class="s" style="grid-template-columns:auto 1fr"><span><input type="checkbox" id="refon" checked> Reference</span><input type="range" id="refop" min="0" max="1" step=".05" value=".8" aria-label="Reference opacity"></label></section>
-<section><h3>Animations</h3><div id="cl"></div>
+<section><h3>Animations</h3><div id="cl" role="group" aria-label="Available animation clips"></div>
 <label class="s"><span>Blend</span><input id="bl" type="range" min="0" max="1.5" step=".05" value=".3"><output id="blo">0.3s</output></label>
-<div class="row"><button id="new">New clip</button><button id="dup">Duplicate</button><button id="sav">Save custom</button><button id="del">Delete</button></div></section>
+<div class="row"><button id="new" type="button" aria-label="Create a new custom animation clip">New clip</button><button id="dup" type="button" aria-label="Duplicate the selected clip">Duplicate</button><button id="sav" type="button" aria-label="Save custom clips in this browser">Save custom</button><button id="del" type="button" aria-label="Delete the selected custom clip">Delete</button></div><div class="row clip-pack-actions"><button id="clip-export" type="button">Export clip pack ↓</button><button id="clip-import" type="button">Import clip pack ↑</button><input id="clip-import-file" type="file" accept=".json,application/json" aria-label="Choose a Motion Atelier clip pack JSON file" hidden></div><p class="clip-pack-hint">Move custom animation clips between browsers with a JSON pack. Character models are not included.</p></section>
 <fieldset id="pose"><h3>Pose editor</h3><select id="bone" aria-label="Bone"></select><div id="ax"></div>
-<div class="row"><button id="ak">Add key</button><button id="dk">Delete key</button></div>
+<div class="row"><button id="ak" type="button" aria-label="Add keyframe">Add key</button><button id="dk" type="button" aria-label="Delete selected keyframe">Delete key</button></div>
 <div style="color:var(--mu)">Moving a slider keys the selected bone at the playhead.</div></fieldset>
 <section><h3>Face</h3><div class="row"><label><input type="checkbox" id="blk" checked> Auto blink</label><label><input type="checkbox" id="eye" checked> Eye tracking</label><button id="rf">Reset face</button></div><div id="ex"></div></section>
 <section><h3>Physics and view</h3><div class="row"><label><input type="checkbox" id="phy" checked> Hair, ear and tail springs</label><label><input type="checkbox" id="grd" checked> Grid</label></div>
-<div class="row"><button data-v="0">Front</button><button data-v="1.5708">Side</button><button data-v="3.1416">Back</button><button id="fr">Frame</button></div></section>
+<div class="row"><button data-v="0">Front</button><button data-v="1.5708">Side</button><button data-v="3.1416">Back</button><button id="fr" type="button" aria-label="Frame the character in the viewport">Frame</button></div></section>
 </aside>
-<main id="vp"><div id="badge"></div><div id="ref"><img id="r1" alt="Full-body reference sheet"><img id="r2" alt="Face reference"></div><div id="drop">Drop .vrm / .glb / .gltf</div></main>
-<footer><div id="tc"><button id="pv" aria-label="Previous frame">◀</button><button id="pl">Pause</button><button id="nx" aria-label="Next frame">▶</button><button id="sp">Stop</button>
+<main id="vp" aria-label="3D character viewport"><div id="badge"></div><div id="ref"><img id="r1" alt="Full-body reference sheet"><img id="r2" alt="Face reference"></div><div id="drop">Drop .vrm / .glb / .gltf</div></main>
+<footer><div id="tc"><button id="pv" aria-label="Previous frame">◀</button><button id="pl" type="button" aria-label="Pause animation" aria-pressed="true">Pause</button><button id="nx" aria-label="Next frame">▶</button><button id="sp" type="button" aria-label="Stop animation">Stop</button>
 <label><input type="checkbox" id="lp" checked> Loop</label><select id="spd" aria-label="Speed"><option>0.25</option><option>0.5</option><option selected>1</option><option>1.5</option><option>2</option></select>
 <label>Length <input id="len" type="number" min=".5" max="30" step=".5" style="width:64px"></label>
 <label>Key easing <select id="ez"><option value="smooth">Smooth</option><option value="linear">Linear</option><option value="in">Ease in</option><option value="out">Ease out</option><option value="hold">Hold</option></select></label><output id="tm"></output></div>
-<canvas id="tl"></canvas></footer>
+<canvas id="tl" role="application" tabindex="0" aria-label="Animation timeline. Use arrow keys to move the playhead and Space to play or pause."></canvas></footer>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/","@pixiv/three-vrm":"https://cdn.jsdelivr.net/npm/@pixiv/three-vrm@3.0.0/lib/three-vrm.module.js","@pixiv/three-vrm-animation":"https://cdn.jsdelivr.net/npm/@pixiv/three-vrm-animation@3.0.0/lib/three-vrm-animation.module.js"}}</script>
 <script type="module">
 import*as T from'three';
@@ -157,7 +179,7 @@ function tick(dt){const c=clips[st.clip];if(!c)return;
  let p=sample(c,st.t);if(st.prev&&st.bt<1){st.bt+=dt/Math.max(st.blend,.01);const u=ez.smooth(Math.min(st.bt,1)),q={};for(const n of ALL){const a=st.prev[n]||Z,b=p[n]||Z;q[n]=a.map((x,j)=>x+(b[j]-x)*u)}p=q;if(st.bt>=1)st.prev=null}
  cur=p;apply(p)}
 const snap=t=>Math.round(t*30)/30,cl=(x,a,b)=>Math.min(b,Math.max(a,x));
-function sync(){$('#pl').textContent=st.play?'Pause':'Play';$('#pl').classList.toggle('on',st.play);const c=clips[st.clip]||{};const ed=!(c.native||c.static);for(const i of['ak','dk','ez'])$('#'+i).disabled=!ed;$('#new').disabled=false;$('#dup').disabled=!ed;$('#del').disabled=!c.custom}
+function sync(){$('#pl').textContent=st.play?'Pause':'Play';$('#pl').setAttribute('aria-label',st.play?'Pause animation':'Play animation');$('#pl').setAttribute('aria-pressed',String(st.play));$('#pl').classList.toggle('on',st.play);const c=clips[st.clip]||{};const ed=!(c.native||c.static);for(const i of['ak','dk','ez'])$('#'+i).disabled=!ed;$('#new').disabled=false;$('#dup').disabled=!ed;$('#del').disabled=!c.custom}
 function buildClips(){const d=$('#cl');d.innerHTML='';for(const n in clips)if(avail(n)){const b=document.createElement('button');b.textContent=n+(clips[n].custom?' (custom)':'');b.className=n===st.clip?'on':'';b.onclick=()=>play(n);d.append(b)}}
 $('#pl').onclick=()=>{const c=clips[st.clip];if(!st.play&&!st.loop&&st.t>=c.dur-1e-3)st.t=0;st.play=!st.play;sync()};
 $('#sp').onclick=()=>{st.play=false;st.t=0;scrub0();sync()};
@@ -169,7 +191,15 @@ const nm=b=>{let n=b,i=1;while(clips[n])n=b+' '+ ++i;return n};
 $('#new').onclick=()=>{const n=nm('Custom');clips[n]={dur:2,loop:true,custom:true,tracks:{}};play(n)};
 $('#dup').onclick=()=>{const n=nm(st.clip+' copy');clips[n]={...structuredClone(clips[st.clip]),custom:true};play(n)};
 $('#del').onclick=()=>{if(!clips[st.clip].custom)return;delete clips[st.clip];st.clip=null;play(Object.keys(clips).find(avail),true)};
-$('#sav').onclick=()=>{const o={};for(const n in clips)if(clips[n].custom)o[n]=clips[n];try{localStorage.setItem('ma.c',JSON.stringify(o));$('#msg').textContent='Saved '+Object.keys(o).length+' custom clip(s) in this browser'}catch(e){$('#msg').textContent='Storage unavailable here'}};
+function saveCustomClips(){const o=Object.create(null);for(const [n,c] of Object.entries(clips))if(c.custom)o[n]={dur:c.dur,loop:!!c.loop,custom:true,tracks:c.tracks||{}};localStorage.setItem('ma.c',JSON.stringify(o));return Object.keys(o).length}
+$('#sav').onclick=()=>{try{$('#msg').textContent='Saved '+saveCustomClips()+' custom clip(s) in this browser'}catch(e){$('#msg').textContent='Storage unavailable here'}};
+function exportClipPack(){const out=Object.create(null);for(const [name,c] of Object.entries(clips))if(c.custom)out[name]={dur:c.dur,loop:!!c.loop,custom:true,tracks:c.tracks||{}};const names=Object.keys(out);if(!names.length){$('#msg').textContent='Create a custom clip before exporting a clip pack';return}const pack={format:'motion-atelier-clip-pack',version:1,createdAt:new Date().toISOString(),clips:out};const blob=new Blob([JSON.stringify(pack,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='motion-atelier-clips.json';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);$('#msg').textContent='Exported '+names.length+' custom clip(s) as JSON'}
+function normalizeImportedClip(raw,budget){if(!raw||typeof raw!=='object'||Array.isArray(raw))return null;const dur=Number(raw.dur);if(!Number.isFinite(dur)||dur<.25||dur>60||!raw.tracks||typeof raw.tracks!=='object'||Array.isArray(raw.tracks))return null;const tracks=Object.create(null);for(const [bone,keys] of Object.entries(raw.tracks)){if(!ALL.includes(bone)||!Array.isArray(keys))continue;const clean=[];for(const key of keys){if(!key||typeof key!=='object')continue;const t=Number(key.t),v=key.v;if(!Number.isFinite(t)||t<0||t>dur||!Array.isArray(v)||v.length!==3)continue;const values=v.map(Number);if(values.some(n=>!Number.isFinite(n)||Math.abs(n)>1000))continue;clean.push({t,v:values,e:['smooth','linear','in','out','hold'].includes(key.e)?key.e:'smooth'});if(++budget.keys>5000)throw Error('Clip pack contains too many keyframes (limit 5,000).')}clean.sort((a,b)=>a.t-b.t);if(clean.length)tracks[bone]=clean}const hasInputKeys=Object.values(raw.tracks).some(keys=>Array.isArray(keys)&&keys.length>0);if(hasInputKeys&&!Object.keys(tracks).length)return null;return{dur,loop:raw.loop!==false,custom:true,tracks}}
+async function importClipPack(file){if(file.size>1024*1024){$('#msg').textContent='Clip pack is too large (maximum 1 MB)';return}try{const data=JSON.parse(await file.text()),source=data?.format==='motion-atelier-clip-pack'?data.clips:data?.clips||data;if(!source||typeof source!=='object'||Array.isArray(source))throw Error('Invalid clip pack structure.');const entries=Object.entries(source);if(entries.length>100)throw Error('A clip pack can contain up to 100 clips.');let added=0,skipped=0,first=null;const budget={keys:0};for(const [name,raw] of entries){const clean=String(name).normalize('NFC').replace(/[^\p{L}\p{N} _-]/gu,'').trim().slice(0,48);if(!clean||['__proto__','constructor','prototype'].includes(clean.toLowerCase())){skipped++;continue}const clip=normalizeImportedClip(raw,budget);if(!clip){skipped++;continue}const target=nm(clean);clips[target]=clip;if(!first)first=target;added++}if(!added)throw Error('No valid editable clips found.');let saved=true;try{saveCustomClips()}catch{saved=false}buildClips();play(first,true);sync();draw();$('#msg').textContent='Imported '+added+' custom clip(s)'+(skipped?' · '+skipped+' skipped':'')+(saved?' · saved in this browser':' · storage unavailable; current session only')}catch(e){$('#msg').textContent='Import failed: '+(e.message||e)}}
+$('#clip-export').onclick=exportClipPack;
+$('#clip-import').onclick=()=>$('#clip-import-file').click();
+$('#clip-import-file').onchange=e=>{const file=e.target.files[0];if(file)importClipPack(file);e.target.value=''};
+
 // ---- keyframe editing
 const trk=n=>(clips[st.clip].tracks[n]??=[]);
 function keyAt(n,t,mk){const tr=trk(n);let k=tr.find(k=>Math.abs(k.t-t)<1/60);if(!k&&mk){st.prev=null;k={t,v:(cur[n]||Z).slice(),e:'smooth'};tr.push(k);tr.sort((a,b)=>a.t-b.t)}return k}
@@ -230,8 +260,8 @@ document.head.append(bridgeStyle);
 const bridgeLaunch=document.createElement('button');
 bridgeLaunch.id='ma-ai-launch';bridgeLaunch.type='button';bridgeLaunch.textContent='✦ AI Bridge';
 const bridgePanel=document.createElement('section');
-bridgePanel.id='ma-ai-panel';
-bridgePanel.innerHTML='<h3>Motion Atelier · AI Bridge</h3><span class="status" id="ma-ai-status">Disconnected</span><p id="ma-ai-help">Connect a local MCP server to let an AI agent inspect and edit animation keyframes.</p><code id="ma-ai-code">------</code><p>Keep the local bridge running on this computer. Share this code with your MCP client, then approve its request here.</p><div class="actions"><button id="ma-ai-connect" type="button">Connect</button><button class="secondary" id="ma-ai-close" type="button">Close</button></div>';
+bridgePanel.id='ma-ai-panel';bridgePanel.setAttribute('role','dialog');bridgePanel.setAttribute('aria-label','Motion Atelier AI Bridge');
+bridgePanel.innerHTML='<h3>Motion Atelier · AI Bridge</h3><span class="status" id="ma-ai-status" role="status" aria-live="polite">Disconnected</span><p id="ma-ai-help">Connect a local MCP server to let an AI agent inspect and edit animation keyframes.</p><code id="ma-ai-code">------</code><p>Keep the local bridge running on this computer. Share this code with your MCP client, then approve its request here.</p><div class="actions"><button id="ma-ai-connect" type="button">Connect</button><button class="secondary" id="ma-ai-close" type="button">Close</button></div>';
 document.body.append(bridgeLaunch,bridgePanel);
 bridgeLaunch.onclick=()=>{bridgePanel.style.display=bridgePanel.style.display==='block'?'none':'block'};
 $('#ma-ai-close').onclick=()=>bridgePanel.style.display='none';
