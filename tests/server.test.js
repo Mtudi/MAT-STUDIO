@@ -104,8 +104,8 @@ test("owner login issues a signed HttpOnly session cookie", async () => {
     method: "POST",
     headers: {
       "content-type": "application/json",
-      origin: base,
-      "x-forwarded-host": new URL(base).host
+      origin: "https://localhost:" + new URL(base).port,
+      "x-forwarded-host": "localhost:" + new URL(base).port
     },
     body: JSON.stringify({ action: "login", password: "test-only-owner-password" })
   });
@@ -125,8 +125,8 @@ test("chat endpoint rejects requests without an owner session", async () => {
     method: "POST",
     headers: {
       "content-type": "application/json",
-      origin: base,
-      "x-forwarded-host": new URL(base).host
+      origin: "https://localhost:" + new URL(base).port,
+      "x-forwarded-host": "localhost:" + new URL(base).port
     },
     body: JSON.stringify({ messages: [{ role: "user", text: "hello" }] })
   });
