@@ -63,6 +63,20 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,ca
 .row{flex-wrap:wrap}
 #msg[role=status]{min-width:0;overflow-wrap:anywhere}
 @media(max-width:600px){.clip-pack-actions button{flex:1 1 100%}}
+</style><style>
+@media(max-width:600px){
+ html,body{width:100%;max-width:100%;overflow-x:hidden}
+ body{min-width:0}
+ header{width:100%;max-width:100%;min-width:0;gap:7px;padding:0 8px}
+ header b{flex:0 0 auto;font-size:10px}
+ #msg{flex:1 1 auto;min-width:0;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+ #ma-toolchain-link,#fps{display:none!important}
+ #vp,aside,footer,#tc{width:100%;max-width:100%;min-width:0}
+ aside>section{width:100%;max-width:100%;min-width:0}
+ .s{width:100%;max-width:100%;min-width:0}
+ .s input,.s select,input,select,textarea{min-width:0;max-width:100%}
+ #refop{width:100%;max-width:100%;min-width:0}
+}
 </style></head><body>
 <header><b>Motion Atelier</b><span id="msg" role="status" aria-live="polite">Ready</span><a id="ma-toolchain-link" href="./motion-toolchain.html" style="color:var(--lav);text-decoration:none;border:1px solid var(--ln);border-radius:5px;padding:4px 8px;font-size:11px;white-space:nowrap">Open-source tools ↗</a><span id="fps"></span></header>
 <aside>
