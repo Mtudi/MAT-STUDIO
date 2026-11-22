@@ -7,6 +7,10 @@ const errors = [];
 try {
   const page = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
   page.on("pageerror", error => errors.push(error.message));
+  page.on("console", message => { if (message.type() === "error") console.error("PAGE CONSOLE:", message.text()); });
+  page.on("requestfailed", request => console.error("REQUEST FAILED:", request.url(), request.failure()?.errorText));
+  page.on("response", response => { if (response.url().includes("stockfish")) console.log("ENGINE RESPONSE:", response.status(), response.url()); });
+  page.on("worker", worker => console.log("WORKER STARTED:", worker.url()));
   await page.goto("http://127.0.0.1:4174/", { waitUntil: "domcontentloaded" });
   await page.waitForSelector("#board .square");
 
@@ -44,9 +48,15 @@ try {
   await page.locator("#engineDepth").selectOption("10");
   await page.locator("#analyze").click();
   await page.waitForFunction(
-    () => document.querySelector("#engineState")?.textContent.includes("Analysis complete"),
-    { timeout: 90000 }
+    () => {
+      const state = document.querySelector("#engineState")?.textContent || "";
+      return state.includes("Analysis complete") || /failed|timed out|could not/i.test(state);
+    },
+    null,
+    { timeout: 120000 }
   );
+  const engineState = await page.locator("#engineState").innerText();
+  assert.match(engineState, /Analysis complete/, "Stockfish should complete its UCI/WASM handshake and return a best move. State: " + engineState);
   assert.match(await page.locator("#engineBest").innerText(), /^Best move:/);
   assert.notEqual(await page.locator("#engineScore").innerText(), "—");
   assert.equal(await page.locator("#stopAnalysis").isDisabled(), true);
