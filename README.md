@@ -13,7 +13,7 @@ MAT-STUDIO is the public source hub for MATUDI's independent digital products an
 - [MATUDI DEUTSCH A1](https://sharable.link/t5cevsdg) — Arabic-supported German A1 course with eight units.
 - [MATUDI Christmas Studio](https://sharable.link/k2dhaohv) — personalized greeting cards, local drafts, Arabic-safe share links and PNG export.
 - [MATUDI Portfolio](https://sharable.link/b7sur4cx) — responsive project showcase with filters and light/dark appearance.
-- [Motion Atelier 3D Studio](https://motion-atelier-3d-studio.vercel.app/) — browser-based 3D character and animation studio.
+- [Motion Atelier 3D Studio](https://sharable.link/d3i3ewiy) — browser-based 3D character and animation studio.
 - [Motion Atelier Open-Source Toolchain](https://sharable.link/jf22dpsr) — ten specialist tools, verified interchange paths and integration roadmap.
 
 ## Active release candidates
