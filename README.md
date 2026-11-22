@@ -7,7 +7,6 @@ MAT-STUDIO is the public source hub for MATUDI's independent digital products an
 ## Web experiences
 
 - [Xi Personal AI](https://mat-studio.vercel.app/) — owner-authenticated personal AI workspace.
-- [MATUDI AI Workspace](https://mat-studio.vercel.app/projects/ai-workspace/index.html) — guest chat, streaming and optional cloud sync.
 - [MATUDI Chess Lab](https://mat-studio.vercel.app/projects/chess-lab/index.html) — legal chess practice and opening study; Stockfish/PGN upgrade is in [PR #10](https://github.com/Mtudi/MAT-STUDIO/pull/10).
 - [MATSONG — Crimson Edition](https://sharable.link/89k1u749) — local-first music player; Spotify Web Playback and migration upgrade is in [PR #12](https://github.com/Mtudi/MAT-STUDIO/pull/12).
 - [MATUDI DEUTSCH A1](https://sharable.link/t5cevsdg) — Arabic-supported German A1 course with eight units.
@@ -26,12 +25,16 @@ MAT-STUDIO is the public source hub for MATUDI's independent digital products an
 
 ## Experiments and local tools
 
+- `projects/ai-workspace/index.html` is a legacy Xi UI prototype, not the separate MATUDI AI Workspace project; it is preserved for reference.
+
 - `experiments/xi-chatgpt-edition/` — archived multi-provider Xi and OpenAI/ChatGPT editions; provider-key modes require the viewer's own key where applicable.
 - `projects/matsong-next/` — experimental source branch used as the basis for the canonical MATSONG release upgrade.
 - `bridge/` — local MCP server for the Motion Atelier editor; runs on the user's computer and requires explicit pairing approval.
 - `projects/ai-workspace/legacy-workspace-backup.html` — archived workspace backup, not the current app.
 
 ## Internal systems
+
+- MATUDI AI Workspace is a separate private project, distinct from Xi. It is not currently published as a runnable public app.
 
 - MAT-CORE is a separate private repository; its source and credentials are not published here.
 - MATUDI AI Engine is a server-side API; requests require a Bearer token.
