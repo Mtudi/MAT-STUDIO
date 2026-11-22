@@ -3,13 +3,14 @@ import { chromium } from "playwright";
 
 const browser = await chromium.launch({ headless: true });
 const errors = [];
+const engineResponses = [];
 
 try {
   const page = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
   page.on("pageerror", error => errors.push(error.message));
   page.on("console", message => { if (message.type() === "error") console.error("PAGE CONSOLE:", message.text()); });
   page.on("requestfailed", request => console.error("REQUEST FAILED:", request.url(), request.failure()?.errorText));
-  page.on("response", response => { if (response.url().includes("stockfish")) console.log("ENGINE RESPONSE:", response.status(), response.url()); });
+  page.on("response", response => { if (response.url().includes("stockfish")) { const record={url:response.url(),status:response.status(),contentType:response.headers()["content-type"]||""};engineResponses.push(record);console.log("ENGINE RESPONSE:",record.status,record.contentType,record.url); } });
   page.on("worker", worker => console.log("WORKER STARTED:", worker.url()));
   await page.goto("http://127.0.0.1:4174/", { waitUntil: "domcontentloaded" });
   await page.waitForSelector("#board .square");
@@ -60,6 +61,8 @@ try {
   assert.match(await page.locator("#engineBest").innerText(), /^Best move:/);
   assert.notEqual(await page.locator("#engineScore").innerText(), "—");
   assert.equal(await page.locator("#stopAnalysis").isDisabled(), true);
+  assert(engineResponses.some(x => x.url.endsWith(".js") && x.status === 200), "Stockfish worker JavaScript should load successfully");
+  assert(engineResponses.some(x => x.url.endsWith(".wasm") && x.status === 200 && /application\/wasm/i.test(x.contentType)), "Stockfish WASM should load with application/wasm MIME type");
 
   const mobile = await browser.newPage({ viewport: { width: 390, height: 844 } });
   mobile.on("pageerror", error => errors.push(error.message));

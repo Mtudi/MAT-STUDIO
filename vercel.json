@@ -13,11 +13,11 @@
   "rewrites": [
     {
       "source": "/projects/chess-lab/engine/stockfish-19-lite-single.js",
-      "destination": "https://cdn.jsdelivr.net/npm/stockfish@19.0.1/bin/stockfish-19-lite-single.js"
+      "destination": "https://unpkg.com/stockfish@19.0.1/bin/stockfish-19-lite-single.js"
     },
     {
       "source": "/projects/chess-lab/engine/stockfish-19-lite-single.wasm",
-      "destination": "https://cdn.jsdelivr.net/npm/stockfish@19.0.1/bin/stockfish-19-lite-single.wasm"
+      "destination": "https://unpkg.com/stockfish@19.0.1/bin/stockfish-19-lite-single.wasm"
     }
   ],
   "headers": [
