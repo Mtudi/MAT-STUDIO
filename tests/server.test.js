@@ -95,6 +95,11 @@ test("HEAD requests return headers without a response body", async () => {
   assert.equal(await response.text(), "");
 });
 
+test("encoded traversal attempts cannot escape the project root", async () => {
+  const response = await fetch(base + "/..%2Fpackage.json");
+  assert.equal(response.status, 403);
+});
+
 test("unsupported methods are rejected on static routes", async () => {
   const response = await fetch(base + "/", { method: "POST" });
   assert.equal(response.status, 405);
