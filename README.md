@@ -6,7 +6,7 @@ MAT-STUDIO is the public source hub for MATUDI's independent digital products an
 
 ## Web experiences
 
-- [Xi Personal AI](https://mat-studio.vercel.app/) — owner-authenticated personal AI workspace.
+- [Xi — Personal AI overview](https://sharable.link/9m2vmt6e) — public project overview; the live app requires owner access.
 - [MATUDI Chess Lab](https://mat-studio.vercel.app/projects/chess-lab/index.html) — legal chess practice and opening study; Stockfish/PGN upgrade is in [PR #10](https://github.com/Mtudi/MAT-STUDIO/pull/10).
 - [MATSONG — Crimson Edition](https://sharable.link/89k1u749) — local-first music player; Spotify Web Playback and migration upgrade is in [PR #12](https://github.com/Mtudi/MAT-STUDIO/pull/12).
 - [MATUDI DEUTSCH A1](https://sharable.link/t5cevsdg) — Arabic-supported German A1 course with eight units.
