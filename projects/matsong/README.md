@@ -30,6 +30,12 @@ A single-file, local-first music player with an optional Spotify connection.
 - OAuth refresh tokens are kept in session storage and cleared by Disconnect. Access tokens are refreshed automatically after expiry or a 401 response.
 - Spotify's Web Playback SDK is used for personal, non-commercial playback; observe Spotify Developer Terms and Branding Guidelines.
 
+## Official Spotify references
+
+- [Web Playback SDK](https://developer.spotify.com/documentation/web-playback-sdk)
+- [Building a Spotify Player inside a Web app](https://developer.spotify.com/documentation/web-playback-sdk/howtos/web-app-player)
+- [Spotify compliance tips](https://developer.spotify.com/compliance-tips)
+
 ## Verification
 
 The GitHub Actions Playwright suite uses mocked Spotify OAuth/API/SDK responses and a generated local WAV file. It checks:
