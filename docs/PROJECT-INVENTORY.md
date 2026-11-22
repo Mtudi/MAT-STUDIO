@@ -41,6 +41,7 @@ The other linked GitHub identity returned no repositories.
 - **Xi Workspace — PR #11:** https://github.com/Mtudi/MAT-STUDIO/pull/11 — UX/API security changes; static, API and browser CI.
 - **MATSONG — PR #12:** https://github.com/Mtudi/MAT-STUDIO/pull/12 — database migration, Spotify integration and regression tests; real Premium playback remains a post-deploy gate.
 - **Christmas + Portfolio — PR #13:** https://github.com/Mtudi/MAT-STUDIO/pull/13 — draft/share/PNG export and portfolio redesign; browser tests are running.
+- **Motion Atelier — PR #14:** https://github.com/Mtudi/MAT-STUDIO/pull/14 — custom clip JSON export/import, input validation and accessible controls; WebGL browser tests are running.
 - Vercel's free API deployment quota requires a 24-hour wait. No more deployments or CLI workarounds should be attempted until it resets.
 
 ## Internal infrastructure
