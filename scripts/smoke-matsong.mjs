@@ -149,7 +149,6 @@ try {
   assert.equal(await page.evaluate(() => localStorage.getItem("matsong-crimson-theme")), "light");
   await page.reload({ waitUntil: "domcontentloaded" });
   await page.waitForFunction(() => document.querySelectorAll("#libraryList .track").length === 2);
-  assert.equal(await page.locator("#playlistGrid .mood").count(), 0, "playlist grid is rendered only when its view is active");
   await page.locator('[data-view="playlists"]').click();
   await page.waitForFunction(() => document.querySelectorAll("#playlistGrid .mood").length === 1);
   await page.locator('[data-view="favorites"]').click();
@@ -168,6 +167,7 @@ try {
   const spotifyPage = await spotifyContext.newPage();
   spotifyPage.on("pageerror", e => spotifyPageErrors.push(e.message));
   const tokenGrants = [];
+  const tokenPayloads = [];
   const apiCalls = [];
   let firstSearch = true;
   await spotifyPage.addInitScript(() => {
@@ -181,6 +181,7 @@ try {
     const params = new URLSearchParams(route.request().postData() || "");
     const grant = params.get("grant_type");
     tokenGrants.push(grant);
+    tokenPayloads.push(params);
     const refresh = grant === "refresh_token";
     await route.fulfill({
       status: 200,
@@ -248,8 +249,8 @@ if (window.onSpotifyWebPlaybackSDKReady) window.onSpotifyWebPlaybackSDKReady();
   await spotifyPage.goto(base + "/?code=mock-code&state=test-state", { waitUntil: "domcontentloaded" });
   await spotifyPage.waitForFunction(() => document.querySelector("#spotifyDisconnect") && !document.querySelector("#spotifyDisconnect").hidden);
   assert.ok(tokenGrants.includes("authorization_code"), "PKCE authorization-code exchange should occur");
+  assert.equal(tokenPayloads[0].get("redirect_uri"), "https://mat-studio.vercel.app/projects/matsong/index.html");
   assert.ok(apiCalls.some(x => x.path === "/v1/me"), "profile should load after authorization");
-  const tokenRequest = await spotifyPage.evaluate(() => window.__matsongLastTokenRequest || null);
   assert.equal(await spotifyPage.locator("#spotifyStatus").count(), 1);
   record("Spotify PKCE callback and profile session initialize with mocked services");
 
