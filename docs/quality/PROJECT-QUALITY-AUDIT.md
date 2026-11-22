@@ -10,9 +10,9 @@ Scope: public `MAT-STUDIO` source, private `MAT-CORE` engine source, Vercel proj
 | Xi Personal AI | root `index.html` | Owner-authenticated assistant; server-side engine bridge | Needs a focused design/keyboard/mobile regression pass |
 | Xi AI Workspace | `projects/ai-workspace/index.html` | Guest chat, streaming, local history and optional Supabase sync. PR #11 refreshes onboarding/layout, hardens origin and owner-code checks, and adds API plus Playwright CI; review is open. |
 | MATUDI Chess Lab | `projects/chess-lab/index.html` | Main branch: legal moves, history, undo, promotion and FEN/PGN copy. PR #10 adds Stockfish 19 lite analysis, PGN import/download and move review. Playwright verifies UCI analysis, JS/WASM HTTP 200 and application/wasm MIME, plus mobile layout. | Latest Vercel preview is blocked by the 100-deployments/24h quota; production rewrite test remains pending |
-| MATSONG | `projects/matsong/index.html` | PR #12 promotes a richer Crimson Edition to the canonical route, reuses the existing IndexedDB database, adds Spotify PKCE refresh, catalog search, Premium Web Playback and official embeds, and archives the previous HTML. Browser regression suite is running; real Premium playback awaits a fresh Vercel deployment. |
+| MATSONG | `projects/matsong/index.html` | PR #12 promotes a richer Crimson Edition to the canonical route, reuses the existing IndexedDB database, adds Spotify PKCE refresh, catalog search, Premium Web Playback and official embeds, and archives the previous HTML. Playwright regression suite passes for migration, local playback, OAuth refresh, favorites, playlist, queue and mocked Spotify API behavior; real Premium playback awaits a fresh Vercel deployment. |
 | MATUDI DEUTSCH | `projects/deutsch/index.html` | Main branch now has a 71-word Arabic-supported A1 path, 8 units, listening/reading checks, writing/speaking models, spaced review and a 60-minute routine. Static CI and Playwright desktop/mobile smoke tests passed. Preview: https://sharable.link/t5cevsdg | Validate progress migration, answer keys, browser speech fallback and mobile layout before merging |
-| MATUDI Christmas | `projects/christmas/index.html` | PR #13 adds local draft save/restore/clear, Arabic-safe share links, shared-card mode, Canvas PNG export and accessibility/mobile refinements. Playwright browser checks are running. |
+| MATUDI Christmas | `projects/christmas/index.html` | PR #13 adds local draft save/restore/clear, Arabic-safe share links, shared-card mode, Canvas PNG export and accessibility/mobile refinements. Playwright browser checks pass for Arabic share links, local drafts, PNG export, portfolio filters, theme persistence, Hub search/filters and mobile layout. |
 | MATUDI Portfolio | `projects/portfolio/index.html` | PR #13 replaces the conflicting CSS layers with a responsive light/dark portfolio, six evidence-based project cards, accessible filters and GitHub contact path. Playwright checks are running. |
 | Motion Atelier 3D Studio | `Motion Atelier 3D Studio.html` | Three.js 3D editor, clips/keyframes and local bridge integration | Needs export workflow, mobile/accessibility testing and bridge end-to-end test |
 
@@ -67,7 +67,7 @@ Scope: public `MAT-STUDIO` source, private `MAT-CORE` engine source, Vercel proj
 8. Opened PR #11 for Xi Workspace UX/API security; static/API/browser checks are in CI.
 9. Opened PR #12 for MATSONG migration-safe storage, Spotify integration and browser regression tests.
 10. Opened PR #13 for the Portfolio redesign and Christmas Studio draft/PNG upgrades; browser checks pass.
-11. Opened PR #14 for Motion Atelier clip-pack export/import and accessibility; WebGL browser checks are running.
+11. Opened PR #14 for Motion Atelier clip-pack export/import and accessibility; WebGL/SwiftShader Playwright checks pass for clip pack export/import, validation, reload persistence, keyboard playback and mobile layout.
 
 ## Release order
 1. **Xi Workspace** — PR #11: verify guest/owner login, streaming and email/cloud sync on the deployed app after quota reset.
