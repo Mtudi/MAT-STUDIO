@@ -81,6 +81,14 @@ test("known project pages are served from their repository paths", async () => {
   }
 });
 
+test("project directory URLs resolve to their index pages", async () => {
+  for (const path of ["/projects/xi/", "/projects/matsong/", "/projects/chess-lab/", "/projects/portfolio/"]) {
+    const response = await fetch(base + path);
+    assert.equal(response.status, 200, path);
+    assert.match(response.headers.get("content-type"), /text\/html/, path);
+  }
+});
+
 test("HEAD requests return headers without a response body", async () => {
   const response = await fetch(base + "/", { method: "HEAD" });
   assert.equal(response.status, 200);
