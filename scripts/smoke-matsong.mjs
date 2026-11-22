@@ -108,7 +108,7 @@ try {
   assert.match(await page.locator("#libraryList").innerText(), /MATSONG Test Clip/);
   record("short local WAV import accepted and stored");
 
-  await page.locator('[data-view="library"]').click();
+  await page.locator('[data-view="library"]:visible').first().click();
   await page.locator("#libraryList .track").filter({ hasText: "MATSONG Test Clip" }).click();
   await page.waitForFunction(() => document.querySelector("#nowTitle")?.textContent === "MATSONG Test Clip");
   await page.waitForFunction(() => {
@@ -118,25 +118,25 @@ try {
   record("local audio playback starts from the library");
 
   await page.locator("#nowLike").click();
-  await page.locator('[data-view="favorites"]').click();
+  await page.locator('[data-view="favorites"]:visible').first().click();
   await page.waitForFunction(() => document.querySelectorAll("#favoriteList .track").length === 1);
   assert.match(await page.locator("#favoriteList").innerText(), /MATSONG Test Clip/);
   record("local favorites persist and render");
 
-  await page.locator('[data-view="playlists"]').click();
+  await page.locator('[data-view="playlists"]:visible').first().click();
   await page.locator("#playlistName").fill("Crimson Test Set");
   await page.locator("#playlistForm").evaluate(form => form.requestSubmit());
   await page.waitForFunction(() => document.querySelectorAll("#playlistGrid .mood").length === 1);
-  await page.locator('[data-view="library"]').click();
+  await page.locator('[data-view="library"]:visible').first().click();
   await page.locator("#libraryList .track").filter({ hasText: "MATSONG Test Clip" }).locator(".add-playlist").click();
   await page.waitForFunction(() => document.querySelector("#toast")?.textContent.includes("Added to Crimson Test Set"));
-  await page.locator('[data-view="playlists"]').click();
+  await page.locator('[data-view="playlists"]:visible').first().click();
   await page.locator("#playlistGrid .mood").first().click();
   await page.waitForFunction(() => document.querySelectorAll("#playlistTracks .track").length === 1);
   assert.match(await page.locator("#playlistTracks").innerText(), /MATSONG Test Clip/);
   record("playlist creation and track assignment work");
 
-  await page.locator('[data-view="search"]').click();
+  await page.locator('[data-view="search"]:visible').first().click();
   await page.locator("#embedUrl").fill("https://attacker.example/track/1234567890123456789012");
   await page.locator("#embedForm").evaluate(form => form.requestSubmit());
   await page.waitForFunction(() => document.querySelector("#toast")?.textContent.includes("Use an open.spotify.com link"));
@@ -150,9 +150,9 @@ try {
   assert.equal(await page.evaluate(() => localStorage.getItem("matsong-crimson-theme")), "light");
   await page.reload({ waitUntil: "domcontentloaded" });
   await page.waitForFunction(() => document.querySelectorAll("#libraryList .track").length === 2);
-  await page.locator('[data-view="playlists"]').click();
+  await page.locator('[data-view="playlists"]:visible').first().click();
   await page.waitForFunction(() => document.querySelectorAll("#playlistGrid .mood").length === 1);
-  await page.locator('[data-view="favorites"]').click();
+  await page.locator('[data-view="favorites"]:visible').first().click();
   await page.waitForFunction(() => document.querySelectorAll("#favoriteList .track").length === 1);
   assert.equal(await page.evaluate(() => localStorage.getItem("matsong-crimson-theme")), "light");
   record("library, playlist, favorite and theme survive reload");
@@ -255,7 +255,7 @@ if (window.onSpotifyWebPlaybackSDKReady) window.onSpotifyWebPlaybackSDKReady();
   assert.equal(await spotifyPage.locator("#spotifyStatus").count(), 1);
   record("Spotify PKCE callback and profile session initialize with mocked services");
 
-  await spotifyPage.locator('[data-view="search"]').click();
+  await spotifyPage.locator('[data-view="search"]:visible').first().click();
   await spotifyPage.locator("#query").fill("Billie Eilish");
   await spotifyPage.locator("#searchForm").evaluate(form => form.requestSubmit());
   await spotifyPage.waitForSelector("#searchResults .album");
@@ -265,7 +265,7 @@ if (window.onSpotifyWebPlaybackSDKReady) window.onSpotifyWebPlaybackSDKReady();
   await spotifyPage.waitForFunction(() => document.querySelector("#nowTitle")?.textContent === "Test Track");
   assert.ok(apiCalls.some(x => x.path === "/v1/me/player/play" && x.method === "PUT"), "full-track playback should call Spotify player endpoint");
   await spotifyPage.locator("#nowLike").click();
-  await spotifyPage.locator('[data-view="favorites"]').click();
+  await spotifyPage.locator('[data-view="favorites"]:visible').first().click();
   await spotifyPage.waitForFunction(() => document.querySelectorAll("#favoriteList .track").length === 1);
   assert.match(await spotifyPage.locator("#favoriteList").innerText(), /Test Track/);
   await spotifyPage.locator("#spotifyDisconnect").click();
