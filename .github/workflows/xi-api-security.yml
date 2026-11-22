@@ -1,0 +1,23 @@
+name: Xi API security tests
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "api/chat.js"
+      - "scripts/test-xi-api.cjs"
+      - ".github/workflows/xi-api-security.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  api-security:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Run API authentication and streaming tests
+        run: node scripts/test-xi-api.cjs

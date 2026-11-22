@@ -1,5 +1,5 @@
 # MATUDI Project Quality Audit
-Last audited: 2026-11-21
+Last audited: 2026-11-22
 Scope: public `MAT-STUDIO` source, private `MAT-CORE` engine source, Vercel project settings, and the connected Xi Supabase project.
 
 ## Verified project inventory
@@ -8,8 +8,8 @@ Scope: public `MAT-STUDIO` source, private `MAT-CORE` engine source, Vercel proj
 | Project | Source | Current verified scope | Main quality gap |
 |---|---|---|---|
 | Xi Personal AI | root `index.html` | Owner-authenticated assistant; server-side engine bridge | Needs a focused design/keyboard/mobile regression pass |
-| Xi AI Workspace | `projects/ai-workspace/index.html` | Guest chat, streaming, local history, optional Supabase sync | Welcome screen had stale provider copy; redesign is in draft PR #3 |
-| MATUDI Chess Lab | `projects/chess-lab/index.html` | Main branch: legal moves, history, undo, promotion and FEN/PGN copy. PR #9 adds local Stockfish analysis, PGN import/download and move-by-move review. | Playwright engine/WASM and mobile tests running; Vercel production rewrite test pending |
+| Xi AI Workspace | `projects/ai-workspace/index.html` | Guest chat, streaming, local history and optional Supabase sync. PR #11 refreshes onboarding and layout, hardens owner-code/origin checks and adds API/browser CI; all three checks pass. |
+| MATUDI Chess Lab | `projects/chess-lab/index.html` | Main branch: legal moves, history, undo, promotion and FEN/PGN copy. PR #10 adds local Stockfish 19 lite analysis, PGN import/download and move-by-move review. Playwright confirms UCI analysis, JS/WASM HTTP 200 and application/wasm MIME, plus mobile layout. | Vercel deployment of the latest candidate is blocked by the 100-deployments/24h API quota; production rewrite test remains pending |
 | MATSONG | `projects/matsong/index.html` | Local audio library in IndexedDB, queue/favorites, Spotify embeds and PKCE profile connection | Fixed a real inline-script syntax bug; hosted preview disables Spotify account sign-in |
 | MATUDI DEUTSCH | `projects/deutsch/index.html` | Main branch now has a 71-word Arabic-supported A1 path, 8 units, listening/reading checks, writing/speaking models, spaced review and a 60-minute routine. Static CI and Playwright desktop/mobile smoke tests passed. Preview: https://sharable.link/t5cevsdg | Validate progress migration, answer keys, browser speech fallback and mobile layout before merging |
 | MATUDI Christmas | `projects/christmas/index.html` | Interactive greeting card, share URL and print | Needs saved drafts, image export and accessibility |
@@ -38,7 +38,7 @@ Scope: public `MAT-STUDIO` source, private `MAT-CORE` engine source, Vercel proj
 ### Vercel
 - Production protection for `mat-studio` and `matudi-ai-engine` is set to public production / protected previews.
 - The Xi owner endpoints retain session validation; the AI Engine endpoint requires a constant-time checked Bearer token and validates project/message payloads.
-- The daily Vercel API deployment quota was reached during this work. Source fixes can be merged and preview pages hosted separately, but a new Vercel build must wait for quota availability.
+- The daily Vercel API deployment quota was reached during this work (Vercel returned `api-deployments-free-per-day`, retry after 24 hours). Do not attempt more deployments or use CLI to bypass the limit. Source fixes and GitHub CI can continue; new Vercel builds must wait for quota availability.
 - A `READY` deployment is not treated as proof that its application flows work.
 
 ### Supabase — Xi Workspace project
@@ -61,11 +61,12 @@ Scope: public `MAT-STUDIO` source, private `MAT-CORE` engine source, Vercel proj
 4. Corrected the public Motion Atelier bridge origin and setup instructions.
 5. Corrected the project inventory, root README and archived Xi classifications.
 6. Added static HTML/JavaScript CI and fixed the MATSONG syntax issue.
-7. Prepared the Xi Workspace design pass in draft PR #3, preserving existing chat, auth, storage and Modo behavior.
+7. Opened PR #10 for Chess Lab Stockfish/PGN upgrades; static and Playwright browser checks pass, including real WASM delivery in CI.
+8. Opened PR #11 for Xi Workspace UX and API security; static, API security (11 tests) and Playwright browser checks pass. External Supabase/OpenRouter calls are mocked in browser tests.
 
 ## Release order
-1. **Xi Workspace design** — finish responsive visual review and end-to-end guest/owner/cloud-sync checks before merging PR #3.
-2. **Chess Lab** — PR #9 adds local Stockfish analysis, PGN import/export, move review and a four-line London/Caro-Kann repertoire; merge only after browser smoke passes and Vercel rewrite paths are verified.
+1. **Xi Workspace** — PR #11 has passing static/API/browser CI. Deploy after Vercel quota reset, then verify a real guest session, owner login, one streamed response and email magic-link/cloud sync.
+2. **Chess Lab** — PR #10 has passing static and Playwright checks, including Stockfish UCI/WASM and mobile. Deploy after quota reset and verify the Vercel rewrite paths before merging.
 3. **MATSONG** — deploy the fixed source to Vercel when the deployment quota allows; then re-enable and verify Spotify PKCE on the official redirect URI.
 4. **Motion Atelier** — verify the public page to local MCP bridge pairing and add a reliable export path.
 5. **Deutsch** — deploy the merged 8-unit course to Vercel when the quota resets; validate German TTS voices on real Android devices.
