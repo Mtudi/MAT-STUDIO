@@ -67,7 +67,7 @@ try {
     await route.fulfill({
       status: 200,
       headers: { "Content-Type": "text/event-stream", "Cache-Control": "no-cache" },
-      body: 'data: {"token":"Hello from Xi"}\\n\\ndata: {"done":true,"model":"openrouter/free"}\\n\\n'
+      body: 'data: {"token":"Hello from Xi"}\n\ndata: {"done":true,"model":"openrouter/free"}\n\n'
     });
   });
   await page.route("https://fonts.googleapis.com/**", route => route.abort());
