@@ -21,7 +21,17 @@ const mime = {
   ".webp": "image/webp",
   ".ico": "image/x-icon",
   ".woff2": "font/woff2",
-  ".txt": "text/plain; charset=utf-8"
+  ".txt": "text/plain; charset=utf-8",
+  ".webmanifest": "application/manifest+json",
+  ".mp3": "audio/mpeg",
+  ".m4a": "audio/mp4",
+  ".wav": "audio/wav",
+  ".ogg": "audio/ogg",
+  ".mp4": "video/mp4",
+  ".webm": "video/webm",
+  ".pdf": "application/pdf",
+  ".avif": "image/avif",
+  ".gif": "image/gif"
 };
 
 function json(res, status, body) {
@@ -76,19 +86,29 @@ async function handle(req, res) {
   const file = path.resolve(root, relative);
   if (file !== root && !file.startsWith(root + path.sep)) return json(res, 403, { error: "Forbidden." });
 
-  fs.stat(file, (error, stat) => {
-    if (error || !stat.isFile()) return json(res, 404, { error: "Not found." });
-    const headers = {
-      "Content-Type": mime[path.extname(file).toLowerCase()] || "application/octet-stream",
-      "X-Content-Type-Options": "nosniff",
-      "Referrer-Policy": "strict-origin-when-cross-origin",
-      "X-Frame-Options": "SAMEORIGIN",
-      "Cache-Control": path.extname(file) === ".html" ? "no-store" : "public, max-age=3600"
-    };
-    res.writeHead(200, headers);
-    if (req.method === "HEAD") return res.end();
-    fs.createReadStream(file).pipe(res);
-  });
+  let target = file;
+  try {
+    let stat = await fs.promises.stat(target);
+    if (stat.isDirectory()) {
+      target = path.join(target, "index.html");
+      stat = await fs.promises.stat(target);
+    }
+    if (!stat.isFile()) return json(res, 404, { error: "Not found." });
+  } catch {
+    return json(res, 404, { error: "Not found." });
+  }
+
+  const extension = path.extname(target).toLowerCase();
+  const headers = {
+    "Content-Type": mime[extension] || "application/octet-stream",
+    "X-Content-Type-Options": "nosniff",
+    "Referrer-Policy": "strict-origin-when-cross-origin",
+    "X-Frame-Options": "SAMEORIGIN",
+    "Cache-Control": extension === ".html" ? "no-store" : "public, max-age=3600"
+  };
+  res.writeHead(200, headers);
+  if (req.method === "HEAD") return res.end();
+  fs.createReadStream(target).pipe(res);
 }
 
 const port = Number(process.env.PORT) || 3000;
