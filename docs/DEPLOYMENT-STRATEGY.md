@@ -74,3 +74,14 @@ Use the current trusted values from the existing Vercel project environment. Do 
 - Do not claim Railway owner login or AI chat works before secrets are set and end-to-end tested.
 - Do not claim Render hosts an app until a service is deployed and tested.
 - Do not equate internal Railway healthcheck with public internet reachability.
+
+
+## Automated verification added — 2026-11-22
+- Added `npm test` using Node's built-in test runner; no third-party test dependencies.
+- Added GitHub Actions workflow `.github/workflows/quality.yml` for pushes and pull requests.
+- Latest run for commit `3715c589040302f3aeb472325eab037e1b041c2b`: **10 tests passed, 0 failed**.
+- Coverage: health endpoint, Xi root HTML and headers, all seven known project page paths, directory-to-index routing (including Xi/MATSONG/Chess Lab/Portfolio), HEAD behavior, unsupported methods, encoded path-traversal rejection, owner auth state, signed HttpOnly owner session, and chat rejection without owner session.
+- Fixed Railway static serving so project directory URLs resolve to their `index.html`; added common media/manifest MIME types.
+- Switched Railway start command from `npm start` to `node server.js` to avoid unnecessary npm startup dependency. Node remains selected by root `package.json`.
+- Railway latest source build is being deployed from `xi-design-only` at `3715c589040302f3aeb472325eab037e1b041c2b`; verify its final status before calling the new version live.
+- Public domain is still not independently reachable from this execution environment's browser/DNS tooling; internal Railway health and GitHub CI do not substitute for an external public HTTP smoke test.
