@@ -65,7 +65,7 @@ function setup() {
 
 test("rejects a missing Origin header", async () => {
   setup();
-  const res = await invoke(request({ origin: undefined, body: baseBody }));
+  const res = await invoke(request({ origin: "", body: baseBody }));
   assert.equal(res.statusCode, 403);
 });
 
