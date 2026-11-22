@@ -108,6 +108,7 @@ try {
   assert.match(await page.locator("#libraryList").innerText(), /MATSONG Test Clip/);
   record("short local WAV import accepted and stored");
 
+  await page.locator('[data-view="library"]').click();
   await page.locator("#libraryList .track").filter({ hasText: "MATSONG Test Clip" }).click();
   await page.waitForFunction(() => document.querySelector("#nowTitle")?.textContent === "MATSONG Test Clip");
   await page.waitForFunction(() => {
