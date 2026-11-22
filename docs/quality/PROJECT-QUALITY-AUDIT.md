@@ -54,6 +54,8 @@ Scope: public `MAT-STUDIO` source, private `MAT-CORE` engine source, Vercel proj
 - CI checks duplicate HTML IDs and parses inline JavaScript in tracked HTML files.
 - The workflow passed on the MATSONG repair PR after it found and helped fix three literal `\\n` sequences (one broke JavaScript parsing; two leaked into page markup).
 
+| MATUDI AI Workspace (private) | `Mtudi/matudi-ai-workspace` | Read-only audit: repository contains only a 21-byte README; no source tree or build config. The 38-file archive is not present in the current Library. The separate project remains distinct from Xi. | Do not modify until explicit written approval and source recovery |
+
 ## Work completed
 1. Published the public MATUDI Projects Hub: https://sharable.link/jfi5b0ql
 2. Published a MATSONG interactive preview: https://sharable.link/89k1u749
