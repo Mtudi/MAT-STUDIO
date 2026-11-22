@@ -22,9 +22,23 @@ const server = createServer(async (req, res) => {
       return;
     }
     try {
-      const upstream = await fetch("https://cdn.jsdelivr.net/npm/stockfish@19.0.1/bin/" + name);
-      if (!upstream.ok) {
-        res.writeHead(upstream.status).end("Engine CDN returned " + upstream.status);
+      const mirrors = [
+        "https://unpkg.com/stockfish@19.0.1/bin/" + name,
+        "https://cdn.jsdelivr.net/npm/stockfish@19.0.1/bin/" + name
+      ];
+      let upstream = null;
+      const failures = [];
+      for (const url of mirrors) {
+        try {
+          const response = await fetch(url, { headers: { "User-Agent": "MATUDI-Chess-Lab/1.0" } });
+          if (response.ok) { upstream = response; break; }
+          failures.push(new URL(url).hostname + " returned " + response.status);
+        } catch (error) {
+          failures.push(new URL(url).hostname + " failed: " + error.message);
+        }
+      }
+      if (!upstream) {
+        res.writeHead(502).end("Stockfish mirrors unavailable: " + failures.join("; "));
         return;
       }
       const data = Buffer.from(await upstream.arrayBuffer());
