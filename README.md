@@ -22,6 +22,7 @@ MAT-STUDIO is the public source hub for MATUDI's independent digital products an
 - [PR #12 — MATSONG](https://github.com/Mtudi/MAT-STUDIO/pull/12): migration-safe local library, Spotify PKCE refresh, Premium Web Playback and embed fallback.
 - [PR #13 — Christmas + Portfolio](https://github.com/Mtudi/MAT-STUDIO/pull/13): local card drafts, PNG export, Arabic-safe sharing and portfolio redesign.
 - [PR #14 — Motion Atelier](https://github.com/Mtudi/MAT-STUDIO/pull/14): portable custom-clip JSON packs, validated import and accessibility improvements.
+- [PR #15 — Xi public landing](https://github.com/Mtudi/MAT-STUDIO/pull/15): crimson product overview, owner-access clarity and responsive browser QA.
 
 ## Experiments and local tools
 
