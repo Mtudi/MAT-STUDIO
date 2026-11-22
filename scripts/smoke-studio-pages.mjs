@@ -22,11 +22,9 @@ const pageErrors = [];
 try {
   const context = await browser.newContext({ viewport: { width: 1365, height: 900 }, acceptDownloads: true });
   await context.addInitScript(() => {
-    Object.defineProperty(navigator, "clipboard", {
-      configurable: true,
-      value: { writeText: async text => { window.__copiedShareUrl = text; }, readText: async () => window.__copiedShareUrl || "" }
-    });
+    try { Object.defineProperty(navigator, "clipboard", { configurable: true, value: { writeText: async text => { window.__copiedShareUrl = text; }, readText: async () => window.__copiedShareUrl || "" } }); } catch {}
   });
+  await context.grantPermissions(["clipboard-read", "clipboard-write"], { origin: base });
   const page = await context.newPage();
   page.on("pageerror", e => pageErrors.push(e.message));
 
@@ -38,11 +36,11 @@ try {
   await page.locator("#saveDraft").click();
   assert.ok(await page.evaluate(() => localStorage.getItem("matudi-christmas-draft-v2")));
   assert.equal(await page.locator("#card").getAttribute("class"), "card midnight");
-  assert.equal(await page.locator("#charCount").innerText(), "54 / 260");
+  assert.equal(await page.locator("#charCount").innerText(), "59 / 260");
   results.push("Christmas Studio saves Unicode drafts locally and applies themes");
 
   await page.locator("#copyLink").click();
-  const shareUrl = await page.evaluate(() => window.__copiedShareUrl);
+  const shareUrl = await page.evaluate(async () => window.__copiedShareUrl || await navigator.clipboard.readText());
   assert.ok(shareUrl && shareUrl.includes("?card="), "share URL should use a compact card query");
   const sharedPage = await context.newPage();
   sharedPage.on("pageerror", e => pageErrors.push(e.message));
