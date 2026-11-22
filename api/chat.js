@@ -1,4 +1,42 @@
 const guestRate = new Map();
+const ownerAttempts = new Map();
+
+function secureSecretMatch(candidate, expected) {
+  if (typeof candidate !== "string" || typeof expected !== "string" || !expected || candidate.length > 256) return false;
+  const a = Buffer.from(candidate);
+  const b = Buffer.from(expected);
+  return a.length === b.length && crypto.timingSafeEqual(a, b);
+}
+
+function sameRequestOrigin(req) {
+  const origin = req.headers.origin;
+  const host = String(req.headers.host || "").split(",")[0].trim().toLowerCase();
+  if (!origin || !host) return false;
+  try {
+    const parsed = new URL(origin);
+    const localHttp = parsed.protocol === "http:" && (parsed.hostname === "localhost" || parsed.hostname === "127.0.0.1");
+    return parsed.host.toLowerCase() === host && (parsed.protocol === "https:" || localHttp);
+  } catch { return false; }
+}
+
+function ownerIsBlocked(ip) {
+  const entry = ownerAttempts.get(ip);
+  if (!entry) return false;
+  if (entry.blockedUntil > Date.now()) return true;
+  if (entry.blockedUntil) ownerAttempts.delete(ip);
+  return false;
+}
+
+function recordOwnerFailure(ip) {
+  const now = Date.now();
+  const entry = ownerAttempts.get(ip) || { count: 0, blockedUntil: 0 };
+  entry.count += 1;
+  if (entry.count >= 6) { entry.count = 0; entry.blockedUntil = now + 15 * 60 * 1000; }
+  ownerAttempts.set(ip, entry);
+  if (ownerAttempts.size > 5000) {
+    for (const [key, value] of ownerAttempts) if (value.blockedUntil <= now && value.count === 0) ownerAttempts.delete(key);
+  }
+}
 function allowGuest(key, limit, windowMs) {
   const now = Date.now();
   const entry = guestRate.get(key);
@@ -20,8 +58,8 @@ module.exports = async function handler(req, res) {
     return res.status(405).json({ error: "Method not allowed." });
   }
   const origin = req.headers.origin;
-  const allowedOrigin = process.env.MAT_STUDIO_ORIGIN || "https://mat-studio.vercel.app";
-  if (origin && origin !== allowedOrigin) return res.status(403).json({ error: "Origin not allowed." });
+  const allowedOrigin = (process.env.MAT_STUDIO_ORIGIN || "https://mat-studio.vercel.app").split(",")[0].trim();
+  if (!sameRequestOrigin(req)) return res.status(403).json({ error: "Origin not allowed." });
   if (req.headers["content-type"] && !String(req.headers["content-type"]).toLowerCase().includes("application/json")) {
     return res.status(415).json({ error: "Content-Type must be application/json." });
   }
@@ -32,7 +70,9 @@ module.exports = async function handler(req, res) {
     return res.status(503).json({ error: "Chat is not configured yet. Add OPENROUTER_API_KEY in Vercel." });
   }
   const body = req.body && typeof req.body === "object" ? req.body : {};
-  const ownerAuthorized = !!(accessPassword && typeof body.accessCode === "string" && body.accessCode === accessPassword);
+  const clientIp = String(req.headers["x-real-ip"] || String(req.headers["x-forwarded-for"] || "").split(",")[0] || "unknown").trim().slice(0, 80);
+  const suppliedCode = typeof body.accessCode === "string" ? body.accessCode : "";
+  const ownerAuthorized = !!(accessPassword && secureSecretMatch(suppliedCode, accessPassword));
   let guestUser = null;
   if (!ownerAuthorized && typeof body.guestToken === "string" && body.guestToken.length > 20 && body.guestToken.length < 5000) {
     const supabaseUrl = process.env.SUPABASE_URL;
@@ -56,13 +96,16 @@ module.exports = async function handler(req, res) {
     }
   }
   if (!ownerAuthorized && !guestUser) {
+    if (suppliedCode) {
+      if (ownerIsBlocked(clientIp)) return res.status(429).json({ error: "Too many incorrect access-code attempts. Try again in 15 minutes." });
+      recordOwnerFailure(clientIp);
+    }
     return res.status(401).json({ error: "Continue as Guest or use your workspace access code." });
   }
+  if (ownerAuthorized) ownerAttempts.delete(clientIp);
   if (guestUser) {
-    const forwarded = String(req.headers["x-forwarded-for"] || "");
-    const ip = String(req.headers["x-real-ip"] || forwarded.split(",")[0] || "unknown").trim().slice(0, 80);
     const userKey = "u:" + guestUser.id;
-    const ipKey = "ip:" + ip;
+    const ipKey = "ip:" + clientIp;
     if (!allowGuest(userKey, 10, 15 * 60 * 1000) || !allowGuest(ipKey, 40, 24 * 60 * 60 * 1000)) {
       return res.status(429).json({ error: "Guest usage limit reached. Please try again later." });
     }
