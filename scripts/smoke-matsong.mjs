@@ -268,6 +268,7 @@ if (window.onSpotifyWebPlaybackSDKReady) window.onSpotifyWebPlaybackSDKReady();
   await spotifyPage.locator('[data-view="favorites"]:visible').first().click();
   await spotifyPage.waitForFunction(() => document.querySelectorAll("#favoriteList .track").length === 1);
   assert.match(await spotifyPage.locator("#favoriteList").innerText(), /Test Track/);
+  await spotifyPage.locator('[data-view="search"]:visible').first().click();
   await spotifyPage.locator("#spotifyDisconnect").click();
   assert.match(await spotifyPage.locator("#spotifyStatus").innerText(), /Disconnected/);
   assert.equal(await spotifyPage.evaluate(() => sessionStorage.getItem("matsong_spotify_refresh")), null);
