@@ -1,35 +1,114 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#09090b"><title>MATUDI Portfolio — MAT-STUDIO</title><style>
-:root{color-scheme:dark;--bg:#09090b;--panel:#15151b;--line:#30303a;--text:#f5f5f7;--muted:#a1a1ad;--red:#fa2d48;--blue:#829cff}*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 80% 0,#34131e 0,transparent 38%),var(--bg);color:var(--text);font:15px Inter,system-ui,sans-serif;min-height:100vh}a{color:inherit;text-decoration:none}.wrap{width:min(1050px,calc(100% - 32px));margin:auto}header{height:70px;border-bottom:1px solid #ffffff18;display:flex;align-items:center;justify-content:space-between}.brand{font-weight:900;letter-spacing:.13em}.back{color:var(--muted);font-size:13px}.hero{padding:65px 0 35px}.eyebrow{color:#ff8392;text-transform:uppercase;letter-spacing:.18em;font-size:10px;font-weight:800}h1{font-size:clamp(36px,7vw,64px);letter-spacing:-.06em;line-height:1.02;margin:15px 0}.lead{color:var(--muted);line-height:1.8;max-width:670px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin:25px 0}.panel{background:linear-gradient(145deg,#1b1b22,#111115);border:1px solid var(--line);border-radius:17px;padding:20px}.panel h2,.panel h3{margin:0 0 10px}.panel p{color:var(--muted);line-height:1.65;font-size:13px}.pill{display:inline-block;color:#ff8b9a;border:1px solid #fa2d4844;border-radius:99px;padding:6px 10px;font-size:11px}.btn,button{border:0;border-radius:10px;padding:11px 15px;background:var(--red);color:white;font-weight:750;cursor:pointer}button.secondary,.btn.secondary{background:#292932;border:1px solid #41414b}input,textarea,select{width:100%;background:#0e0e12;border:1px solid #363640;border-radius:10px;color:white;padding:12px;font:inherit}textarea{min-height:120px;resize:vertical}.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}.muted{color:var(--muted)}footer{border-top:1px solid #ffffff18;margin-top:60px;padding:24px 0;color:#777783;font-size:12px}@media(max-width:550px){.hero{padding-top:45px}}
-
-/* MAT-STUDIO shared Apple-inspired layer */
-:root{color-scheme:light;--studio-bg:#f5f5f7;--studio-surface:rgba(255,255,255,.82);--studio-raised:#fff;--studio-line:rgba(60,60,67,.14);--studio-text:#1d1d1f;--studio-muted:#6e6e73;--studio-accent:#007aff;--studio-shadow:0 14px 42px rgba(0,0,0,.07)}
-html[data-studio-theme=dark]{color-scheme:dark;--studio-bg:#000;--studio-surface:rgba(28,28,30,.86);--studio-raised:#1c1c1e;--studio-line:rgba(255,255,255,.13);--studio-text:#f5f5f7;--studio-muted:#a1a1a6;--studio-accent:#0a84ff;--studio-shadow:0 14px 42px rgba(0,0,0,.25)}
-body{background:var(--studio-bg)!important;color:var(--studio-text)!important;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text",Inter,"Segoe UI",sans-serif!important;transition:background .4s ease,color .4s ease}
-header,.top{border-color:var(--studio-line)!important}
-.card,.panel,.spotify-panel,.tracks,.hero{background:var(--studio-surface)!important;border-color:var(--studio-line)!important;box-shadow:var(--studio-shadow)}
-p,.lead,.back,.muted,.subtle,.artist,.section p,.section li{color:var(--studio-muted)!important}
-input,textarea,select,.search,.spotify-form input{background:var(--studio-raised)!important;color:var(--studio-text)!important;border-color:var(--studio-line)!important}
-button,.btn{transition:transform .28s cubic-bezier(.2,.75,.25,1),background .28s,border-color .28s,box-shadow .28s}
-button:hover,.btn:hover{transform:translateY(-2px)}
-.studio-theme-toggle{width:38px;height:38px;border-radius:50%;border:1px solid var(--studio-line);background:var(--studio-surface);color:var(--studio-text);display:inline-grid;place-items:center;cursor:pointer;margin-left:12px;font-size:16px;vertical-align:middle}
-.studio-theme-toggle:hover{box-shadow:var(--studio-shadow)}
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#f5f5f7">
+<meta name="description" content="MATUDI — independent digital builder creating AI, music, chess, learning and creative software.">
+<meta property="og:title" content="MATUDI — Independent Digital Builder">
+<meta property="og:description" content="Selected products and experiments from MAT-STUDIO.">
+<title>MATUDI — Independent Digital Builder</title>
+<style>
+:root{color-scheme:light;--bg:#f5f5f7;--surface:#fff;--surface2:#fafafd;--text:#1d1d1f;--muted:#6e6e73;--line:#dedee5;--accent:#f23854;--accentSoft:#fff0f2;--blue:#4667df;--shadow:0 18px 54px rgba(25,25,35,.07);--radius:22px}
+html[data-theme=dark]{color-scheme:dark;--bg:#09090b;--surface:#17171c;--surface2:#111115;--text:#f5f5f7;--muted:#a1a1aa;--line:#303039;--accent:#ff536a;--accentSoft:#34151d;--blue:#8da2ff;--shadow:0 18px 54px rgba(0,0,0,.26)}
+*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:90px}body{margin:0;background:radial-gradient(ellipse at 82% -12%,color-mix(in srgb,var(--accent) 10%,transparent),transparent 38%),var(--bg);color:var(--text);font:15px/1.6 -apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text",Inter,system-ui,sans-serif;min-height:100vh;transition:background .3s,color .3s}a{color:inherit;text-decoration:none}button{font:inherit;cursor:pointer}.wrap{width:min(1160px,calc(100% - 44px));margin:auto}
+.topbar{height:76px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5;background:color-mix(in srgb,var(--bg) 82%,transparent);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
+.brand{display:flex;align-items:center;gap:10px;font-weight:900;letter-spacing:.12em;font-size:12px}.brand-mark{width:34px;height:34px;border-radius:12px;background:var(--text);color:var(--bg);display:grid;place-items:center;font-size:17px;letter-spacing:0}
+.nav{display:flex;align-items:center;gap:25px;color:var(--muted);font-size:12px;font-weight:700}.nav a:hover{color:var(--text)}.theme-toggle{width:38px;height:38px;border:1px solid var(--line);border-radius:50%;background:var(--surface);color:var(--text);display:grid;place-items:center;font-size:16px}
+.hero{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(260px,.7fr);gap:34px;align-items:center;padding:88px 0 78px}.eyebrow{font-size:10px;letter-spacing:.2em;text-transform:uppercase;font-weight:850;color:var(--accent)}.eyebrow .dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--accent);margin-right:8px;vertical-align:1px}
+h1{font-size:clamp(44px,7.2vw,82px);line-height:.99;letter-spacing:-.075em;margin:19px 0 20px;max-width:760px}h1 span{color:var(--accent)}.hero-copy>p{max-width:650px;color:var(--muted);font-size:clamp(16px,2vw,19px);line-height:1.8;margin:0}.hero-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:28px}.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 16px;border:1px solid var(--line);border-radius:12px;background:var(--surface);font-size:12px;font-weight:800;transition:transform .2s,box-shadow .2s,border-color .2s}.btn:hover{transform:translateY(-2px);box-shadow:var(--shadow)}.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}.btn.secondary{background:transparent}
+.hero-side{border:1px solid var(--line);border-radius:26px;padding:22px;background:linear-gradient(145deg,var(--surface),var(--surface2));box-shadow:var(--shadow);position:relative;overflow:hidden}.hero-side:after{content:"";position:absolute;width:190px;height:190px;border-radius:50%;background:var(--accentSoft);right:-75px;top:-95px;z-index:0}.side-top{position:relative;z-index:1;color:var(--muted);font-size:9px;font-weight:850;letter-spacing:.18em}.now-card{position:relative;z-index:1;margin:25px 0 22px}.now-icon{width:48px;height:48px;border-radius:15px;background:var(--accentSoft);color:var(--accent);display:grid;place-items:center;font-size:23px}.now-card h2{font-size:25px;letter-spacing:-.05em;margin:14px 0 5px}.now-card p{font-size:12px;color:var(--muted);line-height:1.7;margin:0}.side-bottom{display:flex;gap:12px;border-top:1px solid var(--line);padding-top:16px}.side-bottom div{flex:1}.side-bottom strong{display:block;font-size:18px;letter-spacing:-.04em}.side-bottom span{font-size:10px;color:var(--muted)}
+.section{padding:56px 0;border-top:1px solid var(--line)}.section-head{display:flex;justify-content:space-between;align-items:end;gap:25px;margin-bottom:25px}.section-head h2{font-size:clamp(28px,4vw,42px);letter-spacing:-.06em;margin:8px 0 7px}.section-head p{color:var(--muted);font-size:13px;margin:0;max-width:570px}
+.filters{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}.filter{border:1px solid var(--line);background:var(--surface);color:var(--muted);border-radius:99px;padding:8px 12px;font-size:10px;font-weight:800}.filter.active{background:var(--text);color:var(--bg);border-color:var(--text)}
+.project-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}.project-card{border:1px solid var(--line);border-radius:19px;background:var(--surface);overflow:hidden;display:flex;flex-direction:column;min-width:0;transition:transform .25s,box-shadow .25s,border-color .25s}.project-card[hidden]{display:none}.project-card:hover{transform:translateY(-4px);box-shadow:var(--shadow);border-color:color-mix(in srgb,var(--accent) 42%,var(--line))}.project-top{display:flex;justify-content:space-between;align-items:center;padding:15px 17px 0}.project-index{font-size:9px;color:var(--muted);font-weight:850;letter-spacing:.13em}.status{border-radius:99px;padding:5px 8px;font-size:9px;font-weight:850;color:var(--accent);background:var(--accentSoft)}.visual{height:150px;margin:14px 14px 0;border-radius:13px;background:linear-gradient(145deg,#1c1d29,#363448);position:relative;overflow:hidden;display:grid;place-items:center}.visual:before,.visual:after{content:"";position:absolute;border:1px solid #ffffff30;border-radius:50%;width:170px;height:170px;top:-95px;left:-50px}.visual:after{width:125px;height:125px;top:auto;left:auto;right:-40px;bottom:-70px}.visual .symbol{font-size:47px;color:#fff;position:relative;z-index:1;font-weight:300}.visual.ai{background:linear-gradient(135deg,#171c31,#533248)}.visual.music{background:linear-gradient(135deg,#19171c,#81283b)}.visual.chess{background:linear-gradient(135deg,#111c30,#344d6e)}.visual.learn{background:linear-gradient(135deg,#3b2c20,#8b6a3b)}.visual.motion{background:linear-gradient(135deg,#102d36,#286d78)}.visual.cardart{background:linear-gradient(135deg,#163b35,#9e343c)}
+.project-body{padding:17px;display:flex;flex-direction:column;flex:1}.project-category{font-size:9px;letter-spacing:.15em;font-weight:850;color:var(--muted)}.project-body h3{font-size:20px;letter-spacing:-.05em;margin:7px 0}.project-body p{font-size:12px;color:var(--muted);line-height:1.75;margin:0 0 14px}.tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:auto;padding-top:4px}.tag{font-size:9px;color:var(--muted);background:var(--surface2);border:1px solid var(--line);border-radius:7px;padding:4px 7px}.project-actions{display:flex;gap:14px;flex-wrap:wrap;border-top:1px solid var(--line);padding-top:13px;margin-top:15px}.project-actions a{font-size:10px;font-weight:850;color:var(--accent)}.project-actions a.source{color:var(--muted)}
+.about-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:14px}.about-card,.principle{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:23px}.about-card h3{font-size:22px;letter-spacing:-.05em;margin:0 0 10px}.about-card p{color:var(--muted);font-size:13px;line-height:1.85;margin:0}.principles{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.principle b{display:block;font-size:12px;margin-bottom:5px}.principle p{font-size:11px;color:var(--muted);line-height:1.7;margin:0}
+.contact{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:27px;border-radius:22px;background:linear-gradient(120deg,var(--surface),var(--accentSoft));border:1px solid var(--line)}.contact h2{font-size:clamp(25px,4vw,36px);letter-spacing:-.06em;margin:0 0 5px}.contact p{font-size:12px;color:var(--muted);margin:0}
+footer{padding:27px 0 35px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;color:var(--muted);font-size:10px}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+@media(max-width:900px){.project-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.hero{grid-template-columns:1fr minmax(250px,.75fr);gap:20px}}
+@media(max-width:680px){.wrap{width:calc(100% - 24px)}.topbar{height:64px}.nav{gap:12px;font-size:10px}.nav a:nth-child(2){display:none}.hero{grid-template-columns:1fr;padding:60px 0 50px}.hero-side{max-width:none}.section{padding:40px 0}.section-head{align-items:flex-start;flex-direction:column}.filters{justify-content:flex-start}.project-grid{grid-template-columns:1fr}.visual{height:135px}.about-grid{grid-template-columns:1fr}.contact{align-items:flex-start;flex-direction:column}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition-duration:.01ms!important;animation-duration:.01ms!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="topbar">
+<a class="brand" href="../../"><span class="brand-mark">M</span><span>MATUDI / STUDIO</span></a>
+<nav class="nav" aria-label="Primary navigation"><a href="#work">Work</a><a href="#about">About</a><a href="#contact">Contact</a><button class="theme-toggle" id="themeToggle" type="button" aria-label="Switch to dark appearance" title="Toggle appearance">☾</button></nav>
+</header>
+<main>
+<section class="hero">
+<div class="hero-copy">
+<div class="eyebrow"><span class="dot"></span>Independent digital builder</div>
+<h1>Ideas become<br><span>useful tools.</span></h1>
+<p>I explore the space between thoughtful design and practical software — building independent products across AI, music, chess, learning, and creative tools.</p>
+<div class="hero-actions"><a class="btn primary" href="#work">Explore selected work ↓</a><a class="btn secondary" href="https://github.com/Mtudi" target="_blank" rel="noopener noreferrer">GitHub profile ↗</a></div>
+</div>
+<aside class="hero-side" aria-label="Studio overview">
+<div class="side-top">NOW BUILDING · 2026</div>
+<div class="now-card"><div class="now-icon">✦</div><h2>MAT-STUDIO</h2><p>A personal product lab for ideas that deserve to become real, useful experiences — built, tested and refined in public.</p></div>
+<div class="side-bottom"><div><strong>06</strong><span>Selected projects</span></div><div><strong>01</strong><span>Independent studio</span></div></div>
+</aside>
+</section>
 
-/* MAT-STUDIO 2.0 shared visual system */
-:root{--studio-accent:#5856d6;--studio-bg:#f5f5f7;--studio-surface:rgba(255,255,255,.84);--studio-raised:#fff;--studio-line:rgba(60,60,67,.14);--studio-text:#1d1d1f;--studio-muted:#6e6e73;--studio-shadow:0 16px 48px rgba(0,0,0,.07);--studio-radius:22px}
-html[data-studio-theme="light"]{color-scheme:light}
-html[data-studio-theme="dark"]{color-scheme:dark;--studio-bg:#000;--studio-surface:rgba(28,28,30,.88);--studio-raised:#1c1c1e;--studio-line:rgba(255,255,255,.13);--studio-text:#f5f5f7;--studio-muted:#a1a1a6;--studio-shadow:0 16px 48px rgba(0,0,0,.28)}
-body{background:var(--studio-bg)!important;color:var(--studio-text)!important;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text",Inter,system-ui,sans-serif!important;transition:background .38s ease,color .38s ease}
-header,.top,.topbar,.sidebar,.side,.content,.main,.footer{border-color:var(--studio-line)!important}
-.card,.panel,.tracks,.track,.playlist,.song-row,.chat-card,.messages,.composer-wrap,.chat-head,.empty-state,.code-panel{background:var(--studio-surface)!important;border-color:var(--studio-line)!important;box-shadow:var(--studio-shadow)}
-p,.lead,.back,.muted,.subtle,.artist,.top-sub,.side-label,.composer-note,.footer,.section p,.section li{color:var(--studio-muted)!important}
-input,textarea,select,.search,.ghost{background:var(--studio-raised)!important;color:var(--studio-text)!important;border-color:var(--studio-line)!important}
-button,.btn,.navbtn,.ghost{transition:transform .28s cubic-bezier(.2,.75,.25,1),background .28s,border-color .28s,box-shadow .28s}
-button:hover,.btn:hover,.navbtn:hover{transform:translateY(-2px)}
-a{transition:color .22s ease}
-.studio-theme-toggle{width:38px;height:38px;border-radius:50%;border:1px solid var(--studio-line);background:var(--studio-surface);color:var(--studio-text);display:inline-grid;place-items:center;cursor:pointer;margin-left:10px;font-size:16px;vertical-align:middle}
-.studio-theme-toggle:hover{box-shadow:var(--studio-shadow)}
-@media(max-width:700px){.studio-theme-toggle{width:36px;height:36px;margin-left:6px}}
-@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition-duration:.01ms!important;animation-duration:.01ms!important}}
+<section class="section" id="work">
+<div class="section-head"><div><div class="eyebrow">SELECTED WORK</div><h2>Products in progress.</h2><p>A small collection of independent builds. Each card links to the current preview and its source; project status is kept honest.</p></div>
+<div class="filters" role="group" aria-label="Filter projects"><button class="filter active" type="button" data-filter="all" aria-pressed="true">All</button><button class="filter" type="button" data-filter="ai" aria-pressed="false">AI</button><button class="filter" type="button" data-filter="music" aria-pressed="false">Music</button><button class="filter" type="button" data-filter="games" aria-pressed="false">Games</button><button class="filter" type="button" data-filter="learning" aria-pressed="false">Learning</button><button class="filter" type="button" data-filter="creative" aria-pressed="false">Creative</button></div>
+</div>
+<div class="project-grid" id="projectGrid">
+<article class="project-card" data-category="ai">
+<div class="project-top"><span class="project-index">01 / AI</span><span class="status">In development</span></div><div class="visual ai"><span class="symbol">Xi</span></div>
+<div class="project-body"><div class="project-category">PERSONAL AI</div><h3>Xi — Personal AI</h3><p>A private assistant experience with an owner-authenticated app and a server-side AI engine bridge. Built as an independent project.</p><div class="tags"><span class="tag">AI workflows</span><span class="tag">Security</span><span class="tag">Web app</span></div><div class="project-actions"><a href="https://sharable.link/9m2vmt6e" target="_blank" rel="noopener noreferrer">Project overview ↗</a><a class="source" href="https://github.com/Mtudi/MAT-STUDIO/pull/11" target="_blank" rel="noopener noreferrer">Source ↗</a></div></div>
+</article>
+<article class="project-card" data-category="music">
+<div class="project-top"><span class="project-index">02 / MUSIC</span><span class="status">Testing</span></div><div class="visual music"><span class="symbol">♫</span></div>
+<div class="project-body"><div class="project-category">LOCAL-FIRST MUSIC</div><h3>MATSONG — Crimson Edition</h3><p>A browser music player with a local IndexedDB library, playlists and favorites. Spotify catalog and Premium playback are under test; this shareable preview keeps OAuth disabled, so local audio and official embeds work here.</p><div class="tags"><span class="tag">IndexedDB</span><span class="tag">Spotify</span><span class="tag">Audio</span></div><div class="project-actions"><a href="https://sharable.link/89k1u749" target="_blank" rel="noopener noreferrer">Open preview ↗</a><a class="source" href="https://github.com/Mtudi/MAT-STUDIO/pull/12" target="_blank" rel="noopener noreferrer">Source ↗</a></div></div>
+</article>
+<article class="project-card" data-category="games">
+<div class="project-top"><span class="project-index">03 / GAMES</span><span class="status">In development</span></div><div class="visual chess"><span class="symbol">♞</span></div>
+<div class="project-body"><div class="project-category">CHESS STUDY</div><h3>MATUDI Chess Lab</h3><p>A focused chess workspace for legal play, opening study and game review. Engine analysis and PGN workflows are being expanded.</p><div class="tags"><span class="tag">Chess.js</span><span class="tag">Stockfish</span><span class="tag">PGN</span></div><div class="project-actions"><a href="https://mat-studio.vercel.app/projects/chess-lab/index.html" target="_blank" rel="noopener noreferrer">Open app ↗</a><a class="source" href="https://github.com/Mtudi/MAT-STUDIO/pull/10" target="_blank" rel="noopener noreferrer">Source ↗</a></div></div>
+</article>
+<article class="project-card" data-category="learning">
+<div class="project-top"><span class="project-index">04 / LEARNING</span><span class="status">Interactive preview</span></div><div class="visual learn"><span class="symbol">A1</span></div>
+<div class="project-body"><div class="project-category">GERMAN · A1</div><h3>MATUDI DEUTSCH</h3><p>An Arabic-supported German starter path with eight units, vocabulary practice, listening and reading checks, writing and speaking models.</p><div class="tags"><span class="tag">A1</span><span class="tag">Arabic support</span><span class="tag">Spaced review</span></div><div class="project-actions"><a href="https://sharable.link/t5cevsdg" target="_blank" rel="noopener noreferrer">Open course ↗</a><a class="source" href="https://github.com/Mtudi/MAT-STUDIO/tree/main/projects/deutsch" target="_blank" rel="noopener noreferrer">Source ↗</a></div></div>
+</article>
+<article class="project-card" data-category="creative">
+<div class="project-top"><span class="project-index">05 / CREATIVE</span><span class="status">Interactive</span></div><div class="visual motion"><span class="symbol">◈</span></div>
+<div class="project-body"><div class="project-category">3D · MOTION</div><h3>Motion Atelier</h3><p>A browser-based 3D motion workspace exploring scenes, clips and keyframe animation with a local creative-tool bridge.</p><div class="tags"><span class="tag">Three.js</span><span class="tag">Keyframes</span><span class="tag">3D</span></div><div class="project-actions"><a href="https://sharable.link/d3i3ewiy" target="_blank" rel="noopener noreferrer">Open studio ↗</a><a class="source" href="https://github.com/Mtudi/MAT-STUDIO/pull/14" target="_blank" rel="noopener noreferrer">Source ↗</a></div></div>
+</article>
+<article class="project-card" data-category="creative">
+<div class="project-top"><span class="project-index">06 / CREATIVE</span><span class="status">Interactive preview</span></div><div class="visual cardart"><span class="symbol">✦</span></div>
+<div class="project-body"><div class="project-category">GREETING CARDS</div><h3>MATUDI Christmas Studio</h3><p>A personal greeting-card maker with three visual themes, shareable links, local drafts and PNG export.</p><div class="tags"><span class="tag">Canvas export</span><span class="tag">Share links</span><span class="tag">Local drafts</span></div><div class="project-actions"><a href="https://sharable.link/k2dhaohv" target="_blank" rel="noopener noreferrer">Open studio ↗</a><a class="source" href="https://github.com/Mtudi/MAT-STUDIO/pull/13" target="_blank" rel="noopener noreferrer">Source ↗</a></div></div>
+</article>
+</div>
+</section>
 
-</style></head><body><div class="wrap"><header><a class="brand" href="../../">MAT-STUDIO</a><a class="back" href="../../">← All projects</a></header><main><section class="hero"><div class="eyebrow">PERSONAL PORTFOLIO</div><h1>Curious mind.<br><span style="color:#ff7181">Builder's mindset.</span></h1><p class="lead">I’m building practical digital experiences while learning, experimenting, and improving. This portfolio is a living index of selected projects and skills.</p><div class="row"><a class="btn" href="https://github.com/Mtudi" target="_blank" rel="noreferrer">GitHub profile ↗</a><a class="btn secondary" href="../../">MAT-STUDIO ↗</a></div></section><div class="grid"><section class="panel"><h2>Focus</h2><p>Web development · AI tools · Product thinking · UI/UX</p></section><section class="panel"><h2>Selected work</h2><p><a href="../xi/">Xi Personal AI ↗</a></p><p><a href="../matsong/">MATSONG Music Player ↗</a></p><p><a href="../chess-lab/">MATUDI Chess Lab ↗</a></p></section><section class="panel"><h2>Approach</h2><p>Build small, test honestly, keep projects independent, and improve through iteration.</p></section></div></main><footer>Independent project · MAT-STUDIO · 2026</footer></div><script>(()=>{const root=document.documentElement,key='mat-studio-theme';let saved=null;try{saved=localStorage.getItem(key)}catch{}const dark=window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches;const set=t=>{root.dataset.studioTheme=t;const b=document.getElementById('studioThemeToggle');if(b){b.textContent=t==='dark'?'☀':'☾';b.setAttribute('aria-label',t==='dark'?'Switch to light appearance':'Switch to dark appearance')}try{localStorage.setItem(key,t)}catch{}};const header=document.querySelector('header,.top');if(header){const b=document.createElement('button');b.id='studioThemeToggle';b.className='studio-theme-toggle';b.type='button';b.title='Toggle appearance';b.addEventListener('click',()=>set(root.dataset.studioTheme==='dark'?'light':'dark'));const target=header.querySelector('.topright')||header;target.appendChild(b)}set(saved||(dark?'dark':'light'))})();</script></body></html>
+<section class="section" id="about">
+<div class="section-head"><div><div class="eyebrow">ABOUT THE STUDIO</div><h2>Build. Test. Refine.</h2><p>Not just concepts — working software, with clear boundaries between what is live, what is being tested and what is still an idea.</p></div></div>
+<div class="about-grid">
+<article class="about-card"><h3>Curiosity with a practical edge.</h3><p>MATUDI is an independent maker identity exploring how software can make everyday work more useful, expressive and personal. The projects span AI assistants, music tools, chess study, language learning and creative experiences. The work is shared as it develops, with real limitations stated rather than hidden.</p></article>
+<div class="principles">
+<article class="principle"><b>01 · Useful first</b><p>Start with a real task and build around it.</p></article>
+<article class="principle"><b>02 · Honest status</b><p>A preview is a preview; a deployment is not proof of quality.</p></article>
+<article class="principle"><b>03 · Privacy by default</b><p>Keep local data local and protect server credentials.</p></article>
+<article class="principle"><b>04 · Iterate with evidence</b><p>Test flows, fix errors and refine the experience.</p></article>
+</div>
+</div>
+</section>
+
+<section class="section" id="contact">
+<div class="contact"><div><div class="eyebrow">FOLLOW THE WORK</div><h2>Let's build something useful.</h2><p>Explore the code, follow new releases or connect through GitHub.</p></div><a class="btn primary" href="https://github.com/Mtudi" target="_blank" rel="noopener noreferrer">Connect on GitHub ↗</a></div>
+</section>
+</main>
+<footer><span>MATUDI · INDEPENDENT DIGITAL BUILDER</span><span>Part of MAT-STUDIO · 2026</span><a href="../../">Back to studio ↗</a></footer>
+</div>
+<script>
+const root=document.documentElement,themeKey='matudi-portfolio-theme';
+function setTheme(theme){root.dataset.theme=theme;const button=document.getElementById('themeToggle');button.textContent=theme==='dark'?'☀':'☾';button.setAttribute('aria-label',theme==='dark'?'Switch to light appearance':'Switch to dark appearance');try{localStorage.setItem(themeKey,theme)}catch{}}
+let initial='light';try{initial=localStorage.getItem(themeKey)||'light'}catch{}setTheme(initial);
+document.getElementById('themeToggle').addEventListener('click',()=>setTheme(root.dataset.theme==='dark'?'light':'dark'));
+const filters=[...document.querySelectorAll('[data-filter]')],cards=[...document.querySelectorAll('.project-card')];
+filters.forEach(button=>button.addEventListener('click',()=>{const filter=button.dataset.filter;filters.forEach(item=>{const active=item===button;item.classList.toggle('active',active);item.setAttribute('aria-pressed',String(active))});cards.forEach(card=>{card.hidden=filter!=='all'&&card.dataset.category!==filter})}));
+</script>
+</body></html>
