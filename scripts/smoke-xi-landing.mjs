@@ -23,6 +23,7 @@ try {
   assert.equal(await page.locator("h1").count(), 1);
   assert.match(await page.locator("h1").innerText(), /Your AI/);
   assert.match(await page.locator(".status").innerText(), /PRIVATE BUILD/);
+  assert.match(await page.locator(".live").innerText(), /ILLUSTRATIVE PREVIEW/);
   assert.equal(await page.locator('nav[aria-label="Primary navigation"]').count(), 1);
   assert.equal(await page.locator('a[href="../../"]').first().getAttribute("href"), "../../");
   assert.ok(await page.locator('a[href="../../showcase/index.html"]').count() >= 1);
