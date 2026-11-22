@@ -1,0 +1,30 @@
+name: Studio pages browser smoke
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "projects/christmas/**"
+      - "projects/portfolio/**"
+      - "scripts/smoke-studio-pages.mjs"
+      - ".github/workflows/studio-pages-smoke.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  browser-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install Playwright
+        run: |
+          npm init -y
+          npm install --no-save playwright
+          npx playwright install --with-deps chromium
+      - name: Run studio page tests
+        run: node scripts/smoke-studio-pages.mjs
