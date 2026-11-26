@@ -134,6 +134,12 @@ body.experience-mode main#top{height:100svh;overflow:hidden}
  #car-scene,.car-scene-image img,.car-card img,#horizontal-progress span{transition:none!important;animation:none!important}
 }
 
+
+/* Opening reveal and modal/menu layer discipline */
+.experience-track>.hero{animation:openingScene .95s cubic-bezier(.22,.72,.18,1) both}
+@keyframes openingScene{from{opacity:0;transform:translateX(7vw)}to{opacity:1;transform:translateX(0)}}
+body.lock #horizontal-ui,body.lock #horizontal-progress{opacity:0;pointer-events:none}
+@media(prefers-reduced-motion:reduce){.experience-track>.hero{animation:none}}
 </style>
 </head>
 <body>
