@@ -13,10 +13,6 @@ try {
   assert.equal(await page.locator('.hero h1').count(), 1, 'hero heading should exist');
   assert.equal(await page.locator('.brand-mark svg path').count(), 2, 'original Atelier brand seals should render in header and footer');
   assert.equal(await page.locator('.nav-note').textContent(), 'Molsheim · Atelier 01', 'brand descriptor should be present');
-  await page.mouse.move(1320, 480);
-  await page.waitForFunction(() => document.querySelector('.hero-media img').style.getPropertyValue('--hero-x') !== '');
-  const parallaxX = await page.locator('.hero-media img').evaluate(element => element.style.getPropertyValue('--hero-x'));
-  assert.notEqual(parallaxX, '0px', 'desktop pointer should produce subtle hero parallax');
   const images = page.locator('img');
   const imageCount = await images.count();
   assert.equal(await page.locator('img[alt]').count(), imageCount, 'all images should have alt text');
@@ -32,6 +28,11 @@ try {
   }
   assert.deepEqual(brokenImages, [], `images failed to decode: ${brokenImages.join(', ')}`);
   await page.evaluate(() => scrollTo(0, 0));
+  await page.locator('#intro').waitFor({ state: 'detached', timeout: 5000 });
+  await page.mouse.move(1320, 480);
+  await page.waitForFunction(() => document.querySelector('.hero-media img').style.getPropertyValue('--hero-x') !== '', { timeout: 5000 });
+  const parallaxX = await page.locator('.hero-media img').evaluate(element => element.style.getPropertyValue('--hero-x'));
+  assert.notEqual(parallaxX, '0px', 'desktop pointer should produce subtle hero parallax');
 
   const menuButton = page.locator('#menuBtn');
   await menuButton.click();
@@ -63,6 +64,7 @@ try {
 
   const reducedPage = await browser.newPage({ viewport: { width: 390, height: 844 }, reducedMotion: 'reduce' });
   await reducedPage.goto(baseURL, { waitUntil: 'domcontentloaded' });
+  await reducedPage.locator('#intro').waitFor({ state: 'detached', timeout: 5000 });
   await reducedPage.mouse.move(220, 240);
   await reducedPage.waitForTimeout(50);
   const reduced = await reducedPage.evaluate(() => ({
