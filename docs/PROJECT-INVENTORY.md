@@ -24,7 +24,7 @@ The other linked GitHub identity returned no repositories.
 | MATUDI Christmas | `projects/christmas/index.html` | Greeting-card editor, themes, live preview, share URL, copy/share and print. | `/projects/christmas/index.html` |
 | MATUDI Portfolio | `projects/portfolio/index.html` | Personal portfolio with introduction, focus, selected work and approach. | `/projects/portfolio/index.html` |
 | Motion Atelier 3D Studio | `Motion Atelier 3D Studio.html` | Browser 3D studio with character, animation, pose, face and physics/view controls. | `/Motion%20Atelier%203D%20Studio.html` |
-| BUGATTI — Pour l'Éternité | `projects/bugatti-atelier/index.html` | Independent Tourbillon concept with cinematic storytelling, published engineering facts, responsive navigation and visual paint/material selectors. Playwright CI is being validated; device and image-host checks remain pending. | [Public concept preview](https://sharable.link/vax7b4wr) |
+| BUGATTI — Pour l'Éternité | `projects/bugatti-atelier/index.html` | Independent Tourbillon concept with cinematic storytelling, published engineering facts, responsive navigation and visual paint/material selectors. Playwright CI smoke passed on 2026-11-26; physical-device and image-host checks remain pending. | [Public concept preview](https://sharable.link/vax7b4wr) |
 
 ## Experiments and local tools
 
