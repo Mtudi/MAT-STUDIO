@@ -68,6 +68,8 @@ try {
   await page.locator('.material[data-material="Deep blue leather"]').click();
   assert.equal(await page.locator('#previewMaterial').textContent(), 'Deep blue leather', 'material selection should update');
 
+  await page.locator('#experienceTrack').evaluate(track => track.scrollTo({ left: innerWidth * 3, behavior: 'instant' }));
+  await page.waitForFunction(() => document.querySelector('#scene-count').textContent === '04 / 09');
   await page.setViewportSize({ width: 390, height: 844 });
   await page.waitForTimeout(150);
   const widths = await page.evaluate(() => ({ viewport: innerWidth, document: document.documentElement.scrollWidth, track: document.querySelector('#experienceTrack').scrollWidth, trackClient: document.querySelector('#experienceTrack').clientWidth }));
