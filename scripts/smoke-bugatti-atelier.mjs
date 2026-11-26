@@ -11,6 +11,12 @@ try {
   await page.goto(baseURL, { waitUntil: 'domcontentloaded' });
   assert.match(await page.title(), /BUGATTI/i, 'page title should identify the experience');
   assert.equal(await page.locator('.hero h1').count(), 1, 'hero heading should exist');
+  assert.equal(await page.locator('.brand-mark svg path').count(), 1, 'original Atelier brand seal should render');
+  assert.equal(await page.locator('.nav-note').textContent(), 'Molsheim · Atelier 01', 'brand descriptor should be present');
+  await page.mouse.move(1320, 480);
+  await page.waitForFunction(() => document.querySelector('.hero-media img').style.getPropertyValue('--hero-x') !== '');
+  const parallaxX = await page.locator('.hero-media img').evaluate(element => element.style.getPropertyValue('--hero-x'));
+  assert.notEqual(parallaxX, '0px', 'desktop pointer should produce subtle hero parallax');
   const images = page.locator('img');
   const imageCount = await images.count();
   assert.equal(await page.locator('img[alt]').count(), imageCount, 'all images should have alt text');
@@ -54,7 +60,19 @@ try {
   assert.equal(await menuButton.getAttribute('aria-expanded'), 'false', 'mobile menu should close with Escape');
 
   assert.deepEqual(pageErrors, [], `uncaught page errors: ${pageErrors.join('; ')}`);
-  console.log('PASS: title, image alt text and decoding, menu navigation, Escape dismissal, configurator controls, mobile overflow, and page errors');
+
+  const reducedPage = await browser.newPage({ viewport: { width: 390, height: 844 }, reducedMotion: 'reduce' });
+  await reducedPage.goto(baseURL, { waitUntil: 'domcontentloaded' });
+  const reduced = await reducedPage.evaluate(() => ({
+    preference: matchMedia('(prefers-reduced-motion: reduce)').matches,
+    heroMotion: document.querySelector('.hero-media img').style.getPropertyValue('--hero-x'),
+    titleDuration: getComputedStyle(document.querySelector('.hero-content h1')).animationDuration
+  }));
+  assert.equal(reduced.preference, true, 'reduced-motion preference should be honored');
+  assert.equal(reduced.heroMotion, '', 'pointer parallax should be disabled for reduced motion');
+  assert.ok(parseFloat(reduced.titleDuration) <= 0.00001, 'intro animation should be effectively disabled for reduced motion');
+  await reducedPage.close();
+  console.log('PASS: title, original brand seal, image alt text and decoding, desktop parallax, menu navigation, Escape dismissal, configurator controls, mobile overflow, reduced motion, and page errors');
 } finally {
   await browser.close();
 }
