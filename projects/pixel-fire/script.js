@@ -3,6 +3,7 @@ const ctx = canvas.getContext("2d");
 
 const WIDTH = 80;
 const HEIGHT = 60;
+const SCALE = 8;
 
 canvas.width = WIDTH;
 canvas.height = HEIGHT;
@@ -51,28 +52,22 @@ const palette = [
 let fireStrength = palette.length - 1;
 let animationTime = 0;
 
-// Keep the original pixel-fire source, while gently breathing its intensity.
+// Create the original fire source (bottom row).
 function createFireSource() {
-  const breathing = 0.5 + 0.5 * Math.sin(animationTime * 0.018);
-  fireStrength = Math.round(27 + breathing * 8);
-
   for (let x = 0; x < WIDTH; x++) {
-    const flicker = Math.random() < 0.12 ? 1 : 0;
-    firePixels[(HEIGHT - 1) * WIDTH + x] = Math.min(
-      palette.length - 1,
-      fireStrength + flicker
-    );
+    firePixels[(HEIGHT - 1) * WIDTH + x] = fireStrength;
   }
 }
 
-function updateFire() {
-  animationTime++;
-  createFireSource();
+createFireSource();
 
+function updateFire() {
   for (let y = 1; y < HEIGHT; y++) {
     for (let x = 0; x < WIDTH; x++) {
+
       const src = y * WIDTH + x;
       const decay = Math.floor(Math.random() * 3);
+
       let dst = src - WIDTH - decay;
 
       if (dst < 0) continue;
@@ -90,7 +85,9 @@ function renderFire() {
 
   for (let y = 0; y < HEIGHT; y++) {
     for (let x = 0; x < WIDTH; x++) {
+
       const color = palette[firePixels[y * WIDTH + x]];
+
       ctx.fillStyle = color;
       ctx.fillRect(x, y, 1, 1);
     }
@@ -98,10 +95,16 @@ function renderFire() {
 }
 
 function animate() {
+  animationTime += 1;
+
+  // Automatically breathe the original flame by changing only its source heat.
+  const breathing = 0.5 + 0.5 * Math.sin(animationTime * 0.012);
+  fireStrength = Math.round(18 + breathing * 17);
+
+  createFireSource();
   updateFire();
   renderFire();
   requestAnimationFrame(animate);
 }
 
-createFireSource();
 animate();
