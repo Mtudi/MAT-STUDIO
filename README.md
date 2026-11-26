@@ -12,16 +12,17 @@ MAT-STUDIO is the public source hub for Matudi's independent digital products an
 - [MATSONG interactive preview](https://sharable.link/89k1u749) — local music library and Spotify embeds.
 - [MATUDI DEUTSCH A1 preview](https://sharable.link/t5cevsdg) — German A1 starter learning.
 - [MATUDI Christmas](https://mat-studio.vercel.app/projects/christmas/index.html) — interactive greeting-card creator.
-- [MATUDI Portfolio](https://mat-studio.vercel.app/projects/portfolio/index.html) — personal portfolio.\n- [Pixel Fire — Fire Lab](https://mat-studio.vercel.app/projects/pixel-fire/web/index.html) — interactive pixel-fire simulation with automatic flame motion and live controls.
+- [MATUDI Portfolio](https://mat-studio.vercel.app/projects/portfolio/index.html) — personal portfolio.
+- [Pixel Fire — Fire Lab](https://mat-studio.vercel.app/projects/pixel-fire/web/index.html) — interactive pixel-fire simulation with automatic flame motion and live controls.
 - [Motion Atelier 3D Studio](https://mat-studio.vercel.app/Motion%20Atelier%203D%20Studio.html) — browser-based 3D character and animation studio.
 - [Motion Atelier Open-Source Toolchain](https://mat-studio.vercel.app/motion-toolchain.html) — ten specialist tools, verified interchange paths and integration roadmap. [Live preview](https://sharable.link/jf22dpsr).
 
 ## Experiments and local tools
 
-- `experiments/xi-chatgpt-edition/` — archived multi-provider Xi and OpenAI/ChatGPT editions; they require the viewer's own provider key where applicable.
-- `projects/matsong-next/` — separate development branch experiment for music discovery and Spotify Web Playback.
-- `bridge/` — local MCP server for the Motion Atelier editor; runs on the user's computer and requires explicit pairing approval.
-- `projects/ai-workspace/legacy-workspace-backup.html` — archived workspace backup, not the current app.
+- experiments/xi-chatgpt-edition/ — archived multi-provider Xi and OpenAI/ChatGPT editions; they require the viewer's own provider key where applicable.
+- projects/matsong-next/ — separate development branch experiment for music discovery and Spotify Web Playback.
+- bridge/ — local MCP server for the Motion Atelier editor; runs on the user's computer and requires explicit pairing approval.
+- projects/ai-workspace/legacy-workspace-backup.html — archived workspace backup, not the current app.
 
 ## Internal systems
 
@@ -33,6 +34,7 @@ MAT-STUDIO is the public source hub for Matudi's independent digital products an
 - [Standard](docs/MATUDI-PES/STANDARD.md) — mandatory baseline for all projects.
 - [Project starter](docs/MATUDI-PES/PROJECT-STARTER.md) — pre-flight, implementation, and delivery checklist.
 - [Project brief template](docs/MATUDI-PES/PROJECT-BRIEF-TEMPLATE.md) — define each project's vision and acceptance criteria.
+- [Quality gates](docs/MATUDI-PES/QUALITY-GATES.md) — operational five-layer QA process.
 - [Changelog](docs/MATUDI-PES/CHANGELOG.md) — versioned record of improvements.
 
 ## Project quality
