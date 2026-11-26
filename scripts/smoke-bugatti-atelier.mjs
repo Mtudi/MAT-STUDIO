@@ -27,12 +27,28 @@ try {
     }
   }
   assert.deepEqual(brokenImages, [], `images failed to decode: ${brokenImages.join(', ')}`);
-  await page.evaluate(() => scrollTo(0, 0));
+  await page.locator('#experienceTrack').evaluate(track => track.scrollTo({ left: 0, behavior: 'instant' }));
+  await page.waitForTimeout(80);
   await page.locator('#intro').waitFor({ state: 'detached', timeout: 5000 });
   await page.mouse.move(1320, 480);
   await page.waitForFunction(() => document.querySelector('.hero-media img').style.getPropertyValue('--hero-x') !== '', { timeout: 5000 });
   const parallaxX = await page.locator('.hero-media img').evaluate(element => element.style.getPropertyValue('--hero-x'));
   assert.notEqual(parallaxX, '0px', 'desktop pointer should produce subtle hero parallax');
+
+  const track = page.locator('#experienceTrack');
+  assert.equal(await track.count(), 1, 'horizontal experience track should exist');
+  assert.equal(await page.locator('.scene-panel').count(), 9, 'all eight chapters plus footer should become horizontal scenes');
+  assert.equal(await page.locator('#scene-count').textContent(), '01 / 09');
+  await page.locator('#sceneNext').click();
+  await page.waitForFunction(() => document.querySelector('#scene-count').textContent === '02 / 09');
+  await page.locator('.car-card[data-car="chiron"]').click();
+  assert.equal(await page.locator('#car-scene').getAttribute('aria-hidden'), 'false', 'car spotlight should open accessibly');
+  assert.equal(await page.locator('#carSceneTitle').textContent(), 'Chiron', 'selected car should receive its own scene');
+  await page.locator('#carSceneClose').click();
+  assert.equal(await page.locator('#car-scene').getAttribute('aria-hidden'), 'true', 'car spotlight should close');
+  await page.locator('#soundToggle').click();
+  assert.equal(await page.locator('#soundToggle').getAttribute('aria-pressed'), 'true', 'sound must be opt-in');
+  await page.locator('#soundToggle').click();
 
   const menuButton = page.locator('#menuBtn');
   await menuButton.click();
@@ -43,6 +59,7 @@ try {
 
   await menuButton.click();
   await page.locator('#menuOverlay a[href="#engineering"]').click();
+  await page.waitForFunction(() => document.querySelector('#scene-count').textContent === '04 / 09');
   assert.equal(await menuButton.getAttribute('aria-expanded'), 'false', 'navigation should close menu');
 
   await page.locator('.swatch[data-color="Glacier Silver"]').click();
@@ -53,8 +70,11 @@ try {
 
   await page.setViewportSize({ width: 390, height: 844 });
   await page.waitForTimeout(150);
-  const widths = await page.evaluate(() => ({ viewport: innerWidth, document: document.documentElement.scrollWidth }));
-  assert.ok(widths.document <= widths.viewport + 1, `mobile layout overflows horizontally: ${JSON.stringify(widths)}`);
+  const widths = await page.evaluate(() => ({ viewport: innerWidth, document: document.documentElement.scrollWidth, track: document.querySelector('#experienceTrack').scrollWidth, trackClient: document.querySelector('#experienceTrack').clientWidth }));
+  assert.ok(widths.document <= widths.viewport + 1, `mobile document overflows horizontally: ${JSON.stringify(widths)}`);
+  assert.ok(widths.track > widths.trackClient, 'mobile should retain a horizontally navigable scene track');
+  await page.locator('#sceneNext').click();
+  await page.waitForFunction(() => document.querySelector('#scene-count').textContent === '05 / 09');
   await menuButton.click();
   assert.equal(await menuButton.getAttribute('aria-expanded'), 'true', 'mobile menu should open');
   await page.keyboard.press('Escape');
@@ -76,7 +96,7 @@ try {
   assert.equal(reduced.heroMotion, '', 'pointer parallax should be disabled for reduced motion');
   assert.ok(parseFloat(reduced.titleDuration) <= 0.00001, 'intro animation should be effectively disabled for reduced motion');
   await reducedPage.close();
-  console.log('PASS: title, original brand seal, image alt text and decoding, desktop parallax, menu navigation, Escape dismissal, configurator controls, mobile overflow, reduced motion, and page errors');
+  console.log('PASS: title, brand identity, all image decoding, horizontal scenes and navigation, car spotlights, opt-in sound, menu navigation, configurator controls, mobile horizontal track, reduced motion, and page errors');
 } finally {
   await browser.close();
 }
