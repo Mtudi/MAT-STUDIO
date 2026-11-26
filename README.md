@@ -2,12 +2,12 @@
 
 MAT-STUDIO is the public source hub for Matudi's independent digital products and experiments.
 
-**Public project showcase:** https://sharable.link/jfi5b0ql
+**Project hub source:** `projects/hub/index.html` — the GitHub-backed launchpad for the MATUDI ecosystem. After this change is merged and deployed, open it at `/projects/hub/index.html`.
 
 ## Web experiences
 
 - [Xi Personal AI](https://mat-studio.vercel.app/) — owner-authenticated personal AI workspace.
-- [MATUDI AI Workspace](https://mat-studio.vercel.app/projects/ai-workspace/index.html) — guest chat, streaming and optional cloud sync.
+- [MATUDI AI Workspace release candidate](https://github.com/Mtudi/MAT-STUDIO/pull/11) — guest chat, streaming and optional cloud sync; production route is withheld until the Xi/Workspace source overlap is resolved and real-provider checks pass.
 - [MATUDI Chess Lab](https://mat-studio.vercel.app/projects/chess-lab/index.html) — legal chess practice, opening lines and FEN/PGN tools.
 - [MATSONG interactive preview](https://sharable.link/89k1u749) — local music library and Spotify embeds.
 - [MATUDI DEUTSCH A1 preview](https://sharable.link/t5cevsdg) — German A1 starter learning.
