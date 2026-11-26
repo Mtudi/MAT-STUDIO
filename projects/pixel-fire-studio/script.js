@@ -136,7 +136,7 @@ function animate(timestamp = 0) {
 }
 
 function setIntensity(value) {
-  fireStrength = Math.max(1, Math.min(palette.length - 1, Number(value)));
+  fireStrength = Math.max(0, Math.min(palette.length - 1, Number(value)));
   $("intensity").value = fireStrength;
   $("intensityValue").textContent = `${fireStrength} / ${palette.length - 1}`;
   createFireSource();
@@ -154,8 +154,11 @@ function setPalette(name) {
 function resetFire() {
   firePixels.fill(0);
   embers = [];
-  setIntensity(35);
+  setIntensity(28);
   wind = 0;
+  embersEnabled = true;
+  $("embersBtn").classList.add("is-on");
+  $("embersBtn").setAttribute("aria-checked", "true");
   speed = 2;
   $("wind").value = "0";
   $("windValue").textContent = "Calm";
@@ -300,7 +303,7 @@ $("copyAllBtn").addEventListener("click", () => {
   copyText(bundle, "All three source files copied. Paste them into separate files.");
 });
 
-setIntensity(35);
+setIntensity(28);
 createFireSource();
 renderFire();
 requestAnimationFrame(animate);
