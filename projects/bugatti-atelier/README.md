@@ -28,5 +28,5 @@ Open `index.html` in a modern browser. No build step or framework is required.
 ## QA status
 - Static JavaScript syntax: checked with Node.js.
 - HTML structure: checked for duplicate IDs and broken internal anchor targets.
-- Real-browser Playwright checks: provided in `../../scripts/smoke-bugatti-atelier.mjs`; CI uses the official Playwright 1.56.1 Noble container to avoid runner/OS mismatch.
+- Real-browser Playwright smoke: passed in GitHub Actions on 2026-11-26 using the official Playwright 1.56.1 Noble container. Coverage: navigation, Escape dismissal, finish/material selectors, 390px mobile overflow, image alt text, and uncaught page errors.
 - Physical Android-device testing and image-host availability are not verified in this environment.
