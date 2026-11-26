@@ -1,13 +1,19 @@
 name: Motion Atelier browser smoke
 
 on:
+  push:
+    branches: [main]
+    paths:
+      - "Motion Atelier 3D Studio.html"
+      - "scripts/smoke-motion-atelier.mjs"
+      - ".github/workflows/motion-atelier-browser-smoke.yml"
   pull_request:
     branches: [main]
     paths:
-      - "projects/motion-atelier/**"
-      - "scripts/serve-motion-atelier.mjs"
+      - "Motion Atelier 3D Studio.html"
       - "scripts/smoke-motion-atelier.mjs"
       - ".github/workflows/motion-atelier-browser-smoke.yml"
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -21,18 +27,18 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - name: Install Playwright
+      - name: Install Playwright and Chromium
         run: |
           npm init -y
           npm install --no-save playwright
           npx playwright install --with-deps chromium
       - name: Run Motion Atelier browser tests
         run: |
-          node scripts/serve-motion-atelier.mjs >/tmp/motion-server.log 2>&1 &
+          python3 -m http.server 4175 --bind 127.0.0.1 --directory . >/tmp/motion-atelier-server.log 2>&1 &
           server_pid=$!
           trap 'kill "$server_pid" 2>/dev/null || true' EXIT
           for i in $(seq 1 30); do
-            if curl -fsS http://127.0.0.1:4175/ >/dev/null; then break; fi
+            if curl -fsS "http://127.0.0.1:4175/Motion%20Atelier%203D%20Studio.html" >/dev/null; then break; fi
             sleep 1
           done
           node scripts/smoke-motion-atelier.mjs
