@@ -11,7 +11,7 @@ try {
   await page.goto(baseURL, { waitUntil: 'domcontentloaded' });
   assert.match(await page.title(), /BUGATTI/i, 'page title should identify the experience');
   assert.equal(await page.locator('.hero h1').count(), 1, 'hero heading should exist');
-  assert.equal(await page.locator('.brand-mark svg path').count(), 1, 'original Atelier brand seal should render');
+  assert.equal(await page.locator('.brand-mark svg path').count(), 2, 'original Atelier brand seals should render in header and footer');
   assert.equal(await page.locator('.nav-note').textContent(), 'Molsheim · Atelier 01', 'brand descriptor should be present');
   await page.mouse.move(1320, 480);
   await page.waitForFunction(() => document.querySelector('.hero-media img').style.getPropertyValue('--hero-x') !== '');
