@@ -63,6 +63,8 @@ try {
 
   const reducedPage = await browser.newPage({ viewport: { width: 390, height: 844 }, reducedMotion: 'reduce' });
   await reducedPage.goto(baseURL, { waitUntil: 'domcontentloaded' });
+  await reducedPage.mouse.move(220, 240);
+  await reducedPage.waitForTimeout(50);
   const reduced = await reducedPage.evaluate(() => ({
     preference: matchMedia('(prefers-reduced-motion: reduce)').matches,
     heroMotion: document.querySelector('.hero-media img').style.getPropertyValue('--hero-x'),
