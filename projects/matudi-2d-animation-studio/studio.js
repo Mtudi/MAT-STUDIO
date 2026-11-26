@@ -294,6 +294,7 @@
   function setFrame(frame) {
     state.frame = clamp(Math.round(frame), 0, TOTAL_FRAMES - 1);
     applyTrackValues();
+    if (state.audioElement && !state.playing) state.audioElement.currentTime = Math.min(state.audioDuration || 0, state.frame / state.fps);
     renderFrame();
     updateTimelineCursor();
   }
@@ -692,6 +693,8 @@
     $("#undoBtn").addEventListener("click", undo);
     $("#redoBtn").addEventListener("click", redo);
     $("#saveBtn").addEventListener("click", saveProject);
+    $("#openProjectBtn").addEventListener("click", () => $("#projectInput").click());
+    $("#projectInput").addEventListener("change", event => { if (event.target.files[0]) importProject(event.target.files[0]); event.target.value = ""; });
     $("#exportBtn").addEventListener("click", () => $("#exportModal").classList.remove("hidden"));
     $("#closeExport").addEventListener("click", () => $("#exportModal").classList.add("hidden"));
     $("#exportModal").addEventListener("click", event => {
