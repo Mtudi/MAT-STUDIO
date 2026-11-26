@@ -1,5 +1,5 @@
 # MATUDI Project Quality Audit
-Last audited: 2026-11-21
+Last audited: 2026-11-27
 Scope: public `MAT-STUDIO` source, private `MAT-CORE` engine source, Vercel project settings, and the connected Xi Supabase project.
 
 ## Verified project inventory
@@ -14,7 +14,7 @@ Scope: public `MAT-STUDIO` source, private `MAT-CORE` engine source, Vercel proj
 | MATUDI DEUTSCH | `projects/deutsch/index.html` | Main branch now has a 71-word Arabic-supported A1 path, 8 units, listening/reading checks, writing/speaking models, spaced review and a 60-minute routine. Static CI and Playwright desktop/mobile smoke tests passed. Preview: https://sharable.link/t5cevsdg | Validate progress migration, answer keys, browser speech fallback and mobile layout before merging |
 | MATUDI Christmas | `projects/christmas/index.html` | Interactive greeting card, share URL and print | Needs saved drafts, image export and accessibility |
 | MATUDI Portfolio | `projects/portfolio/index.html` | Static personal portfolio | Needs verified project case studies, screenshots and contact workflow |
-| Motion Atelier 3D Studio | `Motion Atelier 3D Studio.html` | Three.js 3D editor, clips/keyframes and local bridge integration | Needs export workflow, mobile/accessibility testing and bridge end-to-end test |
+| Motion Atelier 3D Studio | `Motion Atelier 3D Studio.html` | Three.js 3D editor, clips/keyframes and local bridge integration; dedicated Playwright smoke test now covers the placeholder rig, presets, playback, keyframe creation, local persistence and mobile overflow | First CI run still needs confirmation; real VRM/GLB loading, mobile device performance, accessibility and bridge end-to-end remain unverified |
 
 ### Experiments and local tools
 - `projects/matsong-next/` on branch `matsong-next`: separate music discovery / Spotify Web Playback experiment; not promoted to the current MATSONG release.
@@ -52,7 +52,7 @@ Scope: public `MAT-STUDIO` source, private `MAT-CORE` engine source, Vercel proj
 ### GitHub quality checks
 - Added `.github/workflows/quality.yml` and `scripts/check-static-html.mjs`.
 - CI checks duplicate HTML IDs and parses inline JavaScript in tracked HTML files.
-- The workflow passed on the MATSONG repair PR after it found and helped fix three literal `\\n` sequences (one broke JavaScript parsing; two leaked into page markup).
+- The workflow passed on the MATSONG repair PR after it found and helped fix three literal `\\n` sequences (one broke JavaScript parsing; two leaked into page markup).\n- Added `scripts/smoke-motion-atelier.mjs` and repaired `.github/workflows/motion-atelier-browser-smoke.yml`; it now targets the actual root-level studio file, runs on matching pushes/PRs, and supports manual dispatch. The workflow's first result is pending; the test script passed `node --check` locally, but Playwright/browser execution has not yet been verified in this environment.
 
 ## Work completed
 1. Published the public MATUDI Projects Hub: https://sharable.link/jfi5b0ql
