@@ -2,179 +2,76 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#090909">
-<meta name="description" content="Pixel Fire — a living pixel-art flame simulation with real-time controls.">
-<title>Pixel Fire — Fire Lab</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#050505">
+<title>Pixel Fire</title>
 <style>
-:root{color-scheme:dark;--bg:#090909;--panel:#121212;--panel2:#191919;--line:#292522;--muted:#91877e;--text:#f7f1e9;--orange:#ff8a24;--red:#ff4d1c;--gold:#ffc46b}
-*{box-sizing:border-box}html{min-height:100%;background:var(--bg)}body{margin:0;min-height:100vh;background:radial-gradient(ellipse at 50% 0%,#291308 0%,#100b08 34%,#090909 72%);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;padding:28px 18px 40px}
-button,input{font:inherit}.app{width:min(1050px,100%);margin:0 auto}.top{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:25px}.brand{display:flex;align-items:center;gap:12px}.brand-icon{width:44px;height:44px;border:1px solid #613018;background:linear-gradient(145deg,#32170c,#160e0a);border-radius:14px;display:grid;place-items:center;font-size:23px;box-shadow:0 0 28px #ff6a2022}.eyebrow{font-size:10px;letter-spacing:.22em;color:var(--orange);font-weight:800;text-transform:uppercase}.brand h1{font-size:20px;letter-spacing:.04em;margin:3px 0 0}.top-tag{font-size:11px;color:#c4a58b;border:1px solid #473023;border-radius:99px;padding:8px 12px;background:#1b110c}
-.intro{text-align:center;margin:24px auto 22px}.intro h2{font-size:clamp(27px,5vw,43px);letter-spacing:-.045em;margin:0 0 8px}.intro h2 span{color:var(--gold)}.intro p{margin:0;color:var(--muted);font-size:13px;line-height:1.6}
-.stage{position:relative;border:1px solid #55301c;border-radius:20px;overflow:hidden;background:#030303;box-shadow:0 24px 80px #0009,0 0 55px #ff641018}.stage-head{position:absolute;z-index:2;top:15px;left:17px;right:17px;display:flex;justify-content:space-between;align-items:center;pointer-events:none}.live{display:flex;align-items:center;gap:7px;background:#0b0b0bd9;border:1px solid #34271e;padding:7px 10px;border-radius:99px;font-size:10px;color:#e8c7a7;letter-spacing:.12em;text-transform:uppercase}.dot{width:6px;height:6px;background:#ff7829;border-radius:50%;box-shadow:0 0 10px #ff7829}.stage-size{font-size:10px;color:#88786b;background:#0b0b0bd9;border:1px solid #34271e;padding:7px 10px;border-radius:99px}canvas{display:block;width:100%;height:auto;aspect-ratio:16/9;image-rendering:pixelated;image-rendering:crisp-edges}
-.control-panel{margin-top:14px;background:linear-gradient(145deg,#171411,#101010);border:1px solid var(--line);border-radius:18px;padding:19px}.panel-title{display:flex;align-items:center;justify-content:space-between;margin-bottom:17px}.panel-title h3{margin:0;font-size:12px;letter-spacing:.13em;text-transform:uppercase}.panel-title span{color:var(--muted);font-size:10px}.controls{display:grid;grid-template-columns:1fr 1fr;gap:16px 22px}.control{min-width:0}.control-top{display:flex;justify-content:space-between;gap:10px;margin-bottom:9px}.control label{font-size:12px;color:#d7c9bc}.value{font-size:11px;color:var(--gold);font-variant-numeric:tabular-nums}input[type=range]{width:100%;accent-color:var(--orange);cursor:pointer}
-.actions{display:flex;flex-wrap:wrap;gap:9px;margin-top:19px;padding-top:16px;border-top:1px solid #2b2520}.btn{border:1px solid #403027;border-radius:10px;padding:10px 14px;background:#211811;color:#f5e9dc;font-size:12px;cursor:pointer;transition:transform .18s,border-color .18s,background .18s}.btn:hover{transform:translateY(-1px);border-color:#a65325;background:#2c1a10}.btn.primary{background:linear-gradient(135deg,#ff8b28,#e84c1c);border-color:#ff8b28;color:#160b05;font-weight:800}.btn:focus-visible,input:focus-visible{outline:2px solid var(--gold);outline-offset:3px}.btn[aria-pressed=true]{border-color:#ff8a24;color:#ffc17d;background:#2a190f}
-.footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:15px 3px 0;color:#756b62;font-size:10px}.footer a{color:#c28b60;text-decoration:none}.footer a:hover{color:#ffc078}
-@media(max-width:620px){body{padding:17px 12px 28px}.top{margin-bottom:18px}.brand h1{font-size:17px}.top-tag{font-size:9px;padding:7px 9px}.intro{margin:18px auto}.intro p{font-size:12px}.stage{border-radius:14px}.stage-head{top:9px;left:9px;right:9px}.live,.stage-size{font-size:8px;padding:6px 8px}.control-panel{padding:15px 13px}.controls{gap:16px 14px}.btn{flex:1;padding:11px 8px}.footer{font-size:9px}}
-@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important}}
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;min-height:100%;background:#050505;color:#f5eee8}
+body{min-height:100svh;display:flex;align-items:center;justify-content:center;overflow:hidden;font-family:system-ui,-apple-system,"Segoe UI",sans-serif}
+main{width:min(100%,1100px);padding:24px 16px;text-align:center}
+h1{margin:0 0 8px;font-size:clamp(22px,4vw,34px);font-weight:750;letter-spacing:.12em}
+p{margin:0 0 24px;color:#8f8278;font-size:12px;letter-spacing:.18em;text-transform:uppercase}
+canvas{display:block;width:100%;height:auto;aspect-ratio:16/9;background:#030303;image-rendering:pixelated;image-rendering:crisp-edges}
+@media(max-width:600px){main{padding:16px 10px}p{font-size:10px;margin-bottom:18px}}
+@media(prefers-reduced-motion:reduce){canvas{image-rendering:pixelated}}
 </style>
 </head>
 <body>
-<main class="app">
-  <header class="top">
-    <div class="brand"><div class="brand-icon" aria-hidden="true">🔥</div><div><div class="eyebrow">MATUDI LABS · EXPERIMENT 01</div><h1>PIXEL FIRE</h1></div></div>
-    <div class="top-tag">CANVAS SIMULATION</div>
-  </header>
-  <section class="intro"><h2>Feel the <span>heat.</span></h2><p>A living pixel flame. Tune its intensity, speed and atmosphere in real time.</p></section>
-  <section class="stage" aria-label="Animated pixel fire simulation">
-    <div class="stage-head"><div class="live"><span class="dot"></span><span id="liveText">LIVE SIMULATION</span></div><div class="stage-size">160 × 90 PIXELS</div></div>
-    <canvas id="fireCanvas" width="160" height="90" role="img" aria-label="Animated orange and red pixel fire"></canvas>
-  </section>
-  <section class="control-panel" aria-label="Fire controls">
-    <div class="panel-title"><h3>Fire controls</h3><span>REAL-TIME ADJUSTMENTS</span></div>
-    <div class="controls">
-      <div class="control"><div class="control-top"><label for="intensity">Intensity</label><output class="value" id="intensityValue">82%</output></div><input id="intensity" type="range" min="10" max="100" value="82"></div>
-      <div class="control"><div class="control-top"><label for="speed">Animation speed</label><output class="value" id="speedValue">70%</output></div><input id="speed" type="range" min="10" max="150" value="70"></div>
-      <div class="control"><div class="control-top"><label for="height">Flame height</label><output class="value" id="heightValue">72%</output></div><input id="height" type="range" min="25" max="100" value="72"></div>
-      <div class="control"><div class="control-top"><label for="wind">Wind direction</label><output class="value" id="windValue">0</output></div><input id="wind" type="range" min="-5" max="5" value="0"></div>
-    </div>
-    <div class="actions">
-      <button class="btn primary" id="toggle" aria-pressed="false">Ⅱ &nbsp; Pause</button>
-      <button class="btn" id="auto" aria-pressed="true">↕ &nbsp; Auto rise / fall: ON</button>
-      <button class="btn" id="sparks" aria-pressed="true">✦ &nbsp; Sparks: ON</button>
-      <button class="btn" id="reset">↺ &nbsp; Reset</button>
-      <button class="btn" id="fullscreen">⛶ &nbsp; Fullscreen</button>
-    </div>
-  </section>
-  <footer class="footer"><span>PIXEL FIRE · BUILT FOR THE WEB</span><span>Original source: <a href="../index.html">HTML</a> · <a href="../style.css">CSS</a> · <a href="../script.js">JS</a></span></footer>
+<main>
+<h1>🔥 PIXEL FIRE</h1>
+<p>Automatic flame simulation</p>
+<canvas id="fire" width="160" height="90" role="img" aria-label="Pixel fire that automatically rises and falls"></canvas>
 </main>
 <script>
-(() => {
-  const canvas = document.getElementById('fireCanvas');
-  const ctx = canvas.getContext('2d', { alpha: false });
-  const W = canvas.width, H = canvas.height;
-  const pixels = new Uint8Array(W * H);
-  const palette = [
-    '#030303','#100504','#210704','#330904','#470b03','#5b0e03','#701202',
-    '#861803','#9b2004','#b12a05','#c73505','#d94305','#ec5105','#fa6108',
-    '#ff710b','#ff8010','#ff9017','#ffa020','#ffb02b','#ffbf3b','#ffcd50',
-    '#ffda69','#ffe583','#ffed9f','#fff5c5','#fffbe8','#ffffff'
-  ];
-  const $ = id => document.getElementById(id);
-  const controls = { intensity:$('intensity'), speed:$('speed'), height:$('height'), wind:$('wind') };
-  const values = { intensity:$('intensityValue'), speed:$('speedValue'), height:$('heightValue'), wind:$('windValue') };
-  let paused = false, auto = true, sparksOn = true, tick = 0, last = 0, accumulator = 0;
-  let sparks = [], autoWave = 0, lastSpark = 0;
-
-  function settings() {
-    return {
-      intensity: Number(controls.intensity.value) / 100,
-      speed: Number(controls.speed.value) / 70,
-      height: Number(controls.height.value) / 100,
-      wind: Number(controls.wind.value)
-    };
-  }
-  function updateLabels() {
-    values.intensity.textContent = controls.intensity.value + '%';
-    values.speed.textContent = controls.speed.value + '%';
-    values.height.textContent = controls.height.value + '%';
-    values.wind.textContent = Number(controls.wind.value) === 0 ? '0' : (controls.wind.value > 0 ? '+' : '') + controls.wind.value;
-  }
-  Object.values(controls).forEach(el => el.addEventListener('input', updateLabels));
-
-  function seedBase(next) {
-    const s = settings();
-    const pulse = auto ? 0.68 + 0.32 * (0.5 + 0.5 * Math.sin(tick * 0.012)) : 1;
-    for (let x = 0; x < W; x++) {
-      const flicker = Math.random() * 0.24 + 0.76;
-      const tongues = Math.pow(Math.max(0, Math.sin(x * 0.115 + tick * 0.035)), 5) * 0.16;
-      const heat = Math.max(0, Math.min(1, (s.intensity * pulse * flicker) + tongues));
-      next[(H - 1) * W + x] = Math.round(heat * (palette.length - 1));
-      if (Math.random() < 0.045 * s.intensity) next[(H - 2) * W + x] = Math.round(heat * (palette.length - 1) * 0.92);
-    }
-  }
-  function step() {
-    const s = settings();
-    const next = new Uint8Array(W * H);
-    seedBase(next);
-    for (let y = 0; y < H - 1; y++) {
-      for (let x = 0; x < W; x++) {
-        const src = (y + 1) * W + x;
-        const drift = Math.round(s.wind * (0.25 + Math.random() * 0.45));
-        const spread = Math.random() < 0.5 ? -1 : 1;
-        const nx = Math.max(0, Math.min(W - 1, x + drift + (Math.random() < 0.32 ? spread : 0)));
-        const decay = Math.random() * (1.1 + (1 - s.intensity) * 1.5) + 0.18;
-        const target = y * W + nx;
-        const riseLimit = H * (1 - s.height);
-        const heightFade = y < riseLimit ? (riseLimit - y) / Math.max(1, riseLimit) : 1;
-        const heat = Math.max(0, pixels[src] - decay * (0.45 + heightFade * 0.75));
-        if (heat > next[target]) next[target] = Math.round(heat);
-      }
-    }
-    pixels.set(next);
-    tick++;
-    if (sparksOn && tick - lastSpark > 2) {
-      lastSpark = tick;
-      if (Math.random() < 0.7) sparks.push({x:Math.random()*W,y:H-5,vx:(Math.random()-.5)*.8+s.wind*.12,vy:-Math.random()*1.6-0.5,life:18+Math.random()*32});
-    }
-    for (const p of sparks) { p.x += p.vx; p.y += p.vy; p.vy += 0.025; p.life--; }
-    sparks = sparks.filter(p => p.life > 0 && p.y > 0 && p.x >= 0 && p.x < W);
-  }
-  function render() {
-    const image = ctx.createImageData(W, H);
-    const data = image.data;
-    for (let i = 0; i < pixels.length; i++) {
-      const hex = palette[Math.min(palette.length - 1, pixels[i])];
-      const n = parseInt(hex.slice(1), 16), j = i * 4;
-      data[j] = (n >> 16) & 255; data[j+1] = (n >> 8) & 255; data[j+2] = n & 255; data[j+3] = 255;
-    }
-    ctx.putImageData(image, 0, 0);
-    if (sparksOn) {
-      for (const p of sparks) {
-        const alpha = Math.min(1, p.life / 12);
-        ctx.fillStyle = alpha > .6 ? '#fff0a8' : '#ff8a24';
-        ctx.fillRect(Math.round(p.x), Math.round(p.y), 1, 1);
-      }
-    }
-  }
-  function frame(now) {
-    requestAnimationFrame(frame);
-    if (paused) return;
-    const s = settings();
-    const interval = Math.max(12, 38 / s.speed);
-    if (!last) last = now;
-    accumulator += Math.min(100, now - last);
-    last = now;
-    while (accumulator >= interval) { step(); accumulator -= interval; }
-    render();
-  }
-  function setPaused(value) {
-    paused = value;
-    $('toggle').textContent = paused ? '▶  Resume' : 'Ⅱ  Pause';
-    $('toggle').setAttribute('aria-pressed', String(paused));
-    $('liveText').textContent = paused ? 'PAUSED' : 'LIVE SIMULATION';
-  }
-  $('toggle').addEventListener('click', () => setPaused(!paused));
-  $('auto').addEventListener('click', () => {
-    auto = !auto; $('auto').setAttribute('aria-pressed', String(auto));
-    $('auto').textContent = auto ? '↕  Auto rise / fall: ON' : '↕  Auto rise / fall: OFF';
-  });
-  $('sparks').addEventListener('click', () => {
-    sparksOn = !sparksOn; if (!sparksOn) sparks = [];
-    $('sparks').setAttribute('aria-pressed', String(sparksOn));
-    $('sparks').textContent = sparksOn ? '✦  Sparks: ON' : '✦  Sparks: OFF';
-  });
-  $('reset').addEventListener('click', () => {
-    controls.intensity.value = 82; controls.speed.value = 70; controls.height.value = 72; controls.wind.value = 0;
-    pixels.fill(0); sparks = []; tick = 0; updateLabels(); setPaused(false);
-  });
-  $('fullscreen').addEventListener('click', async () => {
-    try {
-      if (!document.fullscreenElement) await canvas.requestFullscreen();
-      else await document.exitFullscreen();
-    } catch (_) { $('fullscreen').textContent = 'Fullscreen unavailable'; }
-  });
-  updateLabels(); seedBase(); render(); requestAnimationFrame(frame);
+(()=>{
+const canvas=document.getElementById('fire'),ctx=canvas.getContext('2d',{alpha:false});
+const W=canvas.width,H=canvas.height,heat=new Uint8Array(W*H);
+const colors=['#030303','#100504','#210704','#330904','#470b03','#5b0e03','#701202','#861803','#9b2004','#b12a05','#c73505','#d94305','#ec5105','#fa6108','#ff710b','#ff8010','#ff9017','#ffa020','#ffb02b','#ffbf3b','#ffcd50','#ffda69','#ffe583','#ffed9f','#fff5c5','#fffbe8','#ffffff'];
+let t=0,last=0,acc=0;
+function update(){
+ const next=new Uint8Array(W*H);
+ // A slow, continuous breathing cycle makes the whole flame rise and settle automatically.
+ const breathe=.57+.43*(.5+.5*Math.sin(t*.018));
+ const gust=.88+.12*Math.sin(t*.071);
+ for(let x=0;x<W;x++){
+  const tongues=Math.pow(Math.max(0,Math.sin(x*.12+t*.045)),5)*.17;
+  const flicker=.78+Math.random()*.22;
+  const base=Math.max(0,Math.min(1,(breathe*gust*flicker)+tongues));
+  next[(H-1)*W+x]=Math.round(base*(colors.length-1));
+  if(Math.random()<.035*breathe)next[(H-2)*W+x]=Math.round(base*(colors.length-1)*.9);
+ }
+ const heightWave=.68+.32*(.5+.5*Math.sin(t*.012));
+ const ceiling=Math.floor(H*(1-heightWave));
+ for(let y=0;y<H-1;y++)for(let x=0;x<W;x++){
+  const source=(y+1)*W+x;
+  const sway=Math.sin(t*.014+y*.08)*.7;
+  const nx=Math.max(0,Math.min(W-1,x+(Math.random()<.5?-1:1)+(sway>0?1:0)));
+  const fade=y<ceiling?(ceiling-y)/Math.max(1,ceiling):1;
+  const decay=.45+Math.random()*1.25+fade*.65+(1-breathe)*.35;
+  const value=Math.max(0,heat[source]-decay);
+  const target=y*W+nx;
+  if(value>next[target])next[target]=Math.round(value);
+ }
+ heat.set(next);t++;
+}
+function draw(){
+ const image=ctx.createImageData(W,H),data=image.data;
+ for(let i=0;i<heat.length;i++){
+  const n=parseInt(colors[Math.min(colors.length-1,heat[i])].slice(1),16),j=i*4;
+  data[j]=(n>>16)&255;data[j+1]=(n>>8)&255;data[j+2]=n&255;data[j+3]=255;
+ }
+ ctx.putImageData(image,0,0);
+}
+function loop(now){
+ requestAnimationFrame(loop);
+ if(!last)last=now;
+ acc+=Math.min(100,now-last);last=now;
+ while(acc>=30){update();acc-=30}
+ draw();
+}
+for(let i=0;i<90;i++)update();
+draw();requestAnimationFrame(loop);
 })();
 </script>
 </body>
