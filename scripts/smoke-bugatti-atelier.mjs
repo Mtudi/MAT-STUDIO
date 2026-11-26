@@ -21,7 +21,7 @@ try {
     const image = images.nth(index);
     await image.scrollIntoViewIfNeeded();
     try {
-      await image.evaluate(element => element.decode());
+      await image.evaluate(element => Promise.race([element.decode(), new Promise((_, reject) => setTimeout(() => reject(new Error('Image decode timed out')), 7000))]));
     } catch {
       brokenImages.push(await image.getAttribute('src'));
     }
