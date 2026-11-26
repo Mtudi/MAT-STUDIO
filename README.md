@@ -16,6 +16,7 @@ MAT-STUDIO is the public source hub for Matudi's independent digital products an
 - [Pixel Fire — Fire Lab](https://mat-studio.vercel.app/projects/pixel-fire/web/index.html) — interactive pixel-fire simulation with automatic flame motion and live controls.
 - [Motion Atelier 3D Studio](https://mat-studio.vercel.app/Motion%20Atelier%203D%20Studio.html) — browser-based 3D character and animation studio.
 - [Motion Atelier Open-Source Toolchain](https://mat-studio.vercel.app/motion-toolchain.html) — ten specialist tools, verified interchange paths and integration roadmap. [Live preview](https://sharable.link/jf22dpsr).
+- [BUGATTI — Pour l'Éternité](https://sharable.link/vax7b4wr) — independent Bugatti Tourbillon concept with cinematic storytelling and interactive visual customization.
 
 ## Experiments and local tools
 
