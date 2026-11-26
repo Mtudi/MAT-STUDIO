@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - "projects/pixel-fire/**"
+      - "projects/pixel-fire-original/**"
       - ".github/workflows/deploy-pixel-fire.yml"
   workflow_dispatch:
 
@@ -26,13 +27,14 @@ jobs:
 
       - name: Prepare site
         run: |
-          mkdir -p _site/projects/pixel-fire
+          mkdir -p _site/projects/pixel-fire _site/projects/pixel-fire-original
           cp projects/pixel-fire/index.html projects/pixel-fire/style.css projects/pixel-fire/script.js _site/projects/pixel-fire/
+          cp projects/pixel-fire-original/index.html projects/pixel-fire-original/style.css projects/pixel-fire-original/script.js _site/projects/pixel-fire-original/
           cat > _site/index.html <<'EOF'
           <!doctype html>
           <html lang="en">
-          <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="refresh" content="0;url=projects/pixel-fire/"><title>Pixel Fire</title></head>
-          <body><a href="projects/pixel-fire/">Open Pixel Fire</a></body>
+          <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="refresh" content="0;url=projects/pixel-fire-original/"><title>Original Pixel Fire</title></head>
+          <body><a href="projects/pixel-fire-original/">Open Original Pixel Fire</a></body>
           </html>
           EOF
 
