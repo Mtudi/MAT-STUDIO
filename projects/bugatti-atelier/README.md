@@ -19,6 +19,7 @@ Midnight navy, Bugatti-inspired blue, platinum/ice, and restrained champagne acc
 - Bugatti Tourbillon bespoke configuration: https://newsroom.bugatti.com/en/press-releases/the-bugatti-tourbillon-configuration
 - Bugatti Tourbillon haute horlogerie: https://newsroom.bugatti.com/en/press-releases/haute-horlogerie-to-the-bugatti-tourbillon
 - Bugatti website design recognition: https://ifdesign.com/en/winner-ranking/project/bugatti-website/767079
+- CompleteCar Tourbillon image source: https://www.completecar.ie/car-news/article/13415/Bugatti-Tourbillon-is-1800hp-hybrid
 
 Photography is remotely embedded from the image publishers / Bugatti Newsroom for this independent concept. Image rights remain with their respective owners; replace with licensed assets before commercial use.
 
@@ -29,4 +30,4 @@ Open `index.html` in a modern browser. No build step or framework is required.
 - Static JavaScript syntax: checked with Node.js.
 - HTML structure: checked for duplicate IDs and broken internal anchor targets.
 - Real-browser Playwright smoke: passed in GitHub Actions on 2026-11-26 using the official Playwright 1.56.1 Noble container. Coverage: navigation, Escape dismissal, finish/material selectors, 390px mobile overflow, image alt text, and uncaught page errors.
-- Physical Android-device testing and image-host availability are not verified in this environment.
+- All seven remote images decoded successfully in the Playwright CI browser. Physical Android-device testing remains pending.
