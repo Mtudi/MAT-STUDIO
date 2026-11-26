@@ -2,8 +2,15 @@
 
 An independent, single-page digital concept centered on the Bugatti Tourbillon. It is not an official Bugatti website and is not affiliated with Bugatti Automobiles S.A.S.
 
+## Brand & motion system
+- Original Atelier Tourbillon concept seal and matching favicon; this is not the official Bugatti EB emblem.
+- Editorial wordmark lockup, Atelier 01 descriptor, and consistent midnight / ice / champagne visual tokens.
+- Cinematic title entrance, pointer-responsive hero parallax on fine-pointer desktops, scroll progress, reveal choreography, and restrained micro-interactions.
+- Pointer motion is disabled for reduced-motion users and touch-first devices; CSS transitions and entrance animations honor `prefers-reduced-motion`.
+- The hero parallax is layered photography, not a real-time 3D vehicle model.
+
 ## Experience
-- Cinematic editorial hero and scroll-led storytelling
+- Cinematic editorial hero, pointer parallax, and scroll-led storytelling
 - Responsive navigation overlay with Escape-key dismissal
 - Engineering overview using published Tourbillon specifications
 - Craftsmanship and haute-horlogerie feature sections
