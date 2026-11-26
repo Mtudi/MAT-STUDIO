@@ -28,6 +28,13 @@ MAT-STUDIO is the public source hub for Matudi's independent digital products an
 - MAT-CORE is a separate private repository; its source and credentials are not published here.
 - MATUDI AI Engine is a server-side API; requests require a Bearer token.
 
+## MATUDI PES — Professional Execution Standard
+
+- [Standard](docs/MATUDI-PES/STANDARD.md) — mandatory baseline for all projects.
+- [Project starter](docs/MATUDI-PES/PROJECT-STARTER.md) — pre-flight, implementation, and delivery checklist.
+- [Project brief template](docs/MATUDI-PES/PROJECT-BRIEF-TEMPLATE.md) — define each project's vision and acceptance criteria.
+- [Changelog](docs/MATUDI-PES/CHANGELOG.md) — versioned record of improvements.
+
 ## Project quality
 
 - [Project inventory](docs/PROJECT-INVENTORY.md)
