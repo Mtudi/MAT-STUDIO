@@ -116,7 +116,11 @@ footer{background:#050d15;padding:42px clamp(22px,5.4vw,86px);display:flex;align
     },{passive:true});
   }
   document.addEventListener('visibilitychange',()=>{
-    if(document.hidden&&pointerFrame){cancelAnimationFrame(pointerFrame);pointerFrame=0;}
+    if(document.hidden){
+      if(pointerFrame)cancelAnimationFrame(pointerFrame);
+      pointerFrame=0;
+      if(heroImage){heroImage.style.setProperty('--hero-x','0px');heroImage.style.setProperty('--hero-y','0px');}
+    }
   });
 
   const header=document.getElementById('header'),progress=document.getElementById('progress');
