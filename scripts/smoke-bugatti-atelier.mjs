@@ -14,11 +14,17 @@ try {
   const images = page.locator('img');
   const imageCount = await images.count();
   assert.equal(await page.locator('img[alt]').count(), imageCount, 'all images should have alt text');
+  const brokenImages = [];
   for (let index = 0; index < imageCount; index++) {
     const image = images.nth(index);
     await image.scrollIntoViewIfNeeded();
-    await image.evaluate(element => element.decode());
+    try {
+      await image.evaluate(element => element.decode());
+    } catch {
+      brokenImages.push(await image.getAttribute('src'));
+    }
   }
+  assert.deepEqual(brokenImages, [], `images failed to decode: ${brokenImages.join(', ')}`);
   await page.evaluate(() => scrollTo(0, 0));
 
   const menuButton = page.locator('#menuBtn');
