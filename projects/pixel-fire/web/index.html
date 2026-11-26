@@ -82,20 +82,21 @@ button,input{font:inherit}.app{width:min(1050px,100%);margin:0 auto}.top{display
   }
   Object.values(controls).forEach(el => el.addEventListener('input', updateLabels));
 
-  function seedBase() {
+  function seedBase(next) {
     const s = settings();
-    const pulse = auto ? 0.84 + 0.16 * Math.sin(tick * 0.012) : 1;
+    const pulse = auto ? 0.68 + 0.32 * (0.5 + 0.5 * Math.sin(tick * 0.012)) : 1;
     for (let x = 0; x < W; x++) {
       const flicker = Math.random() * 0.24 + 0.76;
       const tongues = Math.pow(Math.max(0, Math.sin(x * 0.115 + tick * 0.035)), 5) * 0.16;
       const heat = Math.max(0, Math.min(1, (s.intensity * pulse * flicker) + tongues));
-      pixels[(H - 1) * W + x] = Math.round(heat * (palette.length - 1));
-      if (Math.random() < 0.045 * s.intensity) pixels[(H - 2) * W + x] = Math.round(heat * (palette.length - 1) * 0.92);
+      next[(H - 1) * W + x] = Math.round(heat * (palette.length - 1));
+      if (Math.random() < 0.045 * s.intensity) next[(H - 2) * W + x] = Math.round(heat * (palette.length - 1) * 0.92);
     }
   }
   function step() {
     const s = settings();
-    seedBase();
+    const next = new Uint8Array(W * H);
+    seedBase(next);
     for (let y = 0; y < H - 1; y++) {
       for (let x = 0; x < W; x++) {
         const src = (y + 1) * W + x;
@@ -107,9 +108,10 @@ button,input{font:inherit}.app{width:min(1050px,100%);margin:0 auto}.top{display
         const riseLimit = H * (1 - s.height);
         const heightFade = y < riseLimit ? (riseLimit - y) / Math.max(1, riseLimit) : 1;
         const heat = Math.max(0, pixels[src] - decay * (0.45 + heightFade * 0.75));
-        if (heat > pixels[target]) pixels[target] = Math.round(heat);
+        if (heat > next[target]) next[target] = Math.round(heat);
       }
     }
+    pixels.set(next);
     tick++;
     if (sparksOn && tick - lastSpark > 2) {
       lastSpark = tick;
