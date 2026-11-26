@@ -1,11 +1,11 @@
 # MAT-STUDIO Project Inventory
-Updated: 2026-11-21
+Updated: 2026-11-27
 
 ## Linked GitHub repositories
 
 | Repository | Visibility | Audit result |
 |---|---|---|
-| MAT-STUDIO | Public | Main product repository: seven project folders, Xi root app, experiments, Motion Atelier 3D Studio, local MCP bridge, API routes and docs. |
+| MAT-STUDIO | Public | Main product repository: eight project folders, Xi root app, experiments, Motion Atelier 3D Studio, local MCP bridge, API routes and docs. |
 | MAT-CORE | Private | Internal library for research, reusable code, AI, UI/UX, animation, security, chess and music; also contains the MATUDI AI Engine source. |
 | matudi-ai-workspace | Private | Empty except for README; no deployable source found. |
 | Mat | Public | Empty repository; no deployable source found. |
@@ -24,6 +24,7 @@ The other linked GitHub identity returned no repositories.
 | MATUDI Christmas | `projects/christmas/index.html` | Greeting-card editor, themes, live preview, share URL, copy/share and print. | `/projects/christmas/index.html` |
 | MATUDI Portfolio | `projects/portfolio/index.html` | Personal portfolio with introduction, focus, selected work and approach. | `/projects/portfolio/index.html` |
 | Motion Atelier 3D Studio | `Motion Atelier 3D Studio.html` | Browser 3D studio with character, animation, pose, face and physics/view controls. | `/Motion%20Atelier%203D%20Studio.html` |
+| BUGATTI — Pour l'Éternité | `projects/bugatti-atelier/index.html` | Independent Tourbillon concept with cinematic storytelling, published engineering facts, responsive navigation and visual paint/material selectors. Playwright CI is being validated; device and image-host checks remain pending. | [Public concept preview](https://sharable.link/vax7b4wr) |
 
 ## Experiments and local tools
 
