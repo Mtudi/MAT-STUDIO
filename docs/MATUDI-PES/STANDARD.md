@@ -2,7 +2,7 @@
 ## MATUDI Professional Execution Standard
 
 **Status:** Active  
-**Version:** 1.0.0  
+**Version:** 1.1.0  
 **Scope:** Default execution framework for all MATUDI projects unless the user explicitly overrides a project-specific rule.
 
 > Build products that prove their quality through the real experience, not through code volume, screenshots, or claims.
@@ -98,6 +98,29 @@ Report results honestly in three categories:
 3. **Known limitations:** intentionally incomplete or dependent on external services.
 
 Never fabricate test results, device testing, browser testing, performance metrics, or feature completion.
+
+### 7.1 Required QA gates — MATUDI Five-Layer Review
+
+Every substantial web/app release must pass the applicable gates below. These are workflow requirements inspired by the corresponding MAT-CORE skill references; the references are not automatically installed tools and must not be represented as such.
+
+1. **Systematic Debugging (root-cause first):** reproduce the issue, capture observable evidence, isolate the root cause, make the smallest safe fix, then rerun the failing check and relevant regression tests. Do not patch symptoms speculatively.
+2. **Code Review (independent review pass):** inspect the diff for correctness, maintainability, edge cases, unsafe input handling, secrets exposure, dependency risk, and regressions. Use CodeRabbit only if its supported CLI/MCP integration is actually available; otherwise perform and report a manual review.
+3. **Security Review (risk-based):** inspect authentication/authorization, input validation, output encoding, dependency and workflow permissions, secret handling, exposed endpoints, and unsafe CI/agent boundaries where applicable. Use the Trail of Bits Actions auditor only for relevant GitHub Actions/agentic workflows and only when its tool/runtime is available. Do not claim a formal security audit from a checklist pass.
+4. **Accessibility Review:** check semantic structure, labels/names, keyboard operation, visible focus, contrast, zoom/reflow, reduced motion, and accessible feedback. Combine automated scans with manual checks; automated scores alone do not prove WCAG conformance.
+5. **Real Browser / End-to-End Review:** use Playwright when an executable browser/runtime is available. Test primary user journeys, real control behavior, navigation, forms, responsive layouts, and key failure states. Save useful evidence (test output/screenshots) without exposing private data. If Playwright is unavailable, use the best available browser/manual method and clearly mark the missing coverage.
+
+**Release gate:** Do not call a release fully QA-verified if a critical applicable gate failed or was not run. State which gates passed, failed, were skipped, and why. For low-risk static content, scale the depth proportionally and record the reason.
+
+### 7.2 Tool-selection and licensing rules
+
+- MAT-CORE catalogue references are guidance, not proof of installed capabilities. Confirm tool availability, host compatibility, runtime, dependencies, and license before attempting installation or execution.
+- Playwright is the preferred browser E2E path when available; never claim browser automation without a real run.
+- CodeRabbit is an optional independent review aid, not a substitute for engineering judgment.
+- Trail of Bits' referenced Actions auditor is licensed CC-BY-SA-4.0; preserve attribution and comply with share-alike terms if adapting its material.
+- Accessibility and debugging methods can be applied manually even when the original external skill host is unsupported.
+- Never add paid tools, external services, telemetry, or new project dependencies without a clear need and required approval.
+
+See QUALITY-GATES.md for the operational checklist and reporting template.
 
 ## 8. Execution & Delivery Rules
 
