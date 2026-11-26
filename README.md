@@ -12,7 +12,7 @@ MAT-STUDIO is the public source hub for Matudi's independent digital products an
 - [MATSONG interactive preview](https://sharable.link/89k1u749) — local music library and Spotify embeds.
 - [MATUDI DEUTSCH A1 preview](https://sharable.link/t5cevsdg) — German A1 starter learning.
 - [MATUDI Christmas](https://mat-studio.vercel.app/projects/christmas/index.html) — interactive greeting-card creator.
-- [MATUDI Portfolio](https://mat-studio.vercel.app/projects/portfolio/index.html) — personal portfolio.
+- [MATUDI Portfolio](https://mat-studio.vercel.app/projects/portfolio/index.html) — personal portfolio.\n- [Pixel Fire — Fire Lab](https://mat-studio.vercel.app/projects/pixel-fire/web/index.html) — interactive pixel-fire simulation with automatic flame motion and live controls.
 - [Motion Atelier 3D Studio](https://mat-studio.vercel.app/Motion%20Atelier%203D%20Studio.html) — browser-based 3D character and animation studio.
 - [Motion Atelier Open-Source Toolchain](https://mat-studio.vercel.app/motion-toolchain.html) — ten specialist tools, verified interchange paths and integration roadmap. [Live preview](https://sharable.link/jf22dpsr).
 
