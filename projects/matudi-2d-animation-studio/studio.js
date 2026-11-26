@@ -182,16 +182,19 @@
   function applyTrackValues() {
     const transformValue = valueAt("transform", state.frame);
     const faceValue = valueAt("face", state.frame);
+    const motionValue = valueAt("motion", state.frame);
     if (transformValue) state.transform = { ...state.transform, ...transformValue };
     if (faceValue) {
       state.expression = faceValue.expression || state.expression;
       state.mouth = faceValue.mouth ?? state.mouth;
       state.headTilt = faceValue.headTilt ?? state.headTilt;
     }
+    if (motionValue && Number.isFinite(motionValue.armRaise)) {
+      state.armRaise = motionValue.armRaise;
+    }
   }
 
   function renderFrame() {
-    applyTrackValues();
     const { x, y, rotation, scale } = state.transform;
     root.setAttribute("transform", `translate(${x} ${y}) rotate(${rotation}) scale(${scale})`);
     head.setAttribute("transform", `translate(0 -254) rotate(${state.headTilt})`);
@@ -290,6 +293,7 @@
 
   function setFrame(frame) {
     state.frame = clamp(Math.round(frame), 0, TOTAL_FRAMES - 1);
+    applyTrackValues();
     renderFrame();
     updateTimelineCursor();
   }
@@ -467,6 +471,7 @@
           state.playing = false;
         }
       } else state.frame = next;
+      applyTrackValues();
       renderFrame();
       renderTimelineCursor();
       if (state.playing) state.raf = requestAnimationFrame(tick);
@@ -663,13 +668,13 @@
 
   function bindRange(id, key, output, suffix = "%") {
     const input = $("#" + id);
+    input.addEventListener("pointerdown", pushHistory);
     input.addEventListener("input", () => {
       state[key] = Number(input.value);
       $(output).textContent = input.value + suffix;
       renderFrame();
       markDirty();
     });
-    input.addEventListener("change", pushHistory);
   }
 
   function bindUI() {
