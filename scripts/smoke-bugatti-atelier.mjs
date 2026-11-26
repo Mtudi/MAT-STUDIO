@@ -11,7 +11,15 @@ try {
   await page.goto(baseURL, { waitUntil: 'domcontentloaded' });
   assert.match(await page.title(), /BUGATTI/i, 'page title should identify the experience');
   assert.equal(await page.locator('.hero h1').count(), 1, 'hero heading should exist');
-  assert.equal(await page.locator('img[alt]').count(), await page.locator('img').count(), 'all images should have alt text');
+  const images = page.locator('img');
+  const imageCount = await images.count();
+  assert.equal(await page.locator('img[alt]').count(), imageCount, 'all images should have alt text');
+  for (let index = 0; index < imageCount; index++) {
+    const image = images.nth(index);
+    await image.scrollIntoViewIfNeeded();
+    await image.evaluate(element => element.decode());
+  }
+  await page.evaluate(() => scrollTo(0, 0));
 
   const menuButton = page.locator('#menuBtn');
   await menuButton.click();
@@ -40,7 +48,7 @@ try {
   assert.equal(await menuButton.getAttribute('aria-expanded'), 'false', 'mobile menu should close with Escape');
 
   assert.deepEqual(pageErrors, [], `uncaught page errors: ${pageErrors.join('; ')}`);
-  console.log('PASS: title, image alt text, menu navigation, Escape dismissal, configurator controls, mobile overflow, and page errors');
+  console.log('PASS: title, image alt text and decoding, menu navigation, Escape dismissal, configurator controls, mobile overflow, and page errors');
 } finally {
   await browser.close();
 }
