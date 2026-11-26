@@ -10,7 +10,7 @@ A local-first browser workspace for building short 2D character performances.
 - Wave, walk, nod and idle motion-key presets.
 - Local audio import and playback.
 - Background image import.
-- Save to browser storage; export/import editable JSON projects.
+- Save to browser storage; open/import editable JSON projects.
 - Export current frame as SVG or PNG.
 - Keyboard shortcuts and responsive inspector panels.
 - No advertising, analytics, account requirement or server-side asset upload.
