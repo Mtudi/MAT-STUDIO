@@ -148,6 +148,8 @@ body.lock #horizontal-ui,body.lock #horizontal-progress{opacity:0;pointer-events
 @keyframes atelierSceneSweep{0%{opacity:0;transform:translate3d(-110%,0,0)}18%{opacity:1}100%{opacity:0;transform:translate3d(110%,0,0)}}
 .experience-track>.scene-panel.is-active{scroll-snap-align:start}
 @media(prefers-reduced-motion:reduce){.scene-transition-wash.play{animation:none!important;opacity:0!important}}
+/* MATUDI PES v1.2 · Vertical editorial experience */
+html{scroll-behavior:smooth;scroll-padding-top:76px}body{overflow-x:hidden;overflow-y:auto}main#top{height:auto;overflow:visible}section{scroll-margin-top:76px}.car-collection{grid-template-columns:repeat(2,minmax(0,1fr));gap:22px}.car-card{min-height:clamp(360px,58vw,620px);border-radius:2px}.collection-section{padding-top:clamp(110px,13vw,180px);padding-bottom:clamp(110px,13vw,180px)}.collection-head{margin-bottom:clamp(38px,6vw,76px)}#car-scene{transform:translateY(4vh)}#car-scene.open{transform:translateY(0)}@media(max-width:700px){.car-collection{grid-template-columns:1fr;gap:16px}.car-card{min-height:420px}.collection-head{display:block}.collection-head p{margin-top:20px}}@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
 </style>
 </head>
 <body>
@@ -157,8 +159,8 @@ body.lock #horizontal-ui,body.lock #horizontal-progress{opacity:0;pointer-events
   <a class="brand" href="#top" aria-label="Bugatti home"><span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 40 40" fill="none"><path d="M9 29L20 8L31 29M14 21H26M20 8V32" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span>BUGATTI</span></a>
   <div class="nav-right"><span class="nav-note">Molsheim · Atelier 01</span><button class="menu-btn" id="menuBtn" aria-expanded="false" aria-controls="menuOverlay"><span>Menu</span><span class="menu-icon"><i></i><i></i></span></button></div>
 </header>
-<div id="horizontal-progress" aria-hidden="true"><span></span></div>
-<div id="horizontal-ui"><span id="scene-count">01 / 09</span><div class="scene-controls"><button class="sound-control" id="soundToggle" type="button" aria-pressed="false" aria-label="Enable interface sounds">SOUND <span id="sound-state">OFF</span></button><button class="scene-control" id="scenePrev" type="button" aria-label="Previous scene">←</button><button class="scene-control" id="sceneNext" type="button" aria-label="Next scene">→</button></div></div>
+
+</div>
 <nav class="menu-overlay" id="menuOverlay" aria-hidden="true">
   <ul class="menu-list"><li><a href="#tourbillon"><small>01</small> The Tourbillon</a></li><li><a href="#engineering"><small>02</small> Engineering</a></li><li><a href="#craft"><small>03</small> Craftsmanship</a></li><li><a href="#configure"><small>04</small> Sur Mesure</a></li></ul>
   <div class="menu-foot"><span>BUGATTI · POUR L'ÉTERNITÉ</span><span>Independent digital concept · 2026</span></div>
@@ -274,68 +276,7 @@ body.lock #horizontal-ui,body.lock #horizontal-progress{opacity:0;pointer-events
 })();
 </script>
 <script>
-/* Horizontal scene system + optional synthesized interface audio */
-(()=>{
- const main=document.getElementById('top'),footer=document.querySelector('body>footer');
- if(!main||!footer)return;
- const track=document.createElement('div');track.className='experience-track';track.id='experienceTrack';track.setAttribute('aria-label','Horizontal cinematic experience');
- const panels=[...main.children,footer];
- panels.forEach((panel,index)=>{panel.classList.add('scene-panel');panel.dataset.scene=String(index);track.appendChild(panel)});
- main.appendChild(track);document.body.classList.add('experience-mode');
- const total=panels.length,progress=document.querySelector('#horizontal-progress span'),count=document.getElementById('scene-count');
- const prev=document.getElementById('scenePrev'),next=document.getElementById('sceneNext');
- panels.forEach((panel,index)=>{const wash=document.createElement('span');wash.className='scene-transition-wash';wash.setAttribute('aria-hidden','true');panel.appendChild(wash);if(index===0)panel.classList.add('is-active')});
- let active=0,scrollFrame=0;
- const setActive=()=>{const nextIndex=Math.max(0,Math.min(total-1,Math.round(track.scrollLeft/Math.max(1,track.clientWidth))));if(nextIndex===active)return;active=nextIndex;panels.forEach((panel,index)=>panel.classList.toggle('is-active',index===active));const wash=panels[active].querySelector('.scene-transition-wash');if(wash&&!matchMedia('(prefers-reduced-motion: reduce)').matches){wash.classList.remove('play');void wash.offsetWidth;wash.classList.add('play')}count.textContent=String(active+1).padStart(2,'0')+' / '+String(total).padStart(2,'0');progress.style.width=((active+1)/total*100)+'%';prev.disabled=active===0;next.disabled=active===total-1;};
- const go=index=>{const target=Math.max(0,Math.min(total-1,index));track.scrollTo({left:target*track.clientWidth,behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});};
- prev.addEventListener('click',()=>go(active-1));next.addEventListener('click',()=>go(active+1));
- track.addEventListener('scroll',()=>{if(scrollFrame)return;scrollFrame=requestAnimationFrame(()=>{setActive();scrollFrame=0})},{passive:true});
- let wheelLock=false;
- track.addEventListener('wheel',event=>{
-  if(Math.abs(event.deltaY)<Math.abs(event.deltaX))return;
-  const panel=event.target.closest('.scene-panel');
-  const canScroll=panel&&panel.scrollHeight>panel.clientHeight+4;
-  if(canScroll){const atTop=panel.scrollTop<=0,atBottom=panel.scrollTop+panel.clientHeight>=panel.scrollHeight-2;if((event.deltaY<0&&!atTop)||(event.deltaY>0&&!atBottom))return;}
-  event.preventDefault();if(wheelLock)return;wheelLock=true;go(active+(event.deltaY>0?1:-1));setTimeout(()=>wheelLock=false,720);
- },{passive:false});
- addEventListener('keydown',event=>{
-  if(document.getElementById('car-scene').classList.contains('open')||document.getElementById('menuOverlay').classList.contains('open'))return;
-  if(event.target.closest('input,textarea,select,button,a,[contenteditable="true"]'))return;
-  if(['ArrowRight','PageDown'].includes(event.key)){event.preventDefault();go(active+1)}
-  if(['ArrowLeft','PageUp'].includes(event.key)){event.preventDefault();go(active-1)}
- },{passive:false});
- const navMap={'#top':0,'#tourbillon':0,'#collection':1,'#engineering':4,'#craft':5,'#configure':6};
- document.querySelectorAll('a[href^="#"]').forEach(anchor=>anchor.addEventListener('click',event=>{
-  const href=anchor.getAttribute('href');if(!(href in navMap))return;event.preventDefault();go(navMap[href]);
-  const menu=document.getElementById('menuOverlay'),button=document.getElementById('menuBtn');if(menu&&button){menu.classList.remove('open');menu.setAttribute('aria-hidden','true');button.setAttribute('aria-expanded','false');document.body.classList.remove('lock')}
- }));
- count.textContent='01 / '+String(total).padStart(2,'0');progress.style.width=(100/total)+'%';prev.disabled=true;next.disabled=false;
- // Sound is opt-in. No audio context or playback is created before a deliberate user gesture.
- const soundButton=document.getElementById('soundToggle'),soundState=document.getElementById('sound-state');let soundOn=false,audio=null;
- const tone=(frequency=620,duration=.055,volume=.025)=>{
-  if(!soundOn)return;
-  try{audio=audio||new (window.AudioContext||window.webkitAudioContext)();if(audio.state==='suspended')audio.resume();const oscillator=audio.createOscillator(),gain=audio.createGain();oscillator.type='sine';oscillator.frequency.setValueAtTime(frequency,audio.currentTime);gain.gain.setValueAtTime(.0001,audio.currentTime);gain.gain.exponentialRampToValueAtTime(volume,audio.currentTime+.008);gain.gain.exponentialRampToValueAtTime(.0001,audio.currentTime+duration);oscillator.connect(gain);gain.connect(audio.destination);oscillator.start();oscillator.stop(audio.currentTime+duration+.015)}catch{}
- };
- soundButton.addEventListener('click',()=>{soundOn=!soundOn;soundButton.setAttribute('aria-pressed',String(soundOn));soundState.textContent=soundOn?'ON':'OFF';soundButton.setAttribute('aria-label',soundOn?'Mute interface sounds':'Enable interface sounds');if(soundOn)tone(720,.09,.035)});
- [prev,next,...document.querySelectorAll('.car-card')].forEach(control=>control.addEventListener('click',()=>tone(510,.045,.018)));
- // Car spotlights: each model gets its own full-screen motion scene.
- const cars={
-  tourbillon:{name:'Tourbillon',eyebrow:'01 · A new era · V16 hybrid',image:'https://images-stag.jazelc.com/uploads/theautopian-m2en/Bugatti_Tourbillon_profile.jpg',description:'A new expression of automotive artistry, bringing a naturally aspirated V16 together with an electrified future.'},
-  chiron:{name:'Chiron',eyebrow:'02 · The icon · W16',image:'https://bugatti-newsroom.imgix.net/ae4c742c1dbd48309c181690cf557fd7/03-chiron_side_left.jpg',description:'A defining chapter in the modern Bugatti story — a silhouette shaped by speed, proportion and the unmistakable C-line.'},
-  bolide:{name:'Bolide',eyebrow:'03 · Track only · Extreme',image:'https://images.autodaily.com.au/2020/10/Bugatii-Bolide-2020-10.jpg',description:'A track-focused interpretation of extreme performance, with aerodynamic surfaces and a purpose-built racing presence.'},
-  mistral:{name:'W16 Mistral',eyebrow:'04 · Open air · Roadster',image:'https://editorial.pxcrush.net/carsales/general/editorial/bugatti-w16-mistral-roadster-9.jpg?height=682&width=1024',description:'An open-air celebration of the W16 era, combining roadster proportions with the marque’s unmistakable design language.'}
- };
- const modal=document.getElementById('car-scene'),modalImage=document.getElementById('carSceneImage'),modalTitle=document.getElementById('carSceneTitle'),modalEyebrow=document.getElementById('carSceneEyebrow'),modalDescription=document.getElementById('carSceneDescription'),modalIndex=document.getElementById('carSceneIndex'),close=document.getElementById('carSceneClose');let lastTrigger=null;
- const closeModal=()=>{modal.classList.remove('open');modal.setAttribute('aria-hidden','true');document.body.classList.remove('lock');if(lastTrigger)lastTrigger.focus()};
- document.querySelectorAll('.car-card').forEach(card=>card.addEventListener('click',()=>{
-  const key=card.dataset.car,car=cars[key];if(!car)return;lastTrigger=card;modalImage.src=car.image;modalImage.alt='Cinematic view of the Bugatti '+car.name;modalTitle.textContent=car.name;modalEyebrow.textContent=car.eyebrow;modalDescription.textContent=car.description;modalIndex.textContent=String(Object.keys(cars).indexOf(key)+1).padStart(2,'0')+' / 04 · MATUDI ATELIER';
-  modal.classList.remove('open');void modal.offsetWidth;modal.classList.add('open');modal.setAttribute('aria-hidden','false');document.body.classList.add('lock');close.focus();tone(390,.12,.026);
- }));
- close.addEventListener('click',closeModal);modal.addEventListener('click',event=>{if(event.target===modal)closeModal()});
- addEventListener('keydown',event=>{if(event.key==='Escape'&&modal.classList.contains('open'))closeModal()});
- // Touch-friendly horizontal scene swipe is native; no global touch interception.
- if('IntersectionObserver'in window){const observer=new IntersectionObserver(entries=>entries.forEach(entry=>{if(entry.isIntersecting){const img=entry.target.querySelector('img');if(img&&img.loading==='lazy')img.loading='eager'}}),{root:track,threshold:.2});panels.forEach(panel=>observer.observe(panel))}
-})();
+(()=>{const cars={tourbillon:{name:'Tourbillon',eyebrow:'01 · A new era · V16 hybrid',image:'https://images-stag.jazelc.com/uploads/theautopian-m2en/Bugatti_Tourbillon_profile.jpg',description:'A new expression of automotive artistry, bringing a naturally aspirated V16 together with an electrified future.'},chiron:{name:'Chiron',eyebrow:'02 · The icon · W16',image:'https://bugatti-newsroom.imgix.net/ae4c742c1dbd48309c181690cf557fd7/03-chiron_side_left.jpg',description:'A defining chapter in the modern Bugatti story — a silhouette shaped by speed, proportion and the unmistakable C-line.'},bolide:{name:'Bolide',eyebrow:'03 · Track only · Extreme',image:'https://images.autodaily.com.au/2020/10/Bugatii-Bolide-2020-10.jpg',description:'A track-focused interpretation of extreme performance, with aerodynamic surfaces and a purpose-built racing presence.'},mistral:{name:'W16 Mistral',eyebrow:'04 · Open air · Roadster',image:'https://editorial.pxcrush.net/carsales/general/editorial/bugatti-w16-mistral-roadster-9.jpg?height=682&width=1024',description:'An open-air celebration of the W16 era, combining roadster proportions with the marque’s unmistakable design language.'}};const modal=document.getElementById('car-scene'),image=document.getElementById('carSceneImage'),title=document.getElementById('carSceneTitle'),eyebrow=document.getElementById('carSceneEyebrow'),description=document.getElementById('carSceneDescription'),index=document.getElementById('carSceneIndex'),close=document.getElementById('carSceneClose');if(!modal||!image||!close)return;let lastTrigger=null;const closeModal=()=>{modal.classList.remove('open');modal.setAttribute('aria-hidden','true');document.body.classList.remove('lock');if(lastTrigger)lastTrigger.focus()};document.querySelectorAll('.car-card').forEach(card=>card.addEventListener('click',()=>{const key=card.dataset.car,car=cars[key];if(!car)return;lastTrigger=card;image.src=car.image;image.alt='Cinematic view of the Bugatti '+car.name;title.textContent=car.name;eyebrow.textContent=car.eyebrow;description.textContent=car.description;index.textContent=String(Object.keys(cars).indexOf(key)+1).padStart(2,'0')+' / 04 · MATUDI ATELIER';modal.classList.remove('open');void modal.offsetWidth;modal.classList.add('open');modal.setAttribute('aria-hidden','false');document.body.classList.add('lock');close.focus()}));close.addEventListener('click',closeModal);modal.addEventListener('click',event=>{if(event.target===modal)closeModal()});addEventListener('keydown',event=>{if(event.key==='Escape'&&modal.classList.contains('open'))closeModal()})})();
 </script>
 </body>
 </html>
