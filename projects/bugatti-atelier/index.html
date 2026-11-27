@@ -140,6 +140,14 @@ body.experience-mode main#top{height:100svh;overflow:hidden}
 @keyframes openingScene{from{opacity:0;transform:translateX(7vw)}to{opacity:1;transform:translateX(0)}}
 body.lock #horizontal-ui,body.lock #horizontal-progress{opacity:0;pointer-events:none}
 @media(prefers-reduced-motion:reduce){.experience-track>.hero{animation:none}}
+
+/* MATUDI PES · Reference-led scene choreography */
+.experience-track>.scene-panel{isolation:isolate}
+.scene-transition-wash{position:absolute;inset:0;z-index:28;pointer-events:none;opacity:0;background:linear-gradient(90deg,transparent 7%,rgba(199,173,122,.045) 34%,rgba(231,237,241,.13) 50%,rgba(199,173,122,.045) 66%,transparent 93%);transform:translate3d(-110%,0,0);mix-blend-mode:screen}
+.scene-transition-wash.play{animation:atelierSceneSweep .92s cubic-bezier(.22,.72,.18,1) both}
+@keyframes atelierSceneSweep{0%{opacity:0;transform:translate3d(-110%,0,0)}18%{opacity:1}100%{opacity:0;transform:translate3d(110%,0,0)}}
+.experience-track>.scene-panel.is-active{scroll-snap-align:start}
+@media(prefers-reduced-motion:reduce){.scene-transition-wash.play{animation:none!important;opacity:0!important}}
 </style>
 </head>
 <body>
@@ -276,9 +284,10 @@ body.lock #horizontal-ui,body.lock #horizontal-progress{opacity:0;pointer-events
  main.appendChild(track);document.body.classList.add('experience-mode');
  const total=panels.length,progress=document.querySelector('#horizontal-progress span'),count=document.getElementById('scene-count');
  const prev=document.getElementById('scenePrev'),next=document.getElementById('sceneNext');
+ panels.forEach((panel,index)=>{const wash=document.createElement('span');wash.className='scene-transition-wash';wash.setAttribute('aria-hidden','true');panel.appendChild(wash);if(index===0)panel.classList.add('is-active')});
  let active=0,scrollFrame=0;
- const setActive=()=>{const nextIndex=Math.max(0,Math.min(total-1,Math.round(track.scrollLeft/Math.max(1,innerWidth))));if(nextIndex===active)return;active=nextIndex;count.textContent=String(active+1).padStart(2,'0')+' / '+String(total).padStart(2,'0');progress.style.width=((active+1)/total*100)+'%';prev.disabled=active===0;next.disabled=active===total-1;};
- const go=index=>{const target=Math.max(0,Math.min(total-1,index));track.scrollTo({left:target*innerWidth,behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});};
+ const setActive=()=>{const nextIndex=Math.max(0,Math.min(total-1,Math.round(track.scrollLeft/Math.max(1,track.clientWidth))));if(nextIndex===active)return;active=nextIndex;panels.forEach((panel,index)=>panel.classList.toggle('is-active',index===active));const wash=panels[active].querySelector('.scene-transition-wash');if(wash&&!matchMedia('(prefers-reduced-motion: reduce)').matches){wash.classList.remove('play');void wash.offsetWidth;wash.classList.add('play')}count.textContent=String(active+1).padStart(2,'0')+' / '+String(total).padStart(2,'0');progress.style.width=((active+1)/total*100)+'%';prev.disabled=active===0;next.disabled=active===total-1;};
+ const go=index=>{const target=Math.max(0,Math.min(total-1,index));track.scrollTo({left:target*track.clientWidth,behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});};
  prev.addEventListener('click',()=>go(active-1));next.addEventListener('click',()=>go(active+1));
  track.addEventListener('scroll',()=>{if(scrollFrame)return;scrollFrame=requestAnimationFrame(()=>{setActive();scrollFrame=0})},{passive:true});
  let wheelLock=false;
@@ -290,11 +299,12 @@ body.lock #horizontal-ui,body.lock #horizontal-progress{opacity:0;pointer-events
   event.preventDefault();if(wheelLock)return;wheelLock=true;go(active+(event.deltaY>0?1:-1));setTimeout(()=>wheelLock=false,720);
  },{passive:false});
  addEventListener('keydown',event=>{
-  if(document.getElementById('car-scene').classList.contains('open'))return;
+  if(document.getElementById('car-scene').classList.contains('open')||document.getElementById('menuOverlay').classList.contains('open'))return;
+  if(event.target.closest('input,textarea,select,button,a,[contenteditable="true"]'))return;
   if(['ArrowRight','PageDown'].includes(event.key)){event.preventDefault();go(active+1)}
   if(['ArrowLeft','PageUp'].includes(event.key)){event.preventDefault();go(active-1)}
  },{passive:false});
- const navMap={'#top':0,'#tourbillon':0,'#collection':1,'#engineering':3,'#craft':5,'#configure':6};
+ const navMap={'#top':0,'#tourbillon':0,'#collection':1,'#engineering':4,'#craft':5,'#configure':6};
  document.querySelectorAll('a[href^="#"]').forEach(anchor=>anchor.addEventListener('click',event=>{
   const href=anchor.getAttribute('href');if(!(href in navMap))return;event.preventDefault();go(navMap[href]);
   const menu=document.getElementById('menuOverlay'),button=document.getElementById('menuBtn');if(menu&&button){menu.classList.remove('open');menu.setAttribute('aria-hidden','true');button.setAttribute('aria-expanded','false');document.body.classList.remove('lock')}
