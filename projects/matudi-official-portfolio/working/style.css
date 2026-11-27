@@ -192,7 +192,7 @@ body { background: var(--bg-dark); }
   height: 100%;
   object-fit: cover;
   object-position: center 42%;
-  opacity: 0.38;
+  opacity: 0.50;
   filter: brightness(0.58) saturate(0.68) contrast(1.04);
   pointer-events: none;
 }
@@ -201,7 +201,7 @@ body { background: var(--bg-dark); }
   inset: 0;
   display: block;
   background:
-    linear-gradient(90deg, rgba(5,5,5,0.54), rgba(5,5,5,0.18) 55%, rgba(5,5,5,0.48)),
+    linear-gradient(90deg, rgba(5,5,5,0.42), rgba(5,5,5,0.12) 55%, rgba(5,5,5,0.38)),
     linear-gradient(0deg, rgba(5,5,5,0.62), transparent 38%, rgba(5,5,5,0.22));
   pointer-events: none;
 }
@@ -213,7 +213,7 @@ body { background: var(--bg-dark); }
 @media (max-width: 768px) {
   .hero-block { border-radius: 20px; }
   .hero-block .background-video {
-    opacity: 0.30;
+    opacity: 0.40;
     object-position: center 40%;
   }
 }
