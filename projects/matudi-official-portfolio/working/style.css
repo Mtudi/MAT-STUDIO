@@ -162,73 +162,65 @@ section { min-height: 100vh; padding: 140px 8% 80px; display: flex; flex-directi
 
 
 /*==========================================================================
-11. SELF-CONTAINED CINEMATIC MOTION BACKGROUND
-No external video host: animated CSS layers work offline and on mobile.
+11. HIGH-VISIBILITY SELF-CONTAINED ANIMATED BACKGROUND
 ==========================================================================*/
-body { background: transparent; }
+html { background: #050705; }
+body { background: transparent !important; position: relative; }
 .video-background {
-  position: fixed;
+  position: fixed !important;
   inset: 0;
   z-index: 0;
+  display: block !important;
   overflow: hidden;
   pointer-events: none;
-  isolation: isolate;
   background:
-    radial-gradient(ellipse at 18% 28%, rgba(104,145,22,0.24), transparent 42%),
-    radial-gradient(ellipse at 82% 68%, rgba(38,86,18,0.22), transparent 44%),
-    linear-gradient(135deg, #050705 0%, #080b07 48%, #030403 100%);
+    radial-gradient(ellipse at 15% 20%, rgba(133,190,22,0.30) 0%, transparent 38%),
+    radial-gradient(ellipse at 85% 75%, rgba(55,130,20,0.27) 0%, transparent 42%),
+    linear-gradient(135deg, #080d05 0%, #050805 52%, #030503 100%);
 }
 .video-background::before,
 .video-background::after {
   content: "";
   position: absolute;
-  inset: -35%;
+  inset: -25%;
+  display: block;
   pointer-events: none;
-  will-change: transform;
 }
 .video-background::before {
   background:
-    radial-gradient(ellipse at 28% 42%, rgba(200,255,47,0.17), transparent 25%),
-    radial-gradient(ellipse at 72% 58%, rgba(116,164,28,0.16), transparent 30%),
-    radial-gradient(ellipse at 50% 18%, rgba(200,255,47,0.08), transparent 35%);
-  filter: blur(34px);
-  animation: matudiAmbientDrift 26s ease-in-out infinite alternate;
+    radial-gradient(ellipse at 25% 38%, rgba(200,255,47,0.42) 0%, rgba(154,210,30,0.20) 16%, transparent 38%),
+    radial-gradient(ellipse at 72% 64%, rgba(110,205,35,0.34) 0%, rgba(70,150,25,0.16) 18%, transparent 42%),
+    radial-gradient(ellipse at 55% 12%, rgba(200,255,47,0.19) 0%, transparent 34%);
+  filter: blur(42px);
+  opacity: 1;
+  transform: translateZ(0);
+  animation: matudiAmbientDrift 16s ease-in-out infinite alternate;
 }
 .video-background::after {
-  opacity: 0.24;
+  opacity: 0.32;
   background-image:
-    linear-gradient(rgba(200,255,47,0.055) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(200,255,47,0.055) 1px, transparent 1px);
-  background-size: 72px 72px;
-  mask-image: radial-gradient(ellipse at center, #000 0%, transparent 76%);
-  animation: matudiGridDrift 48s linear infinite;
+    linear-gradient(rgba(200,255,47,0.10) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(200,255,47,0.10) 1px, transparent 1px);
+  background-size: 64px 64px;
+  animation: matudiGridDrift 32s linear infinite;
 }
-.video-background-overlay {
-  position: absolute;
-  inset: 0;
-  background:
-    linear-gradient(180deg, rgba(5,5,5,0.36) 0%, rgba(5,5,5,0.56) 48%, rgba(5,5,5,0.78) 100%),
-    radial-gradient(ellipse at 50% 45%, transparent 0%, rgba(5,5,5,0.38) 82%);
-}
+.video-background-overlay { display: none !important; }
 main { position: relative; z-index: 1; }
+header { z-index: 1000; }
 @keyframes matudiAmbientDrift {
-  0% { transform: translate3d(-3%, -2%, 0) rotate(-4deg) scale(1); }
-  50% { transform: translate3d(2%, 3%, 0) rotate(3deg) scale(1.06); }
-  100% { transform: translate3d(-1%, 2%, 0) rotate(-2deg) scale(1.02); }
+  0% { transform: translate3d(-7%, -4%, 0) rotate(-7deg) scale(1); }
+  50% { transform: translate3d(5%, 4%, 0) rotate(5deg) scale(1.12); }
+  100% { transform: translate3d(-2%, 7%, 0) rotate(-3deg) scale(1.06); }
 }
 @keyframes matudiGridDrift {
   from { transform: translate3d(0, 0, 0); }
-  to { transform: translate3d(72px, 36px, 0); }
+  to { transform: translate3d(64px, 32px, 0); }
 }
 @media (max-width: 768px) {
-  .video-background::before { filter: blur(42px); opacity: 0.82; }
-  .video-background::after { opacity: 0.13; background-size: 54px 54px; }
-  .video-background-overlay {
-    background: linear-gradient(180deg, rgba(5,5,5,0.48), rgba(5,5,5,0.78));
-  }
+  .video-background::before { filter: blur(48px); }
+  .video-background::after { opacity: 0.22; background-size: 52px 52px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .video-background::before,
   .video-background::after { animation: none; }
 }
-
