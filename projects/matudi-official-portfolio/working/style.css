@@ -199,3 +199,7 @@ main { position: relative; z-index: 1; }
 @media (prefers-reduced-motion: reduce) {
   .video-background video { display: none; }
 }
+
+/* Subtle stock-footage attribution */
+.contact-footer a { color: var(--text-dim); text-decoration: none; transition: color 0.25s ease; }
+.contact-footer a:hover { color: var(--green); }
