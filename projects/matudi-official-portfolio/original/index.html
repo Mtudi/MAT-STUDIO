@@ -8,13 +8,14 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
-    <link rel="stylesheet" href="style.css">
     <style>
+        /* إضافات تنسيق للصورة لتناسب التصميم */
         .image-passion-card { border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; overflow: hidden; }
         .image-passion-card img { width: 100%; height: 100%; object-fit: cover; display: block; }
     </style>
 </head>
 <body>
+
     <div id="loader">
         <div class="loader-content">
             <div class="loader-name">MATUDI</div>
@@ -22,17 +23,22 @@
             <button id="entry-btn" onclick="startExperience()">Enter Experience</button>
         </div>
     </div>
+
     <div class="bg-glow one"></div>
     <div class="bg-glow two"></div>
     <div class="noise"></div>
+
     <header>
         <div class="logo">MATUDI</div>
         <nav>
             <a href="#home" class="nav-link active">Home & Bio</a>
             <a href="#portfolio" class="nav-link">Portfolio & Contact</a>
         </nav>
-        <div class="header-meta"><span class="status-dot"></span> Available for Projects</div>
+        <div class="header-meta">
+            <span class="status-dot"></span> Available for Projects
+        </div>
     </header>
+
     <main>
         <section id="home" class="split-section">
             <div class="hero-block">
@@ -44,28 +50,52 @@
                         <div class="info-item"><span class="list-dot"></span> <span>Iraq</span></div>
                         <div class="info-item"><span class="list-dot"></span> <span>College Student</span></div>
                     </div>
-                    <p class="hero-quote">"I'm not a genius, I just see what everyone else chooses to overlook."</p>
-                    <div class="hero-cta"><a href="#portfolio" class="btn btn-primary">View My Work</a></div>
+                    <p class="hero-quote">
+                        "I'm not a genius, I just see what everyone else chooses to overlook."
+                    </p>
+                    <div class="hero-cta">
+                        <a href="#portfolio" class="btn btn-primary">View My Work</a>
+                    </div>
                 </div>
                 <div class="hero-right">
                     <div class="image-card">
                         <img src="https://i.ibb.co/Vpc0hsSm/IMG20260626020447.jpg" alt="Matudi Personal Photo">
-                        <div class="image-glow"></div><div class="card-overlay"></div>
+                        <div class="image-glow"></div>
+                        <div class="card-overlay"></div>
                     </div>
                 </div>
             </div>
             <div class="about-subgrid">
-                <div class="dot-item"><h3><span class="neon-dot"></span> Medical Engineering</h3><p>Third-stage student specializing in medical device technology and advanced healthcare systems.</p></div>
-                <div class="dot-item"><h3><span class="neon-dot"></span> Historical Archivist</h3><p>Crafting cinematic, documentary-style World War II historical content on Instagram.</p></div>
-                <div class="dot-item"><h3><span class="neon-dot"></span> Strategy & Analysis</h3><p>Driven by the keen observation of Patrick Jane (The Mentalist) and a 1600-rated chess strategy.</p></div>
-                <div class="dot-item"><h3><span class="neon-dot"></span> UI Design & Literature</h3><p>Architecting Dark Luxury web interfaces, while holding a deep passion: 『 𝙼𝚢 𝚑𝚘𝚋𝚋𝒚 𝚒𝚜 𝚌𝚘𝚕𝚕𝚎𝚌تنg 𝚋𝚘𝚘𝚔𝚜 』.</p></div>
+                <div class="dot-item">
+                    <h3><span class="neon-dot"></span> Medical Engineering</h3>
+                    <p>Third-stage student specializing in medical device technology and advanced healthcare systems.</p>
+                </div>
+                <div class="dot-item">
+                    <h3><span class="neon-dot"></span> Historical Archivist</h3>
+                    <p>Crafting cinematic, documentary-style World War II historical content on Instagram.</p>
+                </div>
+                <div class="dot-item">
+                    <h3><span class="neon-dot"></span> Strategy & Analysis</h3>
+                    <p>Driven by the keen observation of Patrick Jane (The Mentalist) and a 1600-rated chess strategy.</p>
+                </div>
+                <div class="dot-item">
+                    <h3><span class="neon-dot"></span> UI Design & Literature</h3>
+                    <p>Architecting Dark Luxury web interfaces, while holding a deep passion: 『 𝙼𝚢 𝚑𝚘𝚋𝚋𝒚 𝚒𝚜 𝚌𝚘𝚕𝚕𝚎𝚌تنg 𝚋𝚘𝚘𝚔𝚜 』.</p>
+                </div>
             </div>
         </section>
+
         <section id="portfolio" class="combined-section">
             <div class="sub-block">
-                <div class="section-header"><span>PASSIONS</span><h2>What Immerses Me</h2><div class="header-line"></div></div>
+                <div class="section-header">
+                    <span>PASSIONS</span>
+                    <h2>What Immerses Me</h2>
+                    <div class="header-line"></div>
+                </div>
                 <div class="likes-grid">
-                    <div class="like-dot-item image-passion-card"><img src="https://i.ibb.co/jPwppRHS/860dd365c084331fb354693f8195724c.jpg" alt="Patrick Jane"></div>
+                    <div class="like-dot-item image-passion-card">
+                        <img src="https://i.ibb.co/jPwppRHS/860dd365c084331fb354693f8195724c.jpg" alt="Patrick Jane">
+                    </div>
                     <div class="like-dot-item"><span class="pulse-dot"></span><div><span>The Mentalist</span><p>Observation & Analysis</p></div></div>
                     <div class="like-dot-item"><span class="pulse-dot"></span><div><span>Books Around Me</span><p>Continuous Knowledge</p></div></div>
                     <div class="like-dot-item"><span class="pulse-dot"></span><div><span>Chess</span><p>Strategy & Tactics</p></div></div>
@@ -74,10 +104,26 @@
                 </div>
             </div>
             <div class="sub-block">
-                <div class="section-header"><span>SHOWCASE</span><h2>Featured Creations</h2><div class="header-line"></div></div>
+                <div class="section-header">
+                    <span>SHOWCASE</span>
+                    <h2>Featured Creations</h2>
+                    <div class="header-line"></div>
+                </div>
                 <div class="projects-grid">
-                    <div class="project-dot-card"><div class="project-info"><span class="project-tag"><span class="mini-dot"></span> Web Design</span><h3>Cinematic Portfolio UI</h3><p>A premium portfolio template featuring abstract glowing aesthetics and smooth scrolling architecture.</p></div></div>
-                    <div class="project-dot-card"><div class="project-info"><span class="project-tag"><span class="mini-dot"></span> Photography</span><h3>Visual Essence Archive</h3><p>A curated digital exhibition capturing urban landscapes and atmospheric lighting perspectives.</p></div></div>
+                    <div class="project-dot-card">
+                        <div class="project-info">
+                            <span class="project-tag"><span class="mini-dot"></span> Web Design</span>
+                            <h3>Cinematic Portfolio UI</h3>
+                            <p>A premium portfolio template featuring abstract glowing aesthetics and smooth scrolling architecture.</p>
+                        </div>
+                    </div>
+                    <div class="project-dot-card">
+                        <div class="project-info">
+                            <span class="project-tag"><span class="mini-dot"></span> Photography</span>
+                            <h3>Visual Essence Archive</h3>
+                            <p>A curated digital exhibition capturing urban landscapes and atmospheric lighting perspectives.</p>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="contact-box">
@@ -87,15 +133,23 @@
                     <a href="https://instagram.com/xmatdui" target="_blank" class="social-link" title="Instagram"><i class="fab fa-instagram"></i></a>
                     <a href="#" class="social-link" title="Discord Platform"><i class="fab fa-discord"></i></a>
                 </div>
-                <div class="contact-footer"><p>&copy; 2026 MATUDI. All Rights Reserved.</p></div>
+                <div class="contact-footer">
+                    <p>&copy; 2026 MATUDI. All Rights Reserved.</p>
+                </div>
             </div>
         </section>
     </main>
+
     <div class="audio-fixed-player hidden">
       <div class="player-mini-content">
         <div class="player-logo">MatouDi</div>
-        <div class="player-img-container"><img src="https://i.ibb.co/HWjnrmx/6cce485fd86e9092ec30bea15750c95b.jpg" alt="Album Cover"></div>
-        <div class="player-details"><h2>غمض عيونك</h2><div class="player-lyrics-container"><p id="lyrics">✨</p></div></div>
+        <div class="player-img-container">
+          <img src="https://i.ibb.co/HWjnrmx/6cce485fd86e9092ec30bea15750c95b.jpg" alt="Album Cover">
+        </div>
+        <div class="player-details">
+          <h2>غمض عيونك</h2>
+          <div class="player-lyrics-container"><p id="lyrics">✨</p></div>
+        </div>
       </div>
       <div class="player-progress-container">
         <input type="range" id="progressBar" value="0" min="0" max="100" oninput="seekAudio()">
@@ -104,6 +158,5 @@
       <button class="player-play-btn" onclick="toggleAudio()"><svg id="btnIcon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></button>
       <audio id="myAudio" loop src="https://files.catbox.moe/w193wc.mp3"></audio>
     </div>
-    <script src="script.js"></script>
 </body>
 </html>
