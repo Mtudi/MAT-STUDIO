@@ -26,6 +26,13 @@ An independent, single-page digital concept centered on the Bugatti Tourbillon. 
 - Mobile keeps horizontal swipe navigation while allowing vertical reading inside an individual scene. Reduced-motion preferences disable the strongest scene and camera animations.
 - Model image references: [Bugatti Newsroom — Chiron](https://newsroom.bugatti.com/de/pressemeldungen/die-design-dna-der-bugatti-hypersportwagen), [AutoDaily — Bolide](https://www.autodaily.com.au/bugatti-bolide-hypercar-hits-the-track/), [Carsales — W16 Mistral](https://www.carsales.com.au/editorial/details/bugatti-w16-mistral-roadster-unveiled-137094/). Image rights remain with their respective owners.
 
+## Reference-led motion update
+- The horizontal scene system now uses a restrained champagne/ice sweep as a transition cue when a new chapter becomes active. The effect is CSS-only, runs only on scene changes, and is disabled for reduced-motion visitors.
+- The motion direction combines Apple-style product storytelling and clean hierarchy, Nothing-inspired graphic restraint, and the immersive scene choreography associated with Active Theory and Resn. These are design references, not copied layouts or assets.
+- Engineering menu navigation now targets the actual Engineering scene (scene 05 of 09); the previous mapping landed one scene early.
+- The existing native horizontal scroll, touch swipe, wheel/trackpad navigation, keyboard controls, car spotlights, finish selector, and opt-in synthesized UI sounds are preserved.
+- Reference sites reviewed: [Apple](https://www.apple.com/), [Nothing](https://nothing.tech/), [Active Theory](https://activetheory.net/), [Resn](https://resn.co.nz/), and [Awwwards](https://www.awwwards.com/). Active Theory and Resn are JavaScript-heavy, so their live motion could not be fully inspected through text extraction; the implementation uses the general immersive direction rather than claiming a direct technical reproduction.
+
 ## Design direction
 Midnight navy, Bugatti-inspired blue, platinum/ice, and restrained champagne accents. The layout is original and uses Bugatti's public identity and Tourbillon story as reference points rather than reproducing the official site.
 
