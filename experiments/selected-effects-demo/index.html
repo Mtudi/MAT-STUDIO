@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#080908">
+<title>MATUDI — Selected Effects Lab</title>
+<style>
+:root{color-scheme:dark;--bg:#080908;--panel:#111310;--line:#292d25;--ink:#f1f3ed;--muted:#92988b;--acid:#c8ff2f;--acid2:#8eaF22;--ease:cubic-bezier(.2,.75,.2,1)}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(ellipse at 80% 0%,#1a2111 0,transparent 36%),var(--bg);color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,sans-serif;line-height:1.5}button{font:inherit}a{color:inherit}.shell{width:min(1180px,calc(100% - 40px));margin:auto}.top{padding:30px 0 22px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:20px}.brand{font-size:12px;letter-spacing:.22em;font-weight:800}.brand b{color:var(--acid)}.tag{font:11px ui-monospace,monospace;color:var(--muted);letter-spacing:.12em}.hero{padding:76px 0 58px;max-width:850px}.eyebrow{font:11px ui-monospace,monospace;color:var(--acid);letter-spacing:.18em;text-transform:uppercase}.hero h1{font-size:clamp(44px,8vw,94px);line-height:.94;letter-spacing:-.075em;margin:20px 0}.hero h1 span{color:var(--acid)}.hero p{max-width:590px;color:#aeb4a6;font-size:15px}.meta{display:flex;gap:10px;flex-wrap:wrap;margin-top:24px}.pill{border:1px solid var(--line);border-radius:99px;padding:7px 12px;color:#b7bdaf;font:10px ui-monospace,monospace;letter-spacing:.08em}.grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;padding-bottom:80px}.demo{min-width:0;border:1px solid var(--line);border-radius:18px;background:linear-gradient(145deg,#151812,#0e100d 75%);overflow:hidden}.demo-head{padding:20px 22px 15px;display:flex;justify-content:space-between;gap:14px;align-items:flex-start}.num{font:11px ui-monospace,monospace;color:var(--acid)}.demo h2{font-size:19px;letter-spacing:-.035em;margin:5px 0}.demo-head p{font-size:12px;color:var(--muted);margin:0;max-width:390px}.stage{margin:0 14px 14px;min-height:270px;border:1px solid #282d24;border-radius:12px;background:#090b08;position:relative;overflow:hidden;display:grid;place-items:center;padding:20px}.controls{display:flex;gap:8px;flex-wrap:wrap;padding:0 14px 16px}.btn{border:1px solid #39402f;background:#171c12;color:var(--ink);border-radius:8px;padding:9px 13px;font-size:11px;cursor:pointer;transition:background .2s,border-color .2s,transform .2s}.btn:hover{border-color:var(--acid);background:#202719}.btn:focus-visible{outline:2px solid var(--acid);outline-offset:3px}.btn.primary{background:var(--acid);color:#10130b;border-color:var(--acid);font-weight:750}.btn:active{transform:scale(.97)}
+/* Signal Decode */
+.signal{width:100%;text-align:center}.signal-label{font:10px ui-monospace,monospace;letter-spacing:.25em;color:var(--acid);margin-bottom:18px}.signal-word{font-size:clamp(25px,4vw,47px);font-weight:850;letter-spacing:.12em;text-transform:uppercase;min-height:1.35em;text-shadow:0 0 28px #c8ff2f30;cursor:pointer;user-select:none}.signal-sub{font:10px ui-monospace,monospace;color:#727a6b;margin-top:13px;letter-spacing:.13em}
+/* Double Curtain */
+.curtain-wrap{position:relative;width:min(440px,100%);height:215px;perspective:800px;overflow:hidden;border:1px solid #353b2d}.curtain-image{position:absolute;inset:0;background:linear-gradient(0deg,#07090799,#07090710),url('https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1100&q=85') center/cover;display:grid;place-items:center}.curtain-image strong{font-size:clamp(22px,4vw,42px);letter-spacing:-.06em;text-shadow:0 3px 20px #000}.curtain{position:absolute;inset:0 50% 0 0;background:linear-gradient(135deg,#c8ff2f,#829f22);transform-origin:left;transition:transform 1s var(--ease)}.curtain.right{inset:0 0 0 50%;background:linear-gradient(225deg,#252c1b,#0d100b);transform-origin:right}.curtain-wrap.open .curtain.left{transform:translateX(-102%) rotateY(-12deg)}.curtain-wrap.open .curtain.right{transform:translateX(102%) rotateY(12deg)}.curtain-mark{position:absolute;z-index:2;top:50%;left:50%;transform:translate(-50%,-50%);font:10px ui-monospace,monospace;letter-spacing:.15em;color:#10140a;transition:opacity .3s}.curtain-wrap.open .curtain-mark{opacity:0}
+/* Cube */
+.cube-stage{perspective:850px;width:100%;height:220px;display:grid;place-items:center}.cube{--s:116px;width:var(--s);height:var(--s);position:relative;transform-style:preserve-3d;transform:rotateX(-22deg) rotateY(-32deg);transition:transform .8s var(--ease)}.face{position:absolute;inset:0;border:1px solid #d6ff7b88;background:linear-gradient(145deg,#c8ff2fdd,#53651fdd);display:grid;place-items:center;color:#0a0d06;font:800 12px ui-monospace,monospace;letter-spacing:.1em;backface-visibility:hidden;box-shadow:inset 0 0 30px #fff2}.face.front{transform:translateZ(58px)}.face.back{transform:rotateY(180deg) translateZ(58px);background:#28331b;color:#d9ff8c}.face.right{transform:rotateY(90deg) translateZ(58px);background:#829f22}.face.left{transform:rotateY(-90deg) translateZ(58px);background:#20291a;color:#d9ff8c}.face.top{transform:rotateX(90deg) translateZ(58px);background:#dfff9a}.face.bottom{transform:rotateX(-90deg) translateZ(58px);background:#53651f;color:#fff}.cube-hint{position:absolute;bottom:14px;left:0;right:0;text-align:center;color:#707968;font:9px ui-monospace,monospace;letter-spacing:.12em}
+/* Geometric mask */
+.mask-frame{width:min(440px,100%);height:215px;position:relative;overflow:hidden;background:#151a10}.mask-frame img{width:100%;height:100%;object-fit:cover;filter:saturate(.75) contrast(1.05);clip-path:polygon(0 0,100% 0,100% 0,0 0);transform:scale(1.08);transition:clip-path 1s var(--ease),transform 1.1s var(--ease)}.mask-frame.revealed img{clip-path:polygon(0 0,100% 0,100% 100%,0 100%);transform:scale(1)}.mask-frame:after{content:"";position:absolute;inset:0;background:linear-gradient(115deg,transparent 35%,#c8ff2f 50%,transparent 65%);transform:translateX(-120%);pointer-events:none}.mask-frame.revealed:after{animation:sweep 1.05s .12s var(--ease) both}@keyframes sweep{to{transform:translateX(120%)}}.mask-caption{position:absolute;left:16px;bottom:14px;font:10px ui-monospace,monospace;letter-spacing:.15em;color:white;text-shadow:0 2px 12px #000;z-index:1}
+footer{border-top:1px solid var(--line);padding:22px 0 34px;display:flex;justify-content:space-between;gap:15px;color:#747c6c;font:10px ui-monospace,monospace;letter-spacing:.08em}.status{color:var(--acid)}
+@media(max-width:760px){.grid{grid-template-columns:1fr}.hero{padding:58px 0 42px}.stage{min-height:250px}.top{align-items:flex-start;flex-direction:column;gap:8px}.shell{width:min(100% - 26px,600px)}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+</style>
+</head>
+<body>
+<header class="top shell"><div class="brand">MATUDI <b> / </b> EXPERIMENTS</div><div class="tag">INTERACTION STUDY — 04 SELECTED EFFECTS</div></header>
+<main class="shell">
+<section class="hero"><div class="eyebrow">Independent experience lab / 001</div><h1>Make the interface<br><span>feel alive.</span></h1><p>Four selected motion directions brought together in one isolated playground. Test each interaction, compare its character, and decide what deserves a place in the portfolio.</p><div class="meta"><span class="pill">NO FRAMEWORK</span><span class="pill">RESPONSIVE</span><span class="pill">REDUCED-MOTION AWARE</span><span class="pill">NOT CONNECTED TO MAIN SITE</span></div></section>
+<section class="grid" aria-label="Interactive effect demos">
+<article class="demo"><div class="demo-head"><div><div class="num">01 / TYPOGRAPHY</div><h2>Signal Decode</h2><p>Scrambled glyphs resolve into a clean title — a digital signal locking into place.</p></div></div><div class="stage"><div class="signal"><div class="signal-label">INCOMING TRANSMISSION</div><div class="signal-word" id="signalWord" role="button" tabindex="0" aria-label="Replay signal decode">MATUDI STUDIO</div><div class="signal-sub" id="signalState">SIGNAL ACQUIRED · CLICK TO REPLAY</div></div></div><div class="controls"><button class="btn primary" id="decodeBtn">Replay decode ↗</button></div></article>
+<article class="demo"><div class="demo-head"><div><div class="num">02 / REVEAL</div><h2>Double Curtain</h2><p>Two opposing panels part from the center to reveal the scene beneath.</p></div></div><div class="stage"><div class="curtain-wrap" id="curtainWrap"><div class="curtain-image"><strong>Beyond the frame.</strong></div><div class="curtain left"></div><div class="curtain right"></div><div class="curtain-mark">PULL APART</div></div></div><div class="controls"><button class="btn primary" id="curtainBtn" aria-expanded="false">Open curtains ↗</button><button class="btn" id="curtainReset">Reset</button></div></article>
+<article class="demo"><div class="demo-head"><div><div class="num">03 / SPATIAL UI</div><h2>3D Cube Rotation</h2><p>A tactile six-sided object with deliberate, eased rotations on each axis.</p></div></div><div class="stage"><div class="cube-stage"><div class="cube" id="cube" aria-label="Rotating 3D cube"><div class="face front">FRONT</div><div class="face back">BACK</div><div class="face right">RIGHT</div><div class="face left">LEFT</div><div class="face top">TOP</div><div class="face bottom">BOTTOM</div></div></div><div class="cube-hint">USE THE CONTROLS TO EXPLORE THE OBJECT</div></div><div class="controls"><button class="btn" data-rotate="left">↶ Rotate left</button><button class="btn" data-rotate="right">Rotate right ↷</button><button class="btn" data-rotate="up">Tilt up ↑</button><button class="btn" data-rotate="down">Tilt down ↓</button><button class="btn primary" id="cubeReset">Reset view</button></div></article>
+<article class="demo"><div class="demo-head"><div><div class="num">04 / IMAGE TREATMENT</div><h2>Geometric Image Mask</h2><p>A sharp polygonal crop expands into a full-bleed image with a light sweep.</p></div></div><div class="stage"><div class="mask-frame" id="maskFrame"><img src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1100&q=85" alt="Mountain landscape beneath a dramatic sky"><div class="mask-caption">EXPAND YOUR PERSPECTIVE</div></div></div><div class="controls"><button class="btn primary" id="maskBtn" aria-expanded="false">Reveal image ↗</button><button class="btn" id="maskReset">Reset mask</button></div></article>
+</section>
+</main>
+<footer class="shell"><span>MATUDI PES · EXPERIMENTAL BUILD</span><span class="status">ISOLATED / SAFE TO EXPLORE</span></footer>
+<script>
+(() => {
+  const $ = (id) => document.getElementById(id);
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const signal = $('signalWord'), signalState = $('signalState');
+  const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#$%&';
+  let decodeTimer = 0;
+  function decode() {
+    clearInterval(decodeTimer);
+    const target = 'MATUDI STUDIO';
+    if (reduceMotion) { signal.textContent = target; signalState.textContent = 'SIGNAL ACQUIRED'; return; }
+    let frame = 0;
+    signalState.textContent = 'DECODING TRANSMISSION…';
+    decodeTimer = setInterval(() => {
+      signal.textContent = [...target].map((char, i) => char === ' ' ? ' ' : (i < frame / 3 ? char : alphabet[Math.floor(Math.random() * alphabet.length)])).join('');
+      frame++;
+      if (frame > target.length * 3) { clearInterval(decodeTimer); signal.textContent = target; signalState.textContent = 'SIGNAL ACQUIRED · CLICK TO REPLAY'; }
+    }, 38);
+  }
+  $('decodeBtn').addEventListener('click', decode);
+  signal.addEventListener('click', decode);
+  signal.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); decode(); } });
+
+  const curtain = $('curtainWrap'), curtainBtn = $('curtainBtn');
+  function setCurtain(open) { curtain.classList.toggle('open', open); curtainBtn.setAttribute('aria-expanded', String(open)); curtainBtn.textContent = open ? 'Close curtains ↗' : 'Open curtains ↗'; }
+  curtainBtn.addEventListener('click', () => setCurtain(!curtain.classList.contains('open')));
+  $('curtainReset').addEventListener('click', () => setCurtain(false));
+
+  const cube = $('cube'); let rx = -22, ry = -32;
+  function renderCube() { cube.style.transform = `rotateX(${rx}deg) rotateY(${ry}deg)`; }
+  document.querySelectorAll('[data-rotate]').forEach(button => button.addEventListener('click', () => {
+    const direction = button.dataset.rotate;
+    if (direction === 'left') ry -= 90;
+    if (direction === 'right') ry += 90;
+    if (direction === 'up') rx -= 90;
+    if (direction === 'down') rx += 90;
+    renderCube();
+  }));
+  $('cubeReset').addEventListener('click', () => { rx = -22; ry = -32; renderCube(); });
+
+  const mask = $('maskFrame'), maskBtn = $('maskBtn');
+  function setMask(open) { mask.classList.toggle('revealed', open); maskBtn.setAttribute('aria-expanded', String(open)); maskBtn.textContent = open ? 'Hide image ↗' : 'Reveal image ↗'; }
+  maskBtn.addEventListener('click', () => setMask(!mask.classList.contains('revealed')));
+  $('maskReset').addEventListener('click', () => setMask(false));
+  decode();
+})();
+</script>
+</body>
+</html>
