@@ -38,9 +38,12 @@ try {
   const track = page.locator('#experienceTrack');
   assert.equal(await track.count(), 1, 'horizontal experience track should exist');
   assert.equal(await page.locator('.scene-panel').count(), 9, 'all eight chapters plus footer should become horizontal scenes');
+  assert.equal(await page.locator('.scene-transition-wash').count(), 9, 'each scene should have a lightweight transition overlay');
+  assert.equal(await page.locator('.scene-panel.is-active').count(), 1, 'only the current scene should be marked active');
   assert.equal(await page.locator('#scene-count').textContent(), '01 / 09');
   await page.locator('#sceneNext').click();
   await page.waitForFunction(() => document.querySelector('#scene-count').textContent === '02 / 09');
+  assert.equal(await page.locator('#collection').evaluate(el => el.classList.contains('is-active')), true, 'collection should become active after horizontal navigation');
   await page.locator('.car-card[data-car="chiron"]').click();
   assert.equal(await page.locator('#car-scene').getAttribute('aria-hidden'), 'false', 'car spotlight should open accessibly');
   assert.equal(await page.locator('#carSceneTitle').textContent(), 'Chiron', 'selected car should receive its own scene');
@@ -59,7 +62,8 @@ try {
 
   await menuButton.click();
   await page.locator('#menuOverlay a[href="#engineering"]').click();
-  await page.waitForFunction(() => document.querySelector('#scene-count').textContent === '04 / 09');
+  await page.waitForFunction(() => document.querySelector('#scene-count').textContent === '05 / 09');
+  assert.equal(await page.locator('#engineering').evaluate(el => el.classList.contains('is-active')), true, 'Engineering navigation should land on the Engineering scene');
   assert.equal(await menuButton.getAttribute('aria-expanded'), 'false', 'navigation should close menu');
 
   await page.locator('.swatch[data-color="Glacier Silver"]').click();
