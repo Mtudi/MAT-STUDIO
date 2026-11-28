@@ -35,7 +35,7 @@ class Scene:
         self.aspect = (self.width / self.height) * 0.48
 
     def plot(self, x: np.ndarray, y: np.ndarray, depth: np.ndarray,
-             light: np.ndarray, glyph: np.ndarray | str = "@") -> None:
+             light: np.ndarray, glyph: np.ndarray | str | None = None) -> None:
         xi = np.rint(x).astype(np.int32)
         yi = np.rint(y).astype(np.int32)
         valid = (np.isfinite(xi) & np.isfinite(yi) & np.isfinite(depth)
@@ -54,7 +54,9 @@ class Scene:
         b = 8 + 54 * np.power(light, 2.0)
         self.rgb[yi, xi] = np.stack((r, g, b), axis=1).astype(np.uint8)
         levels = np.minimum((light * (len(CHARS) - 1)).astype(int), len(CHARS) - 1)
-        if isinstance(glyph, str):
+        if glyph is None:
+            self.glyph[yi, xi] = np.asarray(list(CHARS), dtype="<U1")[levels[idx]]
+        elif isinstance(glyph, str):
             self.glyph[yi, xi] = glyph
         else:
             self.glyph[yi, xi] = glyph[valid][idx]
