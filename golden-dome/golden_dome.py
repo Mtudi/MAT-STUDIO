@@ -55,7 +55,7 @@ class Scene:
         self.rgb[yi, xi] = np.stack((r, g, b), axis=1).astype(np.uint8)
         levels = np.minimum((light * (len(CHARS) - 1)).astype(int), len(CHARS) - 1)
         if glyph is None:
-            self.glyph[yi, xi] = np.asarray(list(CHARS), dtype="<U1")[levels[idx]]
+            self.glyph[yi, xi] = np.asarray(list(CHARS), dtype="<U1")[levels]
         elif isinstance(glyph, str):
             self.glyph[yi, xi] = glyph
         else:
