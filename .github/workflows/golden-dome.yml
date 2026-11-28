@@ -1,0 +1,27 @@
+name: Python checks
+
+on:
+  push:
+    paths:
+      - "golden-dome/**"
+  pull_request:
+    paths:
+      - "golden-dome/**"
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: golden-dome
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: python -m pip install -r requirements.txt
+      - run: python -m py_compile golden_dome.py
+      - name: Static render smoke test
+        run: python golden_dome.py --static --width 60 --height 22 > /tmp/golden-dome.txt
+      - name: Verify output
+        run: test -s /tmp/golden-dome.txt
