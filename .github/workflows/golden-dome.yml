@@ -20,7 +20,9 @@ jobs:
         with:
           python-version: "3.11"
       - run: python -m pip install -r requirements.txt
+      - run: python -m pip install pytest
       - run: python -m py_compile golden_dome.py
+      - run: python -m pytest -q
       - name: Static render smoke test
         run: python golden_dome.py --static --width 60 --height 22 > /tmp/golden-dome.txt
       - name: Verify output
